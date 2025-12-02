@@ -22,7 +22,7 @@ function Test-Winget {
     }
 }
 
-function Refresh-Path {
+function Update-EnvironmentPath {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
 
@@ -33,7 +33,7 @@ function Install-Python312 {
         if ($LASTEXITCODE -eq 0) {
             Write-Host "      Python 3.12 installed successfully." -ForegroundColor Green
             Write-Host "      NOTE: You may need to restart your terminal for PATH changes." -ForegroundColor Yellow
-            Refresh-Path
+            Update-EnvironmentPath
             return $true
         } else {
             Write-Host "      WARNING: winget install returned non-zero exit code." -ForegroundColor Yellow
@@ -51,7 +51,7 @@ function Install-CMake {
         winget install Kitware.CMake --accept-package-agreements --accept-source-agreements
         if ($LASTEXITCODE -eq 0) {
             Write-Host "      CMake installed successfully." -ForegroundColor Green
-            Refresh-Path
+            Update-EnvironmentPath
             return $true
         }
     } catch {}
@@ -65,7 +65,7 @@ function Install-Ninja {
         winget install Ninja-build.Ninja --accept-package-agreements --accept-source-agreements
         if ($LASTEXITCODE -eq 0) {
             Write-Host "      Ninja installed successfully." -ForegroundColor Green
-            Refresh-Path
+            Update-EnvironmentPath
             return $true
         }
     } catch {}
