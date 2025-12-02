@@ -532,22 +532,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
 <sub>Part of the <a href="../gold_standard/README.md">Gold Standard</a> precious metals intelligence system.</sub>
 </p>
-config.num_threads = 0;                    // 0 = auto
-```
-
-## Requirements
-
-- CMake 3.20+
-- C++20 compiler (MSVC 2022, GCC 12+, Clang 14+)
-- Python 3.10+ (for bindings)
-
-
-##  Roadmap
-
-1. **Phase 1** (Current): Vector store with semantic search
-2. **Phase 2**: Incremental learning from new data
-3. **Phase 3**: Fine-tune small LLM on vectorized corpus
-4. **Phase 4**: Custom domain-specific model for gold/macro analysis
-
 
 
