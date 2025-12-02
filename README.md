@@ -71,8 +71,8 @@ A C++ vector database with SIMD-optimized similarity search, local ONNX-based em
 **Windows PowerShell:**
 ```powershell
 # Clone repository
-git clone https://github.com/amuzetnoM/gold_standard.git
-cd gold_standard/vector_database
+git clone https://github.com/amuzetnoM/vector_studio.git
+cd gold_standard/vector_studio
 
 # Run automated setup (installs Python, CMake, Ninja, dependencies)
 .\scripts\setup.ps1
@@ -84,8 +84,8 @@ cd gold_standard/vector_database
 **Unix/macOS/Linux:**
 ```bash
 # Clone and setup
-git clone https://github.com/amuzetnoM/gold_standard.git
-cd gold_standard/vector_database
+git clone https://github.com/amuzetnoM/vector_studio.git
+cd gold_standard/vector_studio
 
 chmod +x scripts/setup.sh
 ./scripts/setup.sh
