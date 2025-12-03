@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <unordered_set>
+#include <mutex>
 
 namespace vdb {
 
@@ -24,8 +26,30 @@ HnswIndex::HnswIndex(const HnswConfig& config)
 
 HnswIndex::~HnswIndex() = default;
 
-HnswIndex::HnswIndex(HnswIndex&&) noexcept = default;
-HnswIndex& HnswIndex::operator=(HnswIndex&&) noexcept = default;
+HnswIndex::HnswIndex(HnswIndex&& other) noexcept
+    : config_(std::move(other.config_))
+    , nodes_(std::move(other.nodes_))
+    , id_to_index_(std::move(other.id_to_index_))
+    , entry_point_(other.entry_point_)
+    , max_level_(other.max_level_)
+    , element_count_(other.element_count_)
+    , rng_(std::move(other.rng_))
+    , level_mult_(other.level_mult_)
+{}
+
+HnswIndex& HnswIndex::operator=(HnswIndex&& other) noexcept {
+    if (this != &other) {
+        config_ = std::move(other.config_);
+        nodes_ = std::move(other.nodes_);
+        id_to_index_ = std::move(other.id_to_index_);
+        entry_point_ = other.entry_point_;
+        max_level_ = other.max_level_;
+        element_count_ = other.element_count_;
+        rng_ = std::move(other.rng_);
+        level_mult_ = other.level_mult_;
+    }
+    return *this;
+}
 
 int HnswIndex::random_level() {
     std::uniform_real_distribution<double> dist(0.0, 1.0);
@@ -35,21 +59,21 @@ int HnswIndex::random_level() {
 
 Result<void> HnswIndex::add(VectorId id, VectorView vector) {
     if (vector.dim() != config_.dimension) {
-        return Error{ErrorCode::InvalidDimension, 
+        return std::unexpected(Error{ErrorCode::InvalidDimension, 
             "Expected dimension " + std::to_string(config_.dimension) + 
-            ", got " + std::to_string(vector.dim())};
+            ", got " + std::to_string(vector.dim())});
     }
     
     std::unique_lock<std::shared_mutex> lock(mutex_);
     
     if (element_count_ >= config_.max_elements) {
-        return Error{ErrorCode::IndexFull, "Index capacity reached"};
+        return std::unexpected(Error{ErrorCode::IndexFull, "Index capacity reached"});
     }
     
     // Check for existing ID
     if (id_to_index_.contains(id)) {
         if (!config_.allow_replace) {
-            return Error{ErrorCode::InvalidVectorId, "Vector ID already exists"};
+            return std::unexpected(Error{ErrorCode::InvalidVectorId, "Vector ID already exists"});
         }
         // Remove old entry
         // TODO: Implement proper removal
@@ -122,7 +146,7 @@ Result<void> HnswIndex::add_batch(
     std::span<const Vector> vectors
 ) {
     if (ids.size() != vectors.size()) {
-        return Error{ErrorCode::InvalidInput, "IDs and vectors count mismatch"};
+        return std::unexpected(Error{ErrorCode::InvalidInput, "IDs and vectors count mismatch"});
     }
     
     for (size_t i = 0; i < ids.size(); ++i) {
@@ -322,7 +346,7 @@ Result<void> HnswIndex::remove(VectorId id) {
     
     auto it = id_to_index_.find(id);
     if (it == id_to_index_.end()) {
-        return Error{ErrorCode::VectorNotFound, "Vector ID not found"};
+        return std::unexpected(Error{ErrorCode::VectorNotFound, "Vector ID not found"});
     }
     
     // Mark as deleted (lazy deletion)
@@ -385,7 +409,7 @@ void HnswIndex::set_ef_search(size_t ef) {
 
 Result<void> HnswIndex::resize([[maybe_unused]] size_t new_max_elements) {
     // TODO: Implement resize
-    return Error{ErrorCode::NotImplemented, "Resize not implemented"};
+    return std::unexpected(Error{ErrorCode::NotImplemented, "Resize not implemented"});
 }
 
 void HnswIndex::optimize() {
@@ -397,7 +421,7 @@ Result<void> HnswIndex::save(std::string_view path) const {
     
     std::ofstream file(std::string(path), std::ios::binary);
     if (!file) {
-        return Error{ErrorCode::IoError, "Failed to open file for writing"};
+        return std::unexpected(Error{ErrorCode::IoError, "Failed to open file for writing"});
     }
     
     // Write header
@@ -443,7 +467,7 @@ Result<void> HnswIndex::save(std::string_view path) const {
 Result<HnswIndex> HnswIndex::load(std::string_view path) {
     std::ifstream file(std::string(path), std::ios::binary);
     if (!file) {
-        return Error{ErrorCode::IoError, "Failed to open file for reading"};
+        return std::unexpected(Error{ErrorCode::IoError, "Failed to open file for reading"});
     }
     
     // Read header
@@ -452,7 +476,7 @@ Result<HnswIndex> HnswIndex::load(std::string_view path) {
     file.read(reinterpret_cast<char*>(&version), sizeof(version));
     
     if (magic != 0x564442) {
-        return Error{ErrorCode::IndexCorrupted, "Invalid file format"};
+        return std::unexpected(Error{ErrorCode::IndexCorrupted, "Invalid file format"});
     }
     
     HnswConfig config;
@@ -509,11 +533,11 @@ FlatIndex::FlatIndex(Dim dimension, DistanceMetric metric)
 
 Result<void> FlatIndex::add(VectorId id, VectorView vector) {
     if (vector.dim() != dimension_) {
-        return Error{ErrorCode::InvalidDimension, "Dimension mismatch"};
+        return std::unexpected(Error{ErrorCode::InvalidDimension, "Dimension mismatch"});
     }
     
     if (id_to_index_.contains(id)) {
-        return Error{ErrorCode::InvalidVectorId, "ID already exists"};
+        return std::unexpected(Error{ErrorCode::InvalidVectorId, "ID already exists"});
     }
     
     id_to_index_[id] = vectors_.size();
@@ -551,11 +575,11 @@ std::optional<Vector> FlatIndex::get_vector(VectorId id) const {
 }
 
 Result<void> FlatIndex::save([[maybe_unused]] std::string_view path) const {
-    return Error{ErrorCode::NotImplemented, "FlatIndex::save not implemented"};
+    return std::unexpected(Error{ErrorCode::NotImplemented, "FlatIndex::save not implemented"});
 }
 
 Result<FlatIndex> FlatIndex::load([[maybe_unused]] std::string_view path) {
-    return Error{ErrorCode::NotImplemented, "FlatIndex::load not implemented"};
+    return std::unexpected(Error{ErrorCode::NotImplemented, "FlatIndex::load not implemented"});
 }
 
 } // namespace vdb

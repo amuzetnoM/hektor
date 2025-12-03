@@ -464,12 +464,14 @@ Vector ProjectionMatrix::project(VectorView input) const {
 
 Result<void> ProjectionMatrix::load(std::string_view path) {
     // TODO: Implement file loading
-    return Error{ErrorCode::NotImplemented, "ProjectionMatrix::load not implemented"};
+    (void)path;
+    return std::unexpected(Error{ErrorCode::NotImplemented, "ProjectionMatrix::load not implemented"});
 }
 
 Result<void> ProjectionMatrix::save(std::string_view path) const {
     // TODO: Implement file saving
-    return Error{ErrorCode::NotImplemented, "ProjectionMatrix::save not implemented"};
+    (void)path;
+    return std::unexpected(Error{ErrorCode::NotImplemented, "ProjectionMatrix::save not implemented"});
 }
 
 } // namespace vdb
