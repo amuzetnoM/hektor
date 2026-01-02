@@ -168,7 +168,7 @@ Result<std::vector<std::vector<float>>> TextEncoder::encode_batch(
     for (const auto& text : texts) {
         auto result = encode(text);
         if (!result) {
-            return result.error();
+            return std::unexpected(result.error());
         }
         results.push_back(std::move(*result));
     }

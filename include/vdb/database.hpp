@@ -110,11 +110,11 @@ public:
     explicit VectorDatabase(const DatabaseConfig& config);
     ~VectorDatabase();
     
-    // Non-copyable, movable
+    // Non-copyable, non-movable (due to mutex)
     VectorDatabase(const VectorDatabase&) = delete;
     VectorDatabase& operator=(const VectorDatabase&) = delete;
-    VectorDatabase(VectorDatabase&&) noexcept;
-    VectorDatabase& operator=(VectorDatabase&&) noexcept;
+    VectorDatabase(VectorDatabase&&) = delete;
+    VectorDatabase& operator=(VectorDatabase&&) = delete;
     
     // ========================================================================
     // Initialization

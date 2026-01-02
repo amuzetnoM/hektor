@@ -5,6 +5,8 @@
 
 #include "database.hpp"
 #include <regex>
+#include <unordered_set>
+#include <thread>
 
 namespace vdb {
 

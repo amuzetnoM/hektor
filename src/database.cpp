@@ -53,12 +53,9 @@ VectorDatabase::VectorDatabase(const DatabaseConfig& config)
 
 VectorDatabase::~VectorDatabase() {
     if (ready_) {
-        sync().value_or(Error{ErrorCode::Unknown, ""});
+        (void)sync();  // Ignore result in destructor
     }
 }
-
-VectorDatabase::VectorDatabase(VectorDatabase&&) noexcept = default;
-VectorDatabase& VectorDatabase::operator=(VectorDatabase&&) noexcept = default;
 
 Result<void> VectorDatabase::init() {
     // Create directories

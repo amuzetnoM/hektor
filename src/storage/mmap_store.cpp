@@ -204,7 +204,7 @@ Result<void> MemoryMappedFile::open_read(const fs::path& path) {
     madvise(data_, size_, MADV_SEQUENTIAL);
 #endif
     
-    return {});
+    return {};
 }
 
 Result<void> MemoryMappedFile::open_write(const fs::path& path, size_t initial_size) {
@@ -302,7 +302,7 @@ Result<void> MemoryMappedFile::open_write(const fs::path& path, size_t initial_s
     }
 #endif
     
-    return {});
+    return {};
 }
 
 Result<void> MemoryMappedFile::resize(size_t new_size) {
@@ -382,12 +382,12 @@ Result<void> MemoryMappedFile::resize(size_t new_size) {
 #endif
     
     capacity_ = new_size;
-    return {});
+    return {};
 }
 
 Result<void> MemoryMappedFile::sync() {
     if (data_ == nullptr || !writable_) {
-        return {});
+        return {};
     }
     
 #ifdef VDB_PLATFORM_WINDOWS
@@ -403,7 +403,7 @@ Result<void> MemoryMappedFile::sync() {
     }
 #endif
     
-    return {});
+    return {};
 }
 
 // ============================================================================
@@ -469,7 +469,7 @@ Result<void> VectorStore::init() {
     if (fs::exists(vectors_path)) {
         // Open existing file
         auto result = vectors_file_.open_read(vectors_path);
-        if (!result) return result.error();
+        if (!result) return std::unexpected(result.error());
         
         // Validate header
         if (vectors_file_.size() < VectorFileHeader::SIZE) {
@@ -502,7 +502,7 @@ Result<void> VectorStore::init() {
         size_t initial_file_size = VectorFileHeader::SIZE + capacity_ * vector_size_bytes_;
         
         auto result = vectors_file_.open_write(vectors_path, initial_file_size);
-        if (!result) return result.error();
+        if (!result) return std::unexpected(result.error());
         
         // Write header
         auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
@@ -516,7 +516,7 @@ Result<void> VectorStore::init() {
         std::memset(header->padding, 0, sizeof(header->padding));
     }
     
-    return {});
+    return {};
 }
 
 size_t VectorStore::allocate_slot() {
@@ -598,7 +598,7 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
     auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
     header->vector_count = id_to_offset_.size();
     
-    return {});
+    return {};
 }
 
 std::optional<VectorView> VectorStore::get(VectorId id) const {
@@ -635,7 +635,7 @@ Result<void> VectorStore::remove(VectorId id) {
     auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
     header->vector_count = id_to_offset_.size();
     
-    return {});
+    return {};
 }
 
 std::vector<VectorId> VectorStore::all_ids() const {
@@ -689,7 +689,7 @@ Result<void> VectorStore::compact() {
     
     // Optionally shrink file (not implemented to avoid complexity)
     
-    return {});
+    return {};
 }
 
 size_t VectorStore::memory_usage() const {
@@ -714,7 +714,7 @@ Result<void> MetadataStore::init() {
     if (fs::exists(path_)) {
         return load();
     }
-    return {});
+    return {};
 }
 
 Result<void> MetadataStore::load() {
@@ -754,7 +754,7 @@ Result<void> MetadataStore::load() {
         }
     }
     
-    return {});
+    return {};
 }
 
 Result<void> MetadataStore::add(const Metadata& meta) {
@@ -767,7 +767,7 @@ Result<void> MetadataStore::update(const Metadata& meta) {
     metadata_[meta.id] = meta;
     dirty_ = true;
     // Full rewrite on sync
-    return {});
+    return {};
 }
 
 std::optional<Metadata> MetadataStore::get(VectorId id) const {
@@ -820,11 +820,11 @@ std::vector<Metadata> MetadataStore::find_by_asset(std::string_view asset) const
 Result<void> MetadataStore::remove(VectorId id) {
     metadata_.erase(id);
     dirty_ = true;
-    return {});
+    return {};
 }
 
 Result<void> MetadataStore::sync() {
-    if (!dirty_) return {});
+    if (!dirty_) return {};
     
     // Rewrite entire file
     std::ofstream file(path_);
@@ -856,7 +856,7 @@ Result<void> MetadataStore::sync() {
     }
     
     dirty_ = false;
-    return {});
+    return {};
 }
 
 Result<void> MetadataStore::append_to_file(const Metadata& meta) {
@@ -887,7 +887,7 @@ Result<void> MetadataStore::append_to_file(const Metadata& meta) {
     append_stream_ << j.dump() << "\n";
     append_stream_.flush();
     
-    return {});
+    return {};
 }
 
 } // namespace vdb

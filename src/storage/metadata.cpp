@@ -49,30 +49,30 @@ bool DatabasePaths::exists() const {
 
 std::string document_type_to_string(DocumentType type) {
     switch (type) {
-        case DocumentType::JOURNAL: return "journal";
-        case DocumentType::CHART: return "chart";
-        case DocumentType::CATALYST_WATCHLIST: return "catalyst_watchlist";
-        case DocumentType::INSTITUTIONAL_MATRIX: return "institutional_matrix";
-        case DocumentType::ECONOMIC_CALENDAR: return "economic_calendar";
-        case DocumentType::WEEKLY_RUNDOWN: return "weekly_rundown";
-        case DocumentType::THREE_MONTH_REPORT: return "three_month_report";
-        case DocumentType::ONE_YEAR_REPORT: return "one_year_report";
-        case DocumentType::PREMARKET: return "premarket";
+        case DocumentType::Journal: return "journal";
+        case DocumentType::Chart: return "chart";
+        case DocumentType::CatalystWatchlist: return "catalyst_watchlist";
+        case DocumentType::InstitutionalMatrix: return "institutional_matrix";
+        case DocumentType::EconomicCalendar: return "economic_calendar";
+        case DocumentType::WeeklyRundown: return "weekly_rundown";
+        case DocumentType::ThreeMonthReport: return "three_month_report";
+        case DocumentType::OneYearReport: return "one_year_report";
+        case DocumentType::PreMarket: return "premarket";
         default: return "unknown";
     }
 }
 
 DocumentType string_to_document_type(std::string_view str) {
-    if (str == "journal") return DocumentType::JOURNAL;
-    if (str == "chart") return DocumentType::CHART;
-    if (str == "catalyst_watchlist") return DocumentType::CATALYST_WATCHLIST;
-    if (str == "institutional_matrix") return DocumentType::INSTITUTIONAL_MATRIX;
-    if (str == "economic_calendar") return DocumentType::ECONOMIC_CALENDAR;
-    if (str == "weekly_rundown") return DocumentType::WEEKLY_RUNDOWN;
-    if (str == "three_month_report") return DocumentType::THREE_MONTH_REPORT;
-    if (str == "one_year_report") return DocumentType::ONE_YEAR_REPORT;
-    if (str == "premarket") return DocumentType::PREMARKET;
-    return DocumentType::JOURNAL;  // Default
+    if (str == "journal") return DocumentType::Journal;
+    if (str == "chart") return DocumentType::Chart;
+    if (str == "catalyst_watchlist") return DocumentType::CatalystWatchlist;
+    if (str == "institutional_matrix") return DocumentType::InstitutionalMatrix;
+    if (str == "economic_calendar") return DocumentType::EconomicCalendar;
+    if (str == "weekly_rundown") return DocumentType::WeeklyRundown;
+    if (str == "three_month_report") return DocumentType::ThreeMonthReport;
+    if (str == "one_year_report") return DocumentType::OneYearReport;
+    if (str == "premarket") return DocumentType::PreMarket;
+    return DocumentType::Journal;  // Default
 }
 
 } // namespace vdb
