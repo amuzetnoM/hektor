@@ -77,6 +77,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fmt)
 
+# libcurl - HTTP client
+find_package(CURL REQUIRED)
+
 # ONNX Runtime - Download pre-built binaries
 set(ONNX_VERSION "1.16.3")
 if(WIN32)
@@ -129,6 +132,7 @@ add_library(vdb_core STATIC
     src/adapters/csv_adapter.cpp
     src/adapters/json_adapter.cpp
     src/adapters/fred_adapter.cpp
+    src/adapters/http_client.cpp
 )
 
 target_include_directories(vdb_core PUBLIC
@@ -140,6 +144,7 @@ target_link_libraries(vdb_core PUBLIC
     nlohmann_json::nlohmann_json
     fmt::fmt
     ${ONNX_RUNTIME_LIB}
+    CURL::libcurl  # HTTP client
     z  # zlib for PNG decompression in stb_image
 )
 
