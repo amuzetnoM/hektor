@@ -107,6 +107,14 @@ if(XLSXWRITER_LIB)
     add_compile_definitions(HAVE_XLSXWRITER)
 endif()
 
+# Optional: Poppler for PDF support
+find_package(Poppler COMPONENTS cpp)
+if(Poppler_FOUND)
+    set(HAVE_POPPLER TRUE)
+    message(STATUS "Poppler found - PDF support enabled")
+    add_compile_definitions(HAVE_POPPLER)
+endif()
+
 # Optional: PostgreSQL for pgvector support
 find_package(PostgreSQL)
 if(PostgreSQL_FOUND)
@@ -174,6 +182,9 @@ add_library(vdb_core STATIC
     src/adapters/json_adapter.cpp
     src/adapters/fred_adapter.cpp
     src/adapters/http_client.cpp
+    src/adapters/pdf_adapter.cpp
+    src/adapters/text_adapter.cpp
+    src/adapters/excel_adapter.cpp
     src/storage/sqlite_store.cpp
 )
 
@@ -190,6 +201,23 @@ target_link_libraries(vdb_core PUBLIC
     SQLite::SQLite3  # Metadata and caching
     z  # zlib for PNG decompression in stb_image
 )
+
+# Optional libraries for adapters
+if(ICU_FOUND)
+    target_link_libraries(vdb_core PUBLIC ICU::uc ICU::i18n)
+endif()
+
+if(XLSXWRITER_LIB)
+    target_link_libraries(vdb_core PUBLIC ${XLSXWRITER_LIB})
+endif()
+
+if(POPPLER_FOUND)
+    target_link_libraries(vdb_core PUBLIC poppler-cpp)
+endif()
+
+if(PostgreSQL_FOUND)
+    target_link_libraries(vdb_core PUBLIC PostgreSQL::PostgreSQL)
+endif()
 
 # Platform-specific threading
 if(WIN32)

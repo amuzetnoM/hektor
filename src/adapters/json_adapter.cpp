@@ -203,4 +203,88 @@ void JSONAdapter::extract_metadata(const json& j, std::unordered_map<std::string
     }
 }
 
+Result<void> JSONAdapter::write(
+    const fs::path& path,
+    const NormalizedData& data,
+    bool pretty_print
+) {
+    try {
+        nlohmann::json output;
+        
+        // Write global metadata
+        output["format"] = format_to_string(data.format);
+        output["source_path"] = data.source_path;
+        output["confidence"] = data.confidence;
+        output["sanitized"] = data.sanitized;
+        
+        if (!data.global_metadata.empty()) {
+            output["metadata"] = data.global_metadata;
+        }
+        
+        if (!data.warnings.empty()) {
+            output["warnings"] = data.warnings;
+        }
+        
+        // Write chunks
+        nlohmann::json chunks_array = nlohmann::json::array();
+        for (const auto& chunk : data.chunks) {
+            nlohmann::json chunk_obj;
+            chunk_obj["chunk_index"] = chunk.chunk_index;
+            chunk_obj["total_chunks"] = chunk.total_chunks;
+            chunk_obj["content"] = chunk.content;
+            
+            if (chunk.title) {
+                chunk_obj["title"] = *chunk.title;
+            }
+            if (chunk.date) {
+                chunk_obj["date"] = *chunk.date;
+            }
+            if (chunk.source) {
+                chunk_obj["source"] = *chunk.source;
+            }
+            
+            if (!chunk.metadata.empty()) {
+                chunk_obj["metadata"] = chunk.metadata;
+            }
+            
+            if (!chunk.numerical_features.empty()) {
+                chunk_obj["numerical_features"] = chunk.numerical_features;
+            }
+            
+            chunks_array.push_back(chunk_obj);
+        }
+        output["chunks"] = chunks_array;
+        
+        // Write to file
+        std::ofstream file(path);
+        if (!file) {
+            return std::unexpected(Error{
+                ErrorCode::IoError,
+                "Failed to open file for writing: " + path.string()
+            });
+        }
+        
+        if (pretty_print) {
+            file << output.dump(2); // 2-space indentation
+        } else {
+            file << output.dump();
+        }
+        
+        if (!file.good()) {
+            return std::unexpected(Error{
+                ErrorCode::IoError,
+                "Failed to write JSON file: " + path.string()
+            });
+        }
+        
+        return {};
+        
+    } catch (const nlohmann::json::exception& e) {
+        return std::unexpected(Error{
+            ErrorCode::ParseError,
+            "JSON serialization error: " + std::string(e.what())
+        });
+    }
+}
+
 } // namespace vdb::adapters

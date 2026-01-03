@@ -36,6 +36,12 @@ public:
     
     [[nodiscard]] Result<void> sanitize(NormalizedData& data) override;
     
+    // Write support
+    [[nodiscard]] Result<void> write(
+        const fs::path& path,
+        const NormalizedData& data
+    );
+    
     [[nodiscard]] std::string name() const override { return "CSV"; }
     [[nodiscard]] std::vector<DataFormat> supported_formats() const override {
         return {DataFormat::CSV};

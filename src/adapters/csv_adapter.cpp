@@ -176,4 +176,71 @@ std::vector<std::string> CSVAdapter::parse_csv_line(std::string_view line) const
     return fields;
 }
 
+Result<void> CSVAdapter::write(
+    const fs::path& path,
+    const NormalizedData& data
+) {
+    std::ofstream file(path);
+    if (!file) {
+        return std::unexpected(Error{
+            ErrorCode::IoError,
+            "Failed to open file for writing: " + path.string()
+        });
+    }
+    
+    // Write header
+    file << "chunk_index" << config_.delimiter
+         << "content" << config_.delimiter
+         << "source" << config_.delimiter
+         << "metadata\n";
+    
+    // Write each chunk as a row
+    for (const auto& chunk : data.chunks) {
+        // Escape content if needed
+        auto write_field = [&](const std::string& field) {
+            bool needs_quotes = field.find(config_.delimiter) != std::string::npos ||
+                              field.find(config_.quote) != std::string::npos ||
+                              field.find('\n') != std::string::npos;
+            
+            if (needs_quotes) {
+                file << config_.quote;
+                for (char c : field) {
+                    if (c == config_.quote) {
+                        file << config_.quote << config_.quote; // Escape quotes
+                    } else {
+                        file << c;
+                    }
+                }
+                file << config_.quote;
+            } else {
+                file << field;
+            }
+        };
+        
+        // Write row
+        file << chunk.chunk_index << config_.delimiter;
+        write_field(chunk.content);
+        file << config_.delimiter;
+        write_field(chunk.source.value_or(""));
+        file << config_.delimiter;
+        
+        // Serialize metadata
+        std::string metadata_str;
+        for (const auto& [key, value] : chunk.metadata) {
+            metadata_str += key + "=" + value + ";";
+        }
+        write_field(metadata_str);
+        file << "\n";
+    }
+    
+    if (!file.good()) {
+        return std::unexpected(Error{
+            ErrorCode::IoError,
+            "Failed to write CSV file: " + path.string()
+        });
+    }
+    
+    return {};
+}
+
 } // namespace vdb::adapters

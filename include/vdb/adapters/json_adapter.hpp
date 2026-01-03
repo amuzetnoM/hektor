@@ -37,6 +37,13 @@ public:
     
     [[nodiscard]] Result<void> sanitize(NormalizedData& data) override;
     
+    // Write support
+    [[nodiscard]] Result<void> write(
+        const fs::path& path,
+        const NormalizedData& data,
+        bool pretty_print = true
+    );
+    
     [[nodiscard]] std::string name() const override { return "JSON"; }
     [[nodiscard]] std::vector<DataFormat> supported_formats() const override {
         return {DataFormat::JSON, DataFormat::API_JSON};
