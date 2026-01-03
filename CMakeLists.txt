@@ -125,6 +125,10 @@ add_library(vdb_core STATIC
     src/database.cpp
     src/ingest/markdown_parser.cpp
     src/ingest/gold_standard_ingest.cpp
+    src/adapters/data_adapter.cpp
+    src/adapters/csv_adapter.cpp
+    src/adapters/json_adapter.cpp
+    src/adapters/fred_adapter.cpp
 )
 
 target_include_directories(vdb_core PUBLIC
