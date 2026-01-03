@@ -80,6 +80,33 @@ FetchContent_MakeAvailable(fmt)
 # libcurl - HTTP client
 find_package(CURL REQUIRED)
 
+# SQLite3 - Metadata and caching
+find_package(SQLite3 REQUIRED)
+
+# Optional: Poppler for PDF support
+find_package(Poppler COMPONENTS cpp)
+if(Poppler_FOUND)
+    set(HAVE_POPPLER TRUE)
+    message(STATUS "Poppler found - PDF support enabled")
+    add_compile_definitions(HAVE_POPPLER)
+endif()
+
+# Optional: ICU for text encoding detection
+find_package(ICU COMPONENTS uc i18n)
+if(ICU_FOUND)
+    set(HAVE_ICU TRUE)
+    message(STATUS "ICU found - Advanced text encoding support enabled")
+    add_compile_definitions(HAVE_ICU)
+endif()
+
+# Optional: libxlsxwriter for Excel support  
+find_library(XLSXWRITER_LIB xlsxwriter)
+if(XLSXWRITER_LIB)
+    set(HAVE_XLSXWRITER TRUE)
+    message(STATUS "libxlsxwriter found - Excel support enabled")
+    add_compile_definitions(HAVE_XLSXWRITER)
+endif()
+
 # ONNX Runtime - Download pre-built binaries
 set(ONNX_VERSION "1.16.3")
 if(WIN32)
@@ -133,6 +160,7 @@ add_library(vdb_core STATIC
     src/adapters/json_adapter.cpp
     src/adapters/fred_adapter.cpp
     src/adapters/http_client.cpp
+    src/storage/sqlite_store.cpp
 )
 
 target_include_directories(vdb_core PUBLIC
@@ -145,6 +173,7 @@ target_link_libraries(vdb_core PUBLIC
     fmt::fmt
     ${ONNX_RUNTIME_LIB}
     CURL::libcurl  # HTTP client
+    SQLite::SQLite3  # Metadata and caching
     z  # zlib for PNG decompression in stb_image
 )
 

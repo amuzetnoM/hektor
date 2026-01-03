@@ -1,0 +1,23 @@
+# Find SQLite3
+find_package(SQLite3 REQUIRED)
+
+# Optional: Poppler for PDF support
+find_package(Poppler COMPONENTS cpp)
+if(Poppler_FOUND)
+    set(HAVE_POPPLER TRUE)
+    message(STATUS "Poppler found - PDF support enabled")
+endif()
+
+# Optional: ICU for text encoding detection
+find_package(ICU COMPONENTS uc i18n)
+if(ICU_FOUND)
+    set(HAVE_ICU TRUE)
+    message(STATUS "ICU found - Advanced text encoding support enabled")
+endif()
+
+# Optional: libxlsxwriter for Excel support  
+find_library(XLSXWRITER_LIB xlsxwriter)
+if(XLSXWRITER_LIB)
+    set(HAVE_XLSXWRITER TRUE)
+    message(STATUS "libxlsxwriter found - Excel support enabled")
+endif()
