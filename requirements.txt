@@ -1,6 +1,8 @@
-# Vector Studio - Python Requirements
-# For building, testing, and integrating with Gold Standard
-# Last updated: 2025-12-02
+# ============================================================================
+# Vector Studio - Complete Requirements
+# Production-Ready FOSS Vector Database (Alternative to Pinecone/Weaviate)
+# Last updated: 2026-01-03
+# ============================================================================
 
 # ============================================================================
 # Build Tools
@@ -35,11 +37,52 @@ Pillow>=10.4.0
 scipy>=1.14.0
 
 # ============================================================================
-# Testing
+# System Dependencies (C++ Libraries)
+# ============================================================================
+# NOTE: These are system-level dependencies installed via package manager
+# Linux (Ubuntu/Debian):
+#   sudo apt-get install -y libcurl4-openssl-dev libsqlite3-dev zlib1g-dev \
+#                           libpoppler-cpp-dev libicu-dev libpq-dev
+#
+# macOS:
+#   brew install curl sqlite3 zlib poppler icu4c postgresql
+#
+# Windows (vcpkg):
+#   vcpkg install curl sqlite3 zlib poppler icu postgres
+
+# libcurl (HTTP client) - REQUIRED
+# libsqlite3 (metadata/caching) - REQUIRED
+# zlib (compression) - REQUIRED
+# poppler-cpp (PDF support) - REQUIRED for PDF adapter
+# libicu (text encoding) - REQUIRED for plain text adapter
+# libpq/postgresql (pgvector integration) - REQUIRED for distributed storage
+# libxlsxwriter OR xlnt (Excel support) - REQUIRED for Excel adapter
+
+# ============================================================================
+# Python Bindings
+# ============================================================================
+pybind11>=2.11.0
+
+# ============================================================================
+# Database & Storage
+# ============================================================================
+# pgvector support for PostgreSQL vector storage
+psycopg2-binary>=2.9.9  # PostgreSQL adapter
+pgvector>=0.2.0         # pgvector extension support
+
+# ============================================================================
+# Testing & Benchmarking
 # ============================================================================
 pytest>=8.3.0
 pytest-cov>=5.0.0
 pytest-benchmark>=4.0.0
+pytest-asyncio>=0.23.0  # For async storage tests
+
+# Benchmarking against competitors
+requests>=2.31.0        # For API testing
+pinecone-client>=3.0.0  # Pinecone comparison (optional)
+weaviate-client>=4.4.0  # Weaviate comparison (optional)
+chromadb>=0.4.0         # ChromaDB comparison (optional)
 
 # ============================================================================
 # Documentation
@@ -55,3 +98,18 @@ pre-commit>=4.0.0
 black>=24.10.0
 ruff>=0.7.0
 mypy>=1.13.0
+
+# ============================================================================
+# Data Format Support (Python helpers)
+# ============================================================================
+pandas>=2.1.0           # CSV/Excel data manipulation
+openpyxl>=3.1.0         # Excel file reading
+pypdf2>=3.0.0           # PDF text extraction (fallback)
+python-magic>=0.4.27    # File type detection
+
+# ============================================================================
+# Optional: Performance Profiling
+# ============================================================================
+# py-spy>=0.3.14        # CPU profiler
+# memory-profiler>=0.61  # Memory profiler
+# line-profiler>=4.1.0   # Line-by-line profiler

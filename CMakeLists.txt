@@ -107,6 +107,20 @@ if(XLSXWRITER_LIB)
     add_compile_definitions(HAVE_XLSXWRITER)
 endif()
 
+# Optional: PostgreSQL for pgvector support
+find_package(PostgreSQL)
+if(PostgreSQL_FOUND)
+    set(HAVE_POSTGRESQL TRUE)
+    message(STATUS "PostgreSQL found - pgvector support enabled")
+    add_compile_definitions(HAVE_POSTGRESQL)
+    include_directories(${PostgreSQL_INCLUDE_DIRS})
+else()
+    message(STATUS "PostgreSQL not found - pgvector support disabled")
+    message(STATUS "  Install: apt-get install libpq-dev (Ubuntu)")
+    message(STATUS "           brew install postgresql (macOS)")
+    message(STATUS "           vcpkg install libpq (Windows)")
+endif()
+
 # ONNX Runtime - Download pre-built binaries
 set(ONNX_VERSION "1.16.3")
 if(WIN32)
