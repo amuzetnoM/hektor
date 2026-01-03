@@ -177,7 +177,7 @@ PYBIND11_MODULE(pyvdb, m) {
     // VectorDatabase
     // ========================================================================
     
-    py::class_<VectorDatabase, std::unique_ptr<VectorDatabase>>(m, "VectorDatabase")
+    py::class_<VectorDatabase>(m, "VectorDatabase")
         .def(py::init<const DatabaseConfig&>())
         .def("init", [](VectorDatabase& self) {
             auto result = self.init();

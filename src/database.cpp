@@ -59,6 +59,48 @@ VectorDatabase::~VectorDatabase() {
     }
 }
 
+VectorDatabase::VectorDatabase(VectorDatabase&& other) noexcept
+    : config_(std::move(other.config_))
+    , paths_(std::move(other.paths_))
+    , index_(std::move(other.index_))
+    , vectors_(std::move(other.vectors_))
+    , metadata_(std::move(other.metadata_))
+    , text_encoder_(std::move(other.text_encoder_))
+    , image_encoder_(std::move(other.image_encoder_))
+    , text_projection_(std::move(other.text_projection_))
+    , next_id_(other.next_id_)
+    , ready_(other.ready_)
+    // mutex_ is default-constructed (not moved, as mutexes aren't moveable)
+{
+    other.ready_ = false;
+    other.next_id_ = 1;
+}
+
+VectorDatabase& VectorDatabase::operator=(VectorDatabase&& other) noexcept {
+    if (this != &other) {
+        // Sync current state before overwriting
+        if (ready_) {
+            (void)sync();
+        }
+        
+        config_ = std::move(other.config_);
+        paths_ = std::move(other.paths_);
+        index_ = std::move(other.index_);
+        vectors_ = std::move(other.vectors_);
+        metadata_ = std::move(other.metadata_);
+        text_encoder_ = std::move(other.text_encoder_);
+        image_encoder_ = std::move(other.image_encoder_);
+        text_projection_ = std::move(other.text_projection_);
+        next_id_ = other.next_id_;
+        ready_ = other.ready_;
+        // mutex_ remains in place (not moved)
+        
+        other.ready_ = false;
+        other.next_id_ = 1;
+    }
+    return *this;
+}
+
 Result<void> VectorDatabase::init() {
     // Create directories
     auto dir_result = paths_.ensure_dirs();
@@ -656,14 +698,14 @@ Result<void> VectorDatabase::export_training_data(const fs::path& output_path) c
 // Factory Functions
 // ============================================================================
 
-Result<std::unique_ptr<VectorDatabase>> create_gold_standard_db(const fs::path& path) {
+Result<VectorDatabase> create_gold_standard_db(const fs::path& path) {
     DatabaseConfig config;
     config.path = path;
     config.dimension = UNIFIED_DIM;
     config.metric = DistanceMetric::Cosine;
     
-    auto db = std::make_unique<VectorDatabase>(config);
-    auto result = db->init();
+    VectorDatabase db(config);
+    auto result = db.init();
     if (!result) {
         return std::unexpected(result.error());
     }
@@ -671,7 +713,7 @@ Result<std::unique_ptr<VectorDatabase>> create_gold_standard_db(const fs::path& 
     return db;
 }
 
-Result<std::unique_ptr<VectorDatabase>> open_database(const fs::path& path) {
+Result<VectorDatabase> open_database(const fs::path& path) {
     DatabasePaths paths(path);
     if (!paths.exists()) {
         return std::unexpected(Error{ErrorCode::IoError, "Database not found at path"});
@@ -691,8 +733,8 @@ Result<std::unique_ptr<VectorDatabase>> open_database(const fs::path& path) {
     config.metric = static_cast<DistanceMetric>(config_json.value("metric", 0));
     config.hnsw_m = config_json.value("hnsw_m", HNSW_M);
     
-    auto db = std::make_unique<VectorDatabase>(config);
-    auto result = db->init();
+    VectorDatabase db(config);
+    auto result = db.init();
     if (!result) {
         return std::unexpected(result.error());
     }

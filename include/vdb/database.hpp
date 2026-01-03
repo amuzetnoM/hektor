@@ -110,11 +110,11 @@ public:
     explicit VectorDatabase(const DatabaseConfig& config);
     ~VectorDatabase();
     
-    // Non-copyable, non-movable (due to mutex)
+    // Non-copyable, but movable with custom implementation
     VectorDatabase(const VectorDatabase&) = delete;
     VectorDatabase& operator=(const VectorDatabase&) = delete;
-    VectorDatabase(VectorDatabase&&) = delete;
-    VectorDatabase& operator=(VectorDatabase&&) = delete;
+    VectorDatabase(VectorDatabase&&) noexcept;
+    VectorDatabase& operator=(VectorDatabase&&) noexcept;
     
     // ========================================================================
     // Initialization
@@ -305,9 +305,9 @@ private:
 // ============================================================================
 
 /// Create database with default settings for Gold Standard
-[[nodiscard]] Result<std::unique_ptr<VectorDatabase>> create_gold_standard_db(const fs::path& path);
+[[nodiscard]] Result<VectorDatabase> create_gold_standard_db(const fs::path& path);
 
 /// Open existing database
-[[nodiscard]] Result<std::unique_ptr<VectorDatabase>> open_database(const fs::path& path);
+[[nodiscard]] Result<VectorDatabase> open_database(const fs::path& path);
 
 } // namespace vdb
