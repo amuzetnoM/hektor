@@ -1,4 +1,5 @@
-# Vector Studio: Data Science & Technical Architecture Deep Dive
+# VECTOR STUDIO
+> Technical Architecture
 
 **A comprehensive technical guide to Vector Studio's data structures, algorithms, and data requirements.**
 
