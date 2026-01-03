@@ -402,12 +402,20 @@ auto SqliteStore::cache_get(const std::string& key) -> Result<std::string> {
     auto timestamp = string_to_time(timestamp_str);
     auto now = std::chrono::system_clock::now();
     if ((now - timestamp) > config_.cache_ttl) {
-        cache_delete(key);
+        // Ignore result of cache_delete - entry will be cleaned up by eviction later if delete fails
+        (void)cache_delete(key);
         return std::unexpected(Error{ErrorCode::VectorNotFound, "Cache entry expired"});
     }
 
-    // Update access count
-    exec_sql("UPDATE query_cache SET access_count = access_count + 1 WHERE key = '" + key + "'");
+    // Update access count using prepared statement to prevent SQL injection
+    const char* update_sql = "UPDATE query_cache SET access_count = access_count + 1 WHERE key = ?";
+    sqlite3_stmt* update_stmt;
+    int update_rc = sqlite3_prepare_v2(db_, update_sql, -1, &update_stmt, nullptr);
+    if (update_rc == SQLITE_OK) {
+        sqlite3_bind_text(update_stmt, 1, key.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_step(update_stmt);
+        sqlite3_finalize(update_stmt);
+    }
 
     return value;
 }
@@ -624,7 +632,6 @@ auto SqliteStore::evict_expired_cache() -> Result<size_t> {
         return std::unexpected(Error{ErrorCode::InvalidInput, "Cache not available"});
     }
 
-    auto ttl_seconds = config_.cache_ttl.count();
     auto cutoff_time = std::chrono::system_clock::now() - config_.cache_ttl;
     auto cutoff_str = time_to_string(cutoff_time);
 
