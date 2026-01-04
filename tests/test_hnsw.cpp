@@ -130,40 +130,6 @@ namespace vdb::test
         }
     }
 
-<<<<<<< Updated upstream
-TEST_F(HNSWTest, Construction) {
-    HnswConfig config;
-    config.dimension = DIM;
-    config.max_elements = NUM_VECTORS;
-    
-    HnswIndex index(config);
-    EXPECT_EQ(index.dimension(), DIM);
-    EXPECT_EQ(index.size(), 0);
-}
-
-TEST_F(HNSWTest, AddSingleVector) {
-    HnswConfig config;
-    config.dimension = DIM;
-    config.max_elements = 100;
-    
-    HnswIndex index(config);
-    auto result = index.add(1, vectors_[0]);
-    
-    EXPECT_TRUE(result.has_value());
-    EXPECT_EQ(index.size(), 1);
-    EXPECT_TRUE(index.contains(1));
-}
-
-TEST_F(HNSWTest, AddMultipleVectors) {
-    HnswConfig config;
-    config.dimension = DIM;
-    config.max_elements = NUM_VECTORS;
-    
-    HnswIndex index(config);
-    
-    for (size_t i = 0; i < 100; ++i) {
-        auto result = index.add(i + 1, vectors_[i]);
-=======
     TEST_F(HNSWTest, RemoveVector)
     {
         HnswConfig config;
@@ -178,44 +144,12 @@ TEST_F(HNSWTest, AddMultipleVectors) {
         EXPECT_TRUE(index.contains(1));
 
         auto result = index.remove(1);
->>>>>>> Stashed changes
         EXPECT_TRUE(result.has_value());
         EXPECT_EQ(index.size(), 1);
         EXPECT_FALSE(index.contains(1));
         EXPECT_TRUE(index.contains(2));
     }
 
-<<<<<<< Updated upstream
-TEST_F(HNSWTest, SearchReturnsClosest) {
-    HnswConfig config;
-    config.dimension = DIM;
-    config.max_elements = NUM_VECTORS;
-    
-    HnswIndex index(config);
-    
-    // Add first 100 vectors
-    for (size_t i = 0; i < 100; ++i) {
-        ASSERT_TRUE(index.add(i + 1, vectors_[i]).has_value());
-    }
-    
-    // Search for the first vector
-    auto results = index.search(vectors_[0], 1);
-    
-    EXPECT_EQ(results.size(), 1);
-    EXPECT_EQ(results[0].id, 1);  // Should find itself
-    EXPECT_NEAR(results[0].distance, 0.0f, 1e-5f);
-}
-
-TEST_F(HNSWTest, SearchReturnsKResults) {
-    HnswConfig config;
-    config.dimension = DIM;
-    config.max_elements = NUM_VECTORS;
-    
-    HnswIndex index(config);
-    
-    for (size_t i = 0; i < 100; ++i) {
-        ASSERT_TRUE(index.add(i + 1, vectors_[i]).has_value());
-=======
     TEST_F(HNSWTest, RemoveNonExistentVector)
     {
         HnswConfig config;
@@ -228,7 +162,6 @@ TEST_F(HNSWTest, SearchReturnsKResults) {
         auto result = index.remove(999);
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error().code, ErrorCode::VectorNotFound);
->>>>>>> Stashed changes
     }
 
     TEST_F(HNSWTest, ResizeIndex)
