@@ -6,6 +6,7 @@
 #include "vdb/index.hpp"
 #include <random>
 #include <filesystem>
+#include <thread>
 
 namespace vdb::test {
 
@@ -43,7 +44,8 @@ protected:
     }
     
     std::vector<Vector> vectors_;
-    std::string test_file_path_ = std::tmpnam(nullptr) + std::string("_flat_index.bin");
+    std::filesystem::path test_file_path_ = std::filesystem::temp_directory_path() / 
+        ("flat_index_test_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ".bin");
 };
 
 TEST_F(FlatIndexTest, Construction) {

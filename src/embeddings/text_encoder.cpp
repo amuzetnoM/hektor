@@ -182,9 +182,10 @@ Result<std::vector<std::vector<float>>> TextEncoder::encode_batch(
         auto input_ids = tokenizer_->encode(text, config_.max_seq_length, true);
         max_length = std::max(max_length, input_ids.size());
         
-        std::vector<int64_t> attention_mask(input_ids.size());
+        std::vector<int64_t> attention_mask;
+        attention_mask.reserve(input_ids.size());
         for (size_t i = 0; i < input_ids.size(); ++i) {
-            attention_mask[i] = (input_ids[i] != 0) ? 1 : 0;
+            attention_mask.push_back((input_ids[i] != 0) ? 1 : 0);
         }
         
         std::vector<int64_t> token_type_ids(input_ids.size(), 0);

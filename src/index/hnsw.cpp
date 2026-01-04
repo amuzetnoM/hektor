@@ -551,9 +551,11 @@ Result<HnswIndex> HnswIndex::load(std::string_view path) {
 // Flat Index (Brute Force)
 // ============================================================================
 
+namespace {
 // File format magic numbers
 constexpr uint32_t FLAT_INDEX_MAGIC = 0x464C4154;  // "FLAT"
 constexpr uint32_t FLAT_INDEX_VERSION = 1;
+}  // anonymous namespace
 
 FlatIndex::FlatIndex(Dim dimension, DistanceMetric metric)
     : dimension_(dimension)
@@ -645,6 +647,11 @@ Result<FlatIndex> FlatIndex::load(std::string_view path) {
     
     if (magic != FLAT_INDEX_MAGIC) {
         return std::unexpected(Error{ErrorCode::IndexCorrupted, "Invalid file format"});
+    }
+    
+    if (version != FLAT_INDEX_VERSION) {
+        return std::unexpected(Error{ErrorCode::IndexCorrupted, 
+            "Unsupported file version: " + std::to_string(version)});
     }
     
     // Read config
