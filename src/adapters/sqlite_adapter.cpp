@@ -330,4 +330,122 @@ std::vector<DataFormat> SQLiteAdapter::supported_formats() const {
     return {DataFormat::SQL};
 }
 
+#ifdef HAVE_SQLITE3
+
+Result<void> SQLiteAdapter::write(
+    const NormalizedData& data,
+    const fs::path& path
+) {
+    // Open/create database
+    sqlite3* db;
+    int rc = sqlite3_open(path.string().c_str(), &db);
+    if (rc != SQLITE_OK) {
+        return std::unexpected(Error{ErrorCode::IoError, "Failed to create SQLite database: " + std::string(sqlite3_errmsg(db))});
+    }
+    
+    // Create table based on data structure
+    std::string table_name = "data";
+    if (!config_.tables.empty()) {
+        table_name = config_.tables[0];
+    }
+    
+    // Build CREATE TABLE query
+    std::stringstream create_query;
+    create_query << "CREATE TABLE IF NOT EXISTS " << quote_identifier(table_name) << " ("
+                 << "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                 << "content TEXT, "
+                 << "chunk_index INTEGER, "
+                 << "total_chunks INTEGER";
+    
+    // Add columns for common metadata fields
+    create_query << ", title TEXT"
+                 << ", date TEXT"
+                 << ", source TEXT";
+    
+    // Determine additional columns from first chunk's metadata
+    if (!data.chunks.empty() && !data.chunks[0].metadata.empty()) {
+        for (const auto& [key, value] : data.chunks[0].metadata) {
+            create_query << ", " << quote_identifier(key) << " TEXT";
+        }
+    }
+    
+    create_query << ");";
+    
+    char* err_msg = nullptr;
+    rc = sqlite3_exec(db, create_query.str().c_str(), nullptr, nullptr, &err_msg);
+    if (rc != SQLITE_OK) {
+        std::string error = err_msg ? err_msg : "Unknown error";
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+        return std::unexpected(Error{ErrorCode::ParseError, "Failed to create table: " + error});
+    }
+    
+    // Insert data
+    for (const auto& chunk : data.chunks) {
+        std::stringstream insert_query;
+        insert_query << "INSERT INTO " << quote_identifier(table_name) 
+                     << " (content, chunk_index, total_chunks, title, date, source";
+        
+        // Add metadata column names
+        for (const auto& [key, value] : chunk.metadata) {
+            insert_query << ", " << quote_identifier(key);
+        }
+        
+        insert_query << ") VALUES (?, ?, ?, ?, ?, ?";
+        
+        // Add placeholders for metadata values
+        for (size_t i = 0; i < chunk.metadata.size(); ++i) {
+            insert_query << ", ?";
+        }
+        
+        insert_query << ");";
+        
+        sqlite3_stmt* stmt;
+        rc = sqlite3_prepare_v2(db, insert_query.str().c_str(), -1, &stmt, nullptr);
+        if (rc != SQLITE_OK) {
+            sqlite3_close(db);
+            return std::unexpected(Error{ErrorCode::ParseError, "Failed to prepare insert statement"});
+        }
+        
+        // Bind values
+        sqlite3_bind_text(stmt, 1, chunk.content.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, chunk.chunk_index);
+        sqlite3_bind_int(stmt, 3, chunk.total_chunks);
+        sqlite3_bind_text(stmt, 4, chunk.title ? chunk.title->c_str() : "", -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, chunk.date ? chunk.date->c_str() : "", -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 6, chunk.source ? chunk.source->c_str() : "", -1, SQLITE_TRANSIENT);
+        
+        // Bind metadata values
+        int param_idx = 7;
+        for (const auto& [key, value] : chunk.metadata) {
+            sqlite3_bind_text(stmt, param_idx++, value.c_str(), -1, SQLITE_TRANSIENT);
+        }
+        
+        rc = sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+        
+        if (rc != SQLITE_DONE) {
+            sqlite3_close(db);
+            return std::unexpected(Error{ErrorCode::ParseError, "Failed to insert data"});
+        }
+    }
+    
+    sqlite3_close(db);
+    return {};
+}
+
+#else // !HAVE_SQLITE3
+
+Result<void> SQLiteAdapter::write(
+    const NormalizedData& data,
+    const fs::path& path
+) {
+    return std::unexpected(Error{
+        ErrorCode::NotImplemented,
+        "SQLite write support requires SQLite3 library. Install libsqlite3-dev and rebuild."
+    });
+}
+
+#endif // HAVE_SQLITE3
+
 } // namespace vdb::adapters

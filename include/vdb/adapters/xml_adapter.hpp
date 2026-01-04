@@ -52,6 +52,13 @@ public:
     
     [[nodiscard]] std::string name() const override { return "XML"; }
     [[nodiscard]] std::vector<DataFormat> supported_formats() const override;
+    [[nodiscard]] bool supports_write() const override { return true; }
+    
+    /// Write NormalizedData to XML file
+    [[nodiscard]] Result<void> write(
+        const NormalizedData& data,
+        const fs::path& path
+    ) override;
 
 private:
     XMLConfig config_;

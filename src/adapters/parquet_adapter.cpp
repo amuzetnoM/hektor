@@ -124,6 +124,111 @@ std::vector<DataFormat> ParquetAdapter::supported_formats() const {
     return {DataFormat::Parquet};
 }
 
+Result<void> ParquetAdapter::write(
+    const NormalizedData& data,
+    const fs::path& path
+) {
+    // NOTE: Full Parquet write support requires Apache Arrow library.
+    // This is a placeholder implementation.
+    //
+    // Full implementation would use:
+    // #include <arrow/api.h>
+    // #include <parquet/arrow/writer.h>
+    //
+    // Example implementation:
+    // 1. Create Arrow schema from NormalizedData structure
+    // 2. Build Arrow arrays from chunks
+    // 3. Create Arrow table
+    // 4. Write using parquet::arrow::WriteTable
+    
+    return std::unexpected(Error{
+        ErrorCode::NotImplemented,
+        "Parquet write support requires Apache Arrow library. "
+        "Build with -DVDB_USE_ARROW=ON and install Apache Arrow C++ library. "
+        "Placeholder implementation provided."
+    });
+}
+
+// ============================================================================
+// Full Implementation Reference (requires Apache Arrow)
+// ============================================================================
+/*
+#ifdef HAVE_ARROW
+
+Result<void> ParquetAdapter::write(
+    const NormalizedData& data,
+    const fs::path& path
+) {
+    using namespace arrow;
+    using namespace parquet::arrow;
+    
+    // Build schema
+    std::vector<std::shared_ptr<Field>> fields = {
+        field("content", utf8()),
+        field("chunk_index", int64()),
+        field("total_chunks", int64()),
+        field("title", utf8()),
+        field("date", utf8()),
+        field("source", utf8())
+    };
+    
+    // Add metadata fields from first chunk
+    if (!data.chunks.empty() && !data.chunks[0].metadata.empty()) {
+        for (const auto& [key, value] : data.chunks[0].metadata) {
+            fields.push_back(field(key, utf8()));
+        }
+    }
+    
+    auto schema = std::make_shared<Schema>(fields);
+    
+    // Build arrays
+    StringBuilder content_builder, title_builder, date_builder, source_builder;
+    Int64Builder chunk_idx_builder, total_chunks_builder;
+    
+    for (const auto& chunk : data.chunks) {
+        ARROW_RETURN_NOT_OK(content_builder.Append(chunk.content));
+        ARROW_RETURN_NOT_OK(chunk_idx_builder.Append(chunk.chunk_index));
+        ARROW_RETURN_NOT_OK(total_chunks_builder.Append(chunk.total_chunks));
+        ARROW_RETURN_NOT_OK(title_builder.Append(chunk.title.value_or("")));
+        ARROW_RETURN_NOT_OK(date_builder.Append(chunk.date.value_or("")));
+        ARROW_RETURN_NOT_OK(source_builder.Append(chunk.source.value_or("")));
+    }
+    
+    std::shared_ptr<Array> content_array, chunk_idx_array, total_chunks_array;
+    std::shared_ptr<Array> title_array, date_array, source_array;
+    
+    ARROW_RETURN_NOT_OK(content_builder.Finish(&content_array));
+    ARROW_RETURN_NOT_OK(chunk_idx_builder.Finish(&chunk_idx_array));
+    ARROW_RETURN_NOT_OK(total_chunks_builder.Finish(&total_chunks_array));
+    ARROW_RETURN_NOT_OK(title_builder.Finish(&title_array));
+    ARROW_RETURN_NOT_OK(date_builder.Finish(&date_array));
+    ARROW_RETURN_NOT_OK(source_builder.Finish(&source_array));
+    
+    // Create table
+    std::vector<std::shared_ptr<Array>> arrays = {
+        content_array, chunk_idx_array, total_chunks_array,
+        title_array, date_array, source_array
+    };
+    
+    auto table = Table::Make(schema, arrays);
+    
+    // Write to Parquet file
+    std::shared_ptr<io::FileOutputStream> outfile;
+    PARQUET_ASSIGN_OR_THROW(
+        outfile,
+        io::FileOutputStream::Open(path.string())
+    );
+    
+    PARQUET_THROW_NOT_OK(
+        WriteTable(*table, default_memory_pool(), outfile, data.chunks.size())
+    );
+    
+    return {};
+}
+
+#endif // HAVE_ARROW
+*/
+
 // ============================================================================
 // Full Implementation Reference (requires Apache Arrow)
 // ============================================================================

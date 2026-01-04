@@ -3,12 +3,15 @@
 // ============================================================================
 
 #include "vdb/adapters/xml_adapter.hpp"
+#include "vdb/logging.hpp"
 #include <fstream>
 #include <sstream>
 #include <regex>
 #include <stack>
 
 namespace vdb::adapters {
+
+using namespace vdb::logging;
 
 // ============================================================================
 // Simple XML Parser (minimal implementation)
@@ -131,7 +134,9 @@ XMLAdapter::XMLAdapter(const XMLConfig& config)
 bool XMLAdapter::can_handle(const fs::path& path) const {
     auto ext = path.extension().string();
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-    return ext == ".xml";
+    bool result = (ext == ".xml");
+    LOG_DEBUG(std::string("XML adapter can_handle ") + path.string() + ": " + (result ? "true" : "false"));
+    return result;
 }
 
 bool XMLAdapter::can_handle(std::string_view content) const {
@@ -155,14 +160,20 @@ Result<NormalizedData> XMLAdapter::parse(
     const fs::path& path,
     const ChunkConfig& config
 ) {
+    LOG_INFO(std::string("Parsing XML file: ") + path.string());
+    
     std::ifstream file(path);
     if (!file) {
+        LOG_ERROR(std::string("Failed to open XML file: ") + path.string());
+        LOG_ANOMALY(AnomalyType::PARSE_ERROR, "XML file could not be opened: " + path.string());
         return std::unexpected(Error{ErrorCode::IoError, "Failed to open XML file: " + path.string()});
     }
     
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string content = buffer.str();
+    
+    LOG_DEBUG(std::string("XML file size: ") + std::to_string(content.size()) + " bytes");
     
     return parse_content(content, config, path.string());
 }
@@ -277,6 +288,101 @@ Result<void> XMLAdapter::sanitize(NormalizedData& data) {
 
 std::vector<DataFormat> XMLAdapter::supported_formats() const {
     return {DataFormat::XML};
+}
+
+Result<void> XMLAdapter::write(
+    const NormalizedData& data,
+    const fs::path& path
+) {
+    std::ofstream file(path);
+    if (!file) {
+        return std::unexpected(Error{ErrorCode::IoError, "Failed to create XML file: " + path.string()});
+    }
+    
+    // Write XML declaration
+    file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    
+    // Determine root element name from metadata or use default
+    std::string root_name = "document";
+    if (data.global_metadata.count("root_element")) {
+        root_name = data.global_metadata.at("root_element");
+    }
+    
+    file << "<" << root_name << ">\n";
+    
+    // Write each chunk as an element
+    for (const auto& chunk : data.chunks) {
+        file << "  <chunk";
+        
+        // Add chunk metadata as attributes
+        file << " index=\"" << chunk.chunk_index << "\"";
+        file << " total=\"" << chunk.total_chunks << "\"";
+        
+        if (chunk.title) {
+            file << " title=\"" << escape_xml(*chunk.title) << "\"";
+        }
+        if (chunk.date) {
+            file << " date=\"" << escape_xml(*chunk.date) << "\"";
+        }
+        if (chunk.source) {
+            file << " source=\"" << escape_xml(*chunk.source) << "\"";
+        }
+        
+        file << ">\n";
+        
+        // Write metadata as sub-elements
+        if (!chunk.metadata.empty()) {
+            file << "    <metadata>\n";
+            for (const auto& [key, value] : chunk.metadata) {
+                file << "      <" << escape_xml(key) << ">" 
+                     << escape_xml(value) 
+                     << "</" << escape_xml(key) << ">\n";
+            }
+            file << "    </metadata>\n";
+        }
+        
+        // Write content
+        file << "    <content>" << escape_xml(chunk.content) << "</content>\n";
+        
+        // Write numerical features if present
+        if (!chunk.numerical_features.empty()) {
+            file << "    <numerical_features>";
+            for (size_t i = 0; i < chunk.numerical_features.size(); ++i) {
+                if (i > 0) file << ",";
+                file << chunk.numerical_features[i];
+            }
+            file << "</numerical_features>\n";
+        }
+        
+        file << "  </chunk>\n";
+    }
+    
+    file << "</" << root_name << ">\n";
+    
+    if (!file) {
+        return std::unexpected(Error{ErrorCode::IoError, "Failed to write XML file: " + path.string()});
+    }
+    
+    return {};
+}
+
+// Helper function to escape XML special characters
+static std::string escape_xml(const std::string& str) {
+    std::string result;
+    result.reserve(str.size());
+    
+    for (char c : str) {
+        switch (c) {
+            case '&': result += "&amp;"; break;
+            case '<': result += "&lt;"; break;
+            case '>': result += "&gt;"; break;
+            case '"': result += "&quot;"; break;
+            case '\'': result += "&apos;"; break;
+            default: result += c; break;
+        }
+    }
+    
+    return result;
 }
 
 } // namespace vdb::adapters

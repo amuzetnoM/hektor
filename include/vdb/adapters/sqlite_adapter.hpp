@@ -51,6 +51,13 @@ public:
     
     [[nodiscard]] std::string name() const override { return "SQLite"; }
     [[nodiscard]] std::vector<DataFormat> supported_formats() const override;
+    [[nodiscard]] bool supports_write() const override { return true; }
+    
+    /// Write NormalizedData to SQLite database
+    [[nodiscard]] Result<void> write(
+        const NormalizedData& data,
+        const fs::path& path
+    ) override;
 
 private:
     SQLiteConfig config_;

@@ -46,6 +46,13 @@ public:
     [[nodiscard]] std::vector<DataFormat> supported_formats() const override {
         return {DataFormat::PDF};
     }
+    [[nodiscard]] bool supports_write() const override { return true; }
+    
+    /// Write NormalizedData to PDF file
+    [[nodiscard]] Result<void> write(
+        const NormalizedData& data,
+        const fs::path& path
+    ) override;
     
 private:
     PDFConfig config_;
