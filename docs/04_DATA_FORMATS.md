@@ -47,16 +47,16 @@ Vector Studio's data ingestion system is designed to accept a wide variety of da
 
 | Format | Extension(s) | Read | Write | Description |
 |--------|-------------|------|-------|-------------|
-| **PDF** | `.pdf` | ✅ | ❌ | Text extraction, table detection, metadata parsing |
+| **PDF** | `.pdf` | ✅ | ✅ | Text extraction, table detection, PDF generation |
 | **Excel** | `.xlsx`, `.xls` | ✅ | ✅ | Multi-sheet workbooks with formula support |
 
 ### Structured Data
 
 | Format | Extension(s) | Read | Write | Description |
 |--------|-------------|------|-------|-------------|
-| **XML** | `.xml` | ✅ | ❌ | XML documents with DOM parsing |
-| **Parquet** | `.parquet` | 🔶 | ❌ | Apache Parquet columnar format (requires Apache Arrow) |
-| **SQLite** | `.sql`, `.db`, `.sqlite`, `.sqlite3` | ✅ | ❌ | SQLite database files |
+| **XML** | `.xml` | ✅ | ✅ | XML documents with DOM parsing and generation |
+| **Parquet** | `.parquet` | 🔶 | 🔶 | Apache Parquet columnar format (requires Apache Arrow) |
+| **SQLite** | `.sql`, `.db`, `.sqlite`, `.sqlite3` | ✅ | ✅ | SQLite database files with full read/write |
 | **pgvector** | N/A (connection) | ✅ | ✅ | PostgreSQL with pgvector extension |
 
 ### Legend
@@ -346,6 +346,16 @@ enum class CellType {
 - Hierarchy preservation in metadata paths
 - Namespace handling (optional flattening)
 - CDATA section support
+- **XML generation with proper escaping** ✅
+
+**Write Support**:
+```cpp
+// Export NormalizedData to XML
+XMLAdapter adapter;
+auto result = adapter.write(data, "output.xml");
+
+// Generated XML includes all chunks with metadata
+```
 
 **Configuration Options**:
 ```cpp

@@ -1,16 +1,47 @@
-# New Features: XML, Parquet, SQLite, and pgvector Support
+# New Features: XML, Parquet, SQLite, pgvector Support + Logging System
 
 ## Overview
 
-Vector Studio now supports four additional data formats for universal data ingestion:
-- XML documents (.xml)
-- Apache Parquet columnar files (.parquet)
-- SQLite databases (.db, .sqlite, .sqlite3, .sql)
-- PostgreSQL with pgvector extension (connection-based)
+Vector Studio now supports four additional data formats for universal data ingestion with **complete read and write capabilities**:
+- XML documents (.xml) ✅ Read & Write
+- Apache Parquet columnar files (.parquet) 🔶 Read & Write (requires Apache Arrow)
+- SQLite databases (.db, .sqlite, .sqlite3, .sql) ✅ Read & Write
+- PostgreSQL with pgvector extension (connection-based) ✅ Read & Write
+
+Plus a comprehensive **logging and anomaly detection system** that ensures nothing goes blind.
 
 ## Features Summary
 
-### 1. XML Document Support ✅
+### 0. Comprehensive Logging System 🆕✅
+
+**Purpose**: Runtime monitoring and anomaly detection
+
+**Capabilities**:
+- **Multi-level logging**: DEBUG, INFO, WARN, ERROR, CRITICAL, ANOMALY
+- **Thread-safe**: Singleton pattern with mutex protection
+- **Dual output**: Console (stderr) and file logging
+- **Separate anomaly log**: Dedicated file for unusual events
+- **Log rotation**: Automatic rotation with configurable size limits
+- **15 anomaly types**: Including PARSE_ERROR, SQL_INJECTION_ATTEMPT, MEMORY_ANOMALY, DATA_CORRUPTION, SECURITY_VIOLATION, and more
+- **Source tracking**: File and line number in logs
+- **Zero blind spots**: All operations, errors, and anomalies are logged
+
+**Usage Example**:
+```cpp
+#include "vdb/logging.hpp"
+
+LOG_INFO("Starting data ingestion");
+LOG_DEBUG("Processing file: data.xml");
+LOG_WARN("Large file detected");
+LOG_ERROR("Failed to parse document");
+LOG_ANOMALY(AnomalyType::PARSE_ERROR, "Invalid XML structure");
+```
+
+**See**: `docs/LOGGING.md` for complete documentation
+
+---
+
+### 1. XML Document Support ✅ (Read & Write)
 
 **File Extensions**: `.xml`
 
@@ -27,6 +58,7 @@ Vector Studio now supports four additional data formats for universal data inges
 ```cpp
 #include "vdb/adapters/xml_adapter.hpp"
 
+// Read XML
 XMLAdapter adapter;
 auto result = adapter.parse("catalog.xml");
 
@@ -38,6 +70,14 @@ if (result) {
             std::cout << "  " << key << ": " << value << "\n";
         }
     }
+}
+
+// Write XML
+NormalizedData data;
+// ... populate data ...
+auto write_result = adapter.write(data, "output.xml");
+if (write_result) {
+    std::cout << "XML written successfully\n";
 }
 ```
 
