@@ -54,8 +54,8 @@ else()
     if(VDB_USE_AVX512)
         add_compile_options(-mavx512f -mavx512dq)
     endif()
-    # Release optimizations
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native -flto")
+    # Release optimizations (LTO disabled for compatibility with GTest)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native")
 endif()
 
 # ============================================================================
@@ -222,6 +222,7 @@ if(VDB_USE_LLAMA_CPP)
     set(LLAMA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
     set(LLAMA_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
     set(LLAMA_BUILD_SERVER OFF CACHE BOOL "" FORCE)
+    set(LLAMA_BUILD_COMMON ON CACHE BOOL "" FORCE)
     set(LLAMA_NATIVE ON CACHE BOOL "" FORCE)
     
     # GPU acceleration options
@@ -277,10 +278,14 @@ set(VDB_CORE_SOURCES
     src/adapters/parquet_adapter.cpp
     src/adapters/sqlite_adapter.cpp
     src/adapters/pgvector_adapter.cpp
-    src/storage/sqlite_store.cpp
     src/quantization/product_quantizer.cpp
     src/quantization/scalar_quantizer.cpp
 )
+
+# Add SQLite-dependent sources only if SQLite3 is available
+if(SQLite3_FOUND)
+    list(APPEND VDB_CORE_SOURCES src/storage/sqlite_store.cpp)
+endif()
 
 # Add CURL-dependent sources only if CURL is available
 if(CURL_FOUND)
