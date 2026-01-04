@@ -34,14 +34,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Compute lowercase owner
+        id: vars
+        run: |
+          echo "owner=$(echo ${GITHUB_REPOSITORY_OWNER} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build and push image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/vector_studio:${{ github.ref_name }}
-            ghcr.io/${{ toLower(github.repository_owner) }}/vector_studio:latest
+            ghcr.io/${{ steps.vars.outputs.owner }}/vector_studio:${{ github.ref_name }}
+            ghcr.io/${{ steps.vars.outputs.owner }}/vector_studio:latest
           platforms: linux/amd64,linux/arm64
 
       - name: Add image info to release
