@@ -61,9 +61,9 @@
             letter-spacing: -0.02em;
         }
         
-        h1 { font-size: 3.5rem; }
-        h2 { font-size: 2.5rem; }
-        h3 { font-size: 1.5rem; }
+        h1 { font-size: clamp(2.5rem, 5vw + 1rem, 3.5rem); }
+        h2 { font-size: clamp(2rem, 4vw + 0.5rem, 2.5rem); }
+        h3 { font-size: clamp(1.25rem, 2vw + 0.5rem, 1.5rem); }
         
         /* Navigation */
         nav {
@@ -405,11 +405,13 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 2rem; }
+            /* Typography is now responsive via clamp() */
             
             .nav-links {
                 display: none;
+                /* Note: Mobile menu would typically be implemented with a hamburger icon
+                   For this simple landing page, users can scroll through all content or
+                   use the GitHub button which remains visible */
             }
             
             .hero {

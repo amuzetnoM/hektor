@@ -98,6 +98,15 @@ else()
     message(STATUS "SQLite3 not found - Metadata and caching disabled")
 endif()
 
+# ZLIB - For PNG decompression in stb_image
+find_package(ZLIB)
+if(ZLIB_FOUND)
+    set(HAVE_ZLIB TRUE)
+    message(STATUS "ZLIB found - PNG decompression enabled")
+else()
+    message(STATUS "ZLIB not found - PNG decompression disabled")
+endif()
+
 # Optional: Poppler for PDF support
 find_package(Poppler COMPONENTS cpp)
 if(Poppler_FOUND)
@@ -301,8 +310,6 @@ if(SQLite3_FOUND)
     target_link_libraries(vdb_core PUBLIC SQLite::SQLite3)
 endif()
 
-# Link zlib if available (for PNG decompression in stb_image)
-find_package(ZLIB)
 if(ZLIB_FOUND)
     target_link_libraries(vdb_core PUBLIC ZLIB::ZLIB)
 endif()
