@@ -1,6 +1,6 @@
 # Vector Space Theory in High-Dimensional Embeddings: A Comprehensive Study
 
-**Authors**: Vector Studio Research Team  
+**Authors**: Artifact Virtual Research
 **Last Updated**: January 4, 2026  
 **Version**: 1.0  
 **Status**: Peer-Reviewed Academic Research

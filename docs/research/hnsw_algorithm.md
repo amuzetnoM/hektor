@@ -1,6 +1,7 @@
-# Hierarchical Navigable Small World (HNSW) Graphs: Theory, Implementation, and Analysis
+# HNSW Graphs
+> **Hierarchical Navigable Small World (HNSW) Graphs for Approximate Nearest Neighbor Search** <br> *Theory, Implementation, and Analysis*
 
-**Authors**: Vector Studio Research Team  
+**Authors**: Artifact Virtual Research  
 **Last Updated**: January 4, 2026  
 **Version**: 1.0  
 **Status**: Peer-Reviewed Academic Research

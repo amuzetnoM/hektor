@@ -1,7 +1,7 @@
 # Research Survey: State-of-the-Art in Vector Databases and Similarity Search
 
 **Last Updated**: January 4, 2026  
-**Authors**: Vector Studio Research Team  
+**Authors**: Artifact Virtual Research  
 **Version**: 1.0
 
 ---
