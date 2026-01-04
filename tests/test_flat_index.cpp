@@ -81,11 +81,11 @@ TEST_F(FlatIndexTest, SaveAndLoad) {
     }
     
     // Save to file
-    auto save_result = index1.save(test_file_path_);
+    auto save_result = index1.save(test_file_path_.string());
     EXPECT_TRUE(save_result.has_value());
     
     // Load from file
-    auto load_result = FlatIndex::load(test_file_path_);
+    auto load_result = FlatIndex::load(test_file_path_.string());
     ASSERT_TRUE(load_result.has_value());
     
     FlatIndex& index2 = *load_result;
