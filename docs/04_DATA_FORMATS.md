@@ -61,7 +61,6 @@ Vector Studio's data ingestion system is designed to accept a wide variety of da
 
 ### Legend
 - ✅ Fully implemented
-- 🔶 Partial implementation (requires optional dependency)
 - ❌ Not supported
 
 ---
