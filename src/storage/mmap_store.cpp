@@ -419,7 +419,7 @@ struct VectorFileHeader {
     uint64_t vector_count;    // Number of vectors stored
     uint64_t capacity;        // Total slot capacity
     uint64_t free_list_head;  // Head of free slot linked list (or UINT64_MAX if none)
-    uint8_t  padding[32];     // Future use, align to 64 bytes
+    uint8_t  padding[24];     // Future use, align to 64 bytes
     
     static constexpr uint32_t MAGIC = 0x00424456;  // "VDB\0"
     static constexpr uint32_t CURRENT_VERSION = 1;
@@ -469,7 +469,7 @@ Result<void> VectorStore::init() {
     if (fs::exists(vectors_path)) {
         // Open existing file
         auto result = vectors_file_.open_read(vectors_path);
-        if (!result) return result.error();
+        if (!result) return std::unexpected(result.error());
         
         // Validate header
         if (vectors_file_.size() < VectorFileHeader::SIZE) {
@@ -502,7 +502,7 @@ Result<void> VectorStore::init() {
         size_t initial_file_size = VectorFileHeader::SIZE + capacity_ * vector_size_bytes_;
         
         auto result = vectors_file_.open_write(vectors_path, initial_file_size);
-        if (!result) return result.error();
+        if (!result) return std::unexpected(result.error());
         
         // Write header
         auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());

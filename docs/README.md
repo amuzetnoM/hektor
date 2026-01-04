@@ -1,25 +1,60 @@
 # Vector Studio Documentation
 
-Welcome to the Vector Studio documentation. This comprehensive guide covers everything from basic usage to training custom AI models.
+Welcome to the Vector Studio documentation. This comprehensive guide covers everything from basic usage to advanced topics and API reference.
 
-## Quick Links
+## Documentation Index
 
-| Document | Description |
-|----------|-------------|
-| [**ARCHITECTURE.md**](ARCHITECTURE.md) | System design, data flow, component diagrams |
-| [**GUIDE.md**](GUIDE.md) | Installation, usage tutorials, CLI reference |
-| [**MATH.md**](MATH.md) | Mathematical foundations, HNSW algorithm, distance metrics |
-| [**AI_TRAINING.md**](AI_TRAINING.md) | Training custom models, fine-tuning, contrastive learning |
-| [**MODELS.md**](MODELS.md) | Model specifications, benchmarks, integration |
+| Document | Description | Audience |
+|----------|-------------|----------|
+| [**USER_GUIDE.md**](USER_GUIDE.md) | Complete user guide from installation to advanced usage | All users |
+| [**API_REFERENCE.md**](API_REFERENCE.md) | Detailed API documentation for all classes and functions | Developers |
+| [**ARCHITECTURE.md**](ARCHITECTURE.md) | System design, data flow, component diagrams | Architects, contributors |
+| [**DATA_INGESTION.md**](DATA_INGESTION.md) | Data ingestion module guide with adapters | Data engineers |
+| [**GUIDE.md**](GUIDE.md) | Installation, usage tutorials, CLI reference | Beginners |
+| [**MATH.md**](MATH.md) | Mathematical foundations, HNSW algorithm, distance metrics | ML engineers |
+| [**AI_TRAINING.md**](AI_TRAINING.md) | Training custom models, fine-tuning, contrastive learning | AI researchers |
+| [**MODELS.md**](MODELS.md) | Model specifications, benchmarks, integration | ML practitioners |
+
+## Quick Links by Task
+
+### Getting Started
+- [Installation Guide](USER_GUIDE.md#installation)
+- [Quick Start Tutorial](USER_GUIDE.md#getting-started)
+- [First Database](USER_GUIDE.md#first-steps)
+
+### Data Ingestion
+- [Universal Data Adapters](DATA_INGESTION.md)
+- [CSV Adapter](USER_GUIDE.md#csv-adapter)
+- [JSON Adapter](USER_GUIDE.md#json-adapter)
+- [FRED API Integration](USER_GUIDE.md#fred-api-adapter)
+
+### Core Operations
+- [Adding Vectors](USER_GUIDE.md#adding-vectors)
+- [Searching](USER_GUIDE.md#searching)
+- [Batch Operations](USER_GUIDE.md#batch-operations)
+
+### API Reference
+- [VectorDatabase API](API_REFERENCE.md#vectordatabase)
+- [DataAdapterManager API](API_REFERENCE.md#dataadaptermanager)
+- [TextEncoder API](API_REFERENCE.md#textencoder)
+- [Python Bindings](API_REFERENCE.md#python-bindings-api)
+
+### Advanced Topics
+- [Performance Tuning](USER_GUIDE.md#performance-tuning)
+- [Custom Adapters](USER_GUIDE.md#custom-adapters)
+- [HNSW Configuration](USER_GUIDE.md#hnsw-index)
+- [Distributed Deployment](USER_GUIDE.md#distributed-deployment)
 
 ## What is Vector Studio?
 
 Vector Studio is a high-performance vector database and AI training platform designed for semantic search and machine learning applications. It provides:
 
 - **Fast Similarity Search**: Sub-millisecond queries on millions of vectors
+- **Universal Data Ingestion**: CSV, JSON, PDF, Excel, APIs (FRED, Yahoo Finance, Alpha Vantage, etc.)
 - **Local Embedding Generation**: ONNX-based inference for text and images
 - **Gold Standard Integration**: Seamless connection with Gold Standard journal system
 - **AI Training Toolkit**: Tools for fine-tuning and training custom models
+- **Python Bindings**: Easy integration with Python workflows
 
 ## Architecture Overview
 
@@ -28,6 +63,7 @@ Vector Studio is a high-performance vector database and AI training platform des
 │                              VECTOR STUDIO                                  │
 ├────────────────────────────────────────────────────────────────────────────┤
 │                                                                            │
+│  USER INTERFACES                                                          │
 │  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   │
 │  │   Python    │   │   C++ CLI   │   │  REST API   │   │    GUI      │   │
 │  │   pyvdb     │   │     vdb     │   │  (planned)  │   │  (planned)  │   │
@@ -35,19 +71,31 @@ Vector Studio is a high-performance vector database and AI training platform des
 │         │                 │                 │                 │           │
 │         └────────────────┬┴─────────────────┴─────────────────┘           │
 │                          │                                                 │
+│  CORE ENGINE (C++23)                                                      │
 │  ┌───────────────────────┴───────────────────────────────────────────┐    │
-│  │                         CORE ENGINE (C++)                          │    │
-│  ├───────────────────────────────────────────────────────────────────┤    │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐ │    │
-│  │  │   Embedding  │  │    HNSW      │  │      Storage            │ │    │
-│  │  │   Pipeline   │  │    Index     │  │  (Memory-Mapped)        │ │    │
-│  │  │              │  │              │  │                          │ │    │
-│  │  │  MiniLM-L6   │  │  O(log n)    │  │  vectors.bin            │ │    │
-│  │  │  CLIP ViT    │  │  search      │  │  index.hnsw             │ │    │
-│  │  │  ONNX RT     │  │  99%+ recall │  │  metadata.jsonl         │ │    │
-│  │  └──────────────┘  └──────────────┘  └──────────────────────────┘ │    │
-│  └───────────────────────────────────────────────────────────────────┘    │
-│                                                                            │
+│  │                                                                     │    │
+│  │  DATA INGESTION              VECTOR OPS         STORAGE           │    │
+│  │  ┌──────────────┐          ┌───────────┐    ┌────────────┐       │    │
+│  │  │  Adapters    │          │   HNSW    │    │  Memory    │       │    │
+│  │  │  • CSV       │  ──────→ │   Index   │    │  Mapped    │       │    │
+│  │  │  • JSON      │          │           │    │  Storage   │       │    │
+│  │  │  • PDF       │          │  O(log n) │    │            │       │    │
+│  │  │  • Excel     │          │  Search   │    │  vectors   │       │    │
+│  │  │  • APIs      │          │           │    │  .bin      │       │    │
+│  │  │  • SQLite    │          │  99%+     │    │  index     │       │    │
+│  │  └──────────────┘          │  Recall   │    │  .hnsw     │       │    │
+│  │                            └───────────┘    └────────────┘       │    │
+│  │                                                                     │    │
+│  │  EMBEDDINGS                                                        │    │
+│  │  ┌───────────────────────────────────────────────────────────┐    │    │
+│  │  │  ONNX Runtime                                              │    │    │
+│  │  │  • Text: MiniLM-L6 (384-dim)                              │    │    │
+│  │  │  • Image: CLIP ViT (512-dim)                              │    │    │
+│  │  │  • Local inference, no API calls                          │    │    │
+│  │  └───────────────────────────────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────────────────────────────────┘    │
+└────────────────────────────────────────────────────────────────────────────┘
+```
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 

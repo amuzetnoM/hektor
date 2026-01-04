@@ -110,6 +110,9 @@ enum class ErrorCode : uint8_t {
     InvalidInput,
     OutOfMemory,
     NotImplemented,
+    NetworkError,
+    ParseError,
+    SystemError,
     Unknown
 };
 

@@ -40,6 +40,15 @@
 #include <cstring>
 #include <cmath>
 
+// Define STBIDEF if not defined
+#ifndef STBIDEF
+#ifdef STB_IMAGE_STATIC
+#define STBIDEF static
+#else
+#define STBIDEF extern
+#endif
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

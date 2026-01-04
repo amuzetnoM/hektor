@@ -142,7 +142,7 @@ Result<void> ImageEncoder::init(const ImageEncoderConfig& config) {
 Result<std::vector<float>> ImageEncoder::encode(const fs::path& image_path) {
     auto image_result = load_image(image_path);
     if (!image_result) {
-        return image_result.error();
+        return std::unexpected(image_result.error());
     }
     
     return encode(*image_result);
@@ -222,7 +222,7 @@ Result<std::vector<std::vector<float>>> ImageEncoder::encode_batch(
     for (const auto& path : image_paths) {
         auto result = encode(path);
         if (!result) {
-            return result.error();
+            return std::unexpected(result.error());
         }
         results.push_back(std::move(*result));
     }

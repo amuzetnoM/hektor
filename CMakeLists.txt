@@ -12,6 +12,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Enable position independent code globally for shared library support
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Build type defaults
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -77,6 +80,59 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(fmt)
 
 # ONNX Runtime - Download pre-built binaries (MSVC only)
+# libcurl - HTTP client
+find_package(CURL REQUIRED)
+
+# SQLite3 - Metadata and caching
+find_package(SQLite3 REQUIRED)
+
+# Optional: Poppler for PDF support
+find_package(Poppler COMPONENTS cpp)
+if(Poppler_FOUND)
+    set(HAVE_POPPLER TRUE)
+    message(STATUS "Poppler found - PDF support enabled")
+    add_compile_definitions(HAVE_POPPLER)
+endif()
+
+# Optional: ICU for text encoding detection
+find_package(ICU COMPONENTS uc i18n)
+if(ICU_FOUND)
+    set(HAVE_ICU TRUE)
+    message(STATUS "ICU found - Advanced text encoding support enabled")
+    add_compile_definitions(HAVE_ICU)
+endif()
+
+# Optional: libxlsxwriter for Excel support  
+find_library(XLSXWRITER_LIB xlsxwriter)
+if(XLSXWRITER_LIB)
+    set(HAVE_XLSXWRITER TRUE)
+    message(STATUS "libxlsxwriter found - Excel support enabled")
+    add_compile_definitions(HAVE_XLSXWRITER)
+endif()
+
+# Optional: Poppler for PDF support
+find_package(Poppler COMPONENTS cpp)
+if(Poppler_FOUND)
+    set(HAVE_POPPLER TRUE)
+    message(STATUS "Poppler found - PDF support enabled")
+    add_compile_definitions(HAVE_POPPLER)
+endif()
+
+# Optional: PostgreSQL for pgvector support
+find_package(PostgreSQL)
+if(PostgreSQL_FOUND)
+    set(HAVE_POSTGRESQL TRUE)
+    message(STATUS "PostgreSQL found - pgvector support enabled")
+    add_compile_definitions(HAVE_POSTGRESQL)
+    include_directories(${PostgreSQL_INCLUDE_DIRS})
+else()
+    message(STATUS "PostgreSQL not found - pgvector support disabled")
+    message(STATUS "  Install: apt-get install libpq-dev (Ubuntu)")
+    message(STATUS "           brew install postgresql (macOS)")
+    message(STATUS "           vcpkg install libpq (Windows)")
+endif()
+
+# ONNX Runtime - Download pre-built binaries
 set(ONNX_VERSION "1.16.3")
 if(VDB_USE_ONNX_RUNTIME)
     if(NOT MSVC)
@@ -167,12 +223,24 @@ set(VDB_CORE_SOURCES
     src/core/thread_pool.cpp
     src/index/hnsw.cpp
     src/index/flat.cpp
+    src/index/metadata_index.cpp
     src/storage/mmap_store.cpp
     src/storage/metadata.cpp
     src/database.cpp
     src/ingest/markdown_parser.cpp
     src/ingest/gold_standard_ingest.cpp
     src/llm/llama_engine.cpp
+    src/adapters/data_adapter.cpp
+    src/adapters/csv_adapter.cpp
+    src/adapters/json_adapter.cpp
+    src/adapters/fred_adapter.cpp
+    src/adapters/http_client.cpp
+    src/adapters/pdf_adapter.cpp
+    src/adapters/text_adapter.cpp
+    src/adapters/excel_adapter.cpp
+    src/storage/sqlite_store.cpp
+    src/quantization/product_quantizer.cpp
+    src/quantization/scalar_quantizer.cpp
 )
 
 # Add ONNX-dependent sources only if ONNX Runtime is enabled
@@ -210,6 +278,27 @@ if(VDB_USE_LLAMA_CPP)
         ${llama_cpp_SOURCE_DIR}/include
         ${llama_cpp_SOURCE_DIR}/common
     )
+    ${ONNX_RUNTIME_LIB}
+    CURL::libcurl  # HTTP client
+    SQLite::SQLite3  # Metadata and caching
+    z  # zlib for PNG decompression in stb_image
+)
+
+# Optional libraries for adapters
+if(ICU_FOUND)
+    target_link_libraries(vdb_core PUBLIC ICU::uc ICU::i18n)
+endif()
+
+if(XLSXWRITER_LIB)
+    target_link_libraries(vdb_core PUBLIC ${XLSXWRITER_LIB})
+endif()
+
+if(POPPLER_FOUND)
+    target_link_libraries(vdb_core PUBLIC poppler-cpp)
+endif()
+
+if(PostgreSQL_FOUND)
+    target_link_libraries(vdb_core PUBLIC PostgreSQL::PostgreSQL)
 endif()
 
 # Platform-specific threading
