@@ -422,6 +422,7 @@ if(VDB_BUILD_TESTS)
         tests/test_vector_ops.cpp
         tests/test_distance.cpp
         tests/test_hnsw.cpp
+        tests/test_flat_index.cpp
         tests/test_storage.cpp
         tests/test_embeddings.cpp
         tests/test_ingest.cpp
