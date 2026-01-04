@@ -6,11 +6,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     build-essential cmake ninja-build git ca-certificates \
-    libsqlite3-dev libpq-dev libarrow-dev pkg-config python3 python3-pip \
+        libsqlite3-dev libpq-dev pkg-config python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /src
-COPY . /src
+# Note: Parquet/Arrow support requires system Arrow dev packages; keep them optional
+# and install explicitly in the build environment if needed.
 
 RUN mkdir -p build && cd build \
     && cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. \
