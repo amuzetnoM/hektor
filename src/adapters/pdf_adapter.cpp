@@ -8,6 +8,18 @@
 
 namespace vdb::adapters {
 
+// Helper to escape special characters in PDF strings
+static std::string escape_pdf_string(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (c == '(' || c == ')' || c == '\\') {
+            result += '\\';
+        }
+        result += c;
+    }
+    return result;
+}
+
 PDFAdapter::PDFAdapter(const PDFConfig& config) : config_(config) {}
 
 bool PDFAdapter::can_handle(const fs::path& path) const {
@@ -262,25 +274,16 @@ Result<void> PDFAdapter::write(
     file << "0000000349 00000 n \n";
     
     file << "trailer\n<<\n/Size 6\n/Root 1 0 R\n>>\n";
-    file << "startxref\n" << file.tellp() - 100 << "\n%%EOF\n";
+    
+    // Calculate xref position (approximate)
+    size_t xref_pos = 400 + content_str.size();
+    file << "startxref\n" << xref_pos << "\n%%EOF\n";
     
     if (!file) {
         return std::unexpected(Error{ErrorCode::IoError, "Failed to write PDF file: " + path.string()});
     }
     
     return {};
-}
-
-// Helper to escape special characters in PDF strings
-static std::string escape_pdf_string(const std::string& str) {
-    std::string result;
-    for (char c : str) {
-        if (c == '(' || c == ')' || c == '\\') {
-            result += '\\';
-        }
-        result += c;
-    }
-    return result;
 }
 
 } // namespace vdb::adapters

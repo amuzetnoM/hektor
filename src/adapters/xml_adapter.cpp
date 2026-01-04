@@ -13,6 +13,25 @@ namespace vdb::adapters {
 
 using namespace vdb::logging;
 
+// Helper function to escape XML special characters
+static std::string escape_xml(const std::string& str) {
+    std::string result;
+    result.reserve(str.size());
+    
+    for (char c : str) {
+        switch (c) {
+            case '&': result += "&amp;"; break;
+            case '<': result += "&lt;"; break;
+            case '>': result += "&gt;"; break;
+            case '"': result += "&quot;"; break;
+            case '\'': result += "&apos;"; break;
+            default: result += c; break;
+        }
+    }
+    
+    return result;
+}
+
 // ============================================================================
 // Simple XML Parser (minimal implementation)
 // For production, consider using libxml2 or pugixml
@@ -81,7 +100,7 @@ public:
                     // Note: This simplified parser only handles double-quoted attributes
                     // For production, consider using libxml2 or pugixml
                     std::string attr_str(tag.substr(space_pos + 1));
-                    std::regex attr_regex(R"((\w+)="([^"]*)")");
+                    std::regex attr_regex(R"((\w+)=\"([^\"]*)\")");
                     std::smatch match;
                     std::string::const_iterator search_start(attr_str.cbegin());
                     while (std::regex_search(search_start, attr_str.cend(), match, attr_regex)) {
@@ -364,25 +383,6 @@ Result<void> XMLAdapter::write(
     }
     
     return {};
-}
-
-// Helper function to escape XML special characters
-static std::string escape_xml(const std::string& str) {
-    std::string result;
-    result.reserve(str.size());
-    
-    for (char c : str) {
-        switch (c) {
-            case '&': result += "&amp;"; break;
-            case '<': result += "&lt;"; break;
-            case '>': result += "&gt;"; break;
-            case '"': result += "&quot;"; break;
-            case '\'': result += "&apos;"; break;
-            default: result += c; break;
-        }
-    }
-    
-    return result;
 }
 
 } // namespace vdb::adapters

@@ -10,6 +10,8 @@
 #include <iomanip>
 #include <ctime>
 #include <filesystem>
+#include <iostream>
+#include <thread>
 
 namespace vdb::logging {
 
