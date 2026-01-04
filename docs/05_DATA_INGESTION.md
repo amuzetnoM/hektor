@@ -461,6 +461,271 @@ enum class CellType {
 
 ---
 
+### 6. XML Adapter ✅
+
+**Purpose**: Structured documents, configuration files, data exchange
+
+**Supported Files**: `.xml`
+
+**Features**:
+- DOM-based XML parsing
+- Text content extraction from all nodes
+- Attribute extraction and metadata storage
+- Hierarchical path preservation
+- Namespace handling
+- CDATA support
+
+**Configuration**:
+```cpp
+XMLConfig config;
+config.extract_text_content = true;    // Extract all text nodes
+config.extract_attributes = true;      // Extract element attributes
+config.preserve_hierarchy = true;      // Maintain XML structure in metadata
+config.flatten_namespaces = true;      // Remove namespace prefixes
+```
+
+**Example**:
+```cpp
+#include "vdb/adapters/xml_adapter.hpp"
+
+using namespace vdb::adapters;
+
+XMLAdapter adapter;
+auto result = adapter.parse("catalog.xml");
+
+if (result) {
+    for (const auto& chunk : result->chunks) {
+        std::cout << "Root: " << chunk.title.value_or("unknown") << "\n";
+        std::cout << "Content: " << chunk.content << "\n";
+        
+        // Access XML attributes from metadata
+        for (const auto& [key, value] : chunk.metadata) {
+            std::cout << "  " << key << ": " << value << "\n";
+        }
+    }
+}
+```
+
+**Use Cases**:
+- Configuration files (Maven, Spring)
+- RSS/Atom feeds
+- Web service responses
+- SVG metadata extraction
+- Office document internals
+
+---
+
+### 7. Parquet Adapter 🔶
+
+**Purpose**: Columnar data storage, big data analytics
+
+**Supported Files**: `.parquet`
+
+**Features**:
+- Columnar data reading (requires Apache Arrow)
+- Row-based or column-based chunking
+- Schema extraction
+- Batch processing
+- Type-aware parsing
+
+**Configuration**:
+```cpp
+ParquetConfig config;
+config.row_based_chunks = true;
+config.batch_size = 1000;
+config.extract_schema = true;
+```
+
+**Note**: Full Parquet support requires Apache Arrow library. Install:
+```bash
+# Ubuntu
+sudo apt-get install libarrow-dev libparquet-dev
+
+# macOS
+brew install apache-arrow
+
+# Build with Arrow support
+cmake .. -DVDB_USE_ARROW=ON
+```
+
+**Example**:
+```cpp
+#include "vdb/adapters/parquet_adapter.hpp"
+
+ParquetAdapter adapter;
+auto result = adapter.parse("data.parquet");
+
+if (result) {
+    std::cout << "Schema: " << result->global_metadata.at("schema") << "\n";
+    std::cout << "Rows: " << result->chunks.size() << "\n";
+}
+```
+
+**Use Cases**:
+- Data lake exports (Databricks, Snowflake)
+- Pandas DataFrame storage
+- Apache Spark outputs
+- ML dataset storage
+
+---
+
+### 8. SQLite Adapter ✅
+
+**Purpose**: Relational database data extraction
+
+**Supported Files**: `.db`, `.sqlite`, `.sqlite3`, `.sql`
+
+**Features**:
+- Multiple table support
+- Custom SQL queries
+- Schema extraction
+- Row-based or table-based chunking
+- Type-aware column parsing
+- Batch reading
+
+**Configuration**:
+```cpp
+SQLiteConfig config;
+config.tables = {"products", "customers"};  // Specific tables
+config.row_based_chunks = true;
+config.batch_size = 1000;
+config.extract_column_names = true;
+```
+
+**Example**:
+```cpp
+#include "vdb/adapters/sqlite_adapter.hpp"
+
+using namespace vdb::adapters;
+
+SQLiteConfig config;
+config.tables = {"users", "posts"};
+
+SQLiteAdapter adapter(config);
+auto result = adapter.parse("app.db");
+
+if (result) {
+    std::cout << "Tables: " << result->global_metadata.at("num_tables") << "\n";
+    
+    for (const auto& chunk : result->chunks) {
+        std::cout << "Table: " << chunk.metadata.at("table") << "\n";
+        std::cout << "Row: " << chunk.metadata.at("row_number") << "\n";
+        std::cout << "Data: " << chunk.content << "\n";
+    }
+}
+```
+
+**Use Cases**:
+- Application databases
+- Mobile app data
+- Configuration databases
+- Data exports
+- Offline sync
+
+---
+
+### 9. pgvector Adapter ✅
+
+**Purpose**: Distributed vector storage with PostgreSQL
+
+**Supported**: PostgreSQL connection with pgvector extension
+
+**Features**:
+- Bidirectional vector sync (read/write)
+- Native similarity search
+- IVFFlat and HNSW indexes
+- Batch operations
+- Custom metadata columns
+
+**Configuration**:
+```cpp
+PgvectorConfig config;
+config.host = "localhost";
+config.port = 5432;
+config.database = "vector_db";
+config.user = "postgres";
+config.table = "embeddings";
+config.vector_column = "embedding";
+config.content_column = "content";
+config.metadata_columns = {"author", "date"};
+```
+
+**Setup PostgreSQL**:
+```sql
+-- Install pgvector extension
+CREATE EXTENSION vector;
+
+-- Create table
+CREATE TABLE embeddings (
+    id SERIAL PRIMARY KEY,
+    content TEXT,
+    embedding vector(384),
+    author TEXT,
+    date DATE
+);
+
+-- Create index
+CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops);
+```
+
+**Example - Reading**:
+```cpp
+#include "vdb/adapters/pgvector_adapter.hpp"
+
+PgvectorConfig config;
+config.host = "localhost";
+config.database = "vector_db";
+config.user = "postgres";
+config.table = "embeddings";
+
+PgvectorAdapter adapter(config);
+
+// Connect and read
+auto conn = adapter.connect();
+auto result = adapter.parse({});  // Read all vectors
+
+if (result) {
+    for (const auto& chunk : result->chunks) {
+        std::cout << chunk.content << "\n";
+    }
+}
+```
+
+**Example - Similarity Search**:
+```cpp
+// Query similar vectors
+std::vector<float> query = {0.1, 0.2, ...};  // Your query vector
+auto similar = adapter.query_similar(query, /*k=*/10, /*threshold=*/0.5);
+
+if (similar) {
+    for (const auto& result : *similar) {
+        float distance = result.numerical_features[0];
+        std::cout << "Distance: " << distance << "\n";
+        std::cout << "Content: " << result.content << "\n";
+    }
+}
+```
+
+**Example - Writing**:
+```cpp
+// Insert vectors
+std::vector<std::vector<float>> vectors = {...};
+std::vector<std::string> contents = {...};
+std::vector<std::unordered_map<std::string, std::string>> metadata = {...};
+
+auto inserted = adapter.insert_vectors(vectors, contents, metadata);
+std::cout << "Inserted " << *inserted << " vectors\n";
+```
+
+**Use Cases**:
+- Distributed vector storage
+- Enterprise-scale deployments
+- Hybrid SQL + vector queries
+- Multi-tenant applications
+- Real-time analytics
+
+---
+
 ## Chunking Strategies
 
 Chunking divides large documents into smaller, manageable pieces suitable for embedding. The choice of strategy significantly impacts search quality and performance.
@@ -1262,17 +1527,17 @@ std::vector<DataChunk> chunk_text(
   - [03_USER_GUIDE.md](03_USER_GUIDE.md) - User guide and tutorials
 
 - **Future Enhancements**:
-  - XML adapter
-  - SQL database adapter
-  - Parquet file support
   - HTML/web scraping adapter
   - Semantic chunking strategy
   - Sentence-based chunking
   - Automatic language detection
   - OCR for scanned PDFs
+  - Full Apache Arrow integration for Parquet
+  - Word document (.docx) adapter
+  - PowerPoint (.pptx) adapter
 
 ---
 
-**Version**: 1.1.0  
+**Version**: 2.0.0  
 **Last Updated**: 2026-01-04  
 **Status**: Production Ready

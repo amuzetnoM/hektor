@@ -58,11 +58,13 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 | **Local Embeddings** | ONNX Runtime inference for text and images without API calls |
 | **Cross-Modal Search** | Unified 512-dim space for text and image embeddings |
 | **Memory-Mapped Storage** | Zero-copy vector access via mmap for efficient I/O |
+| **Universal Data Ingestion** | Support for XML, JSON, CSV, Excel, PDF, Parquet, SQLite, and pgvector |
 | **Gold Standard Integration** | Native ingestion of journals, charts, and analysis reports |
 | **Python Bindings** | pybind11-based Python API for seamless integration |
 | **Thread-Safe Operations** | Concurrent reads with exclusive writes |
 | **AI Training Export** | Export vector pairs and triplets for model fine-tuning |
 | **Rich Metadata** | JSONL storage with full attribute filtering |
+| **Database Connectors** | Direct integration with SQLite and PostgreSQL with pgvector extension |
 
 ---
 

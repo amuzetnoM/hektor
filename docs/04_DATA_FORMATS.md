@@ -54,13 +54,14 @@ Vector Studio's data ingestion system is designed to accept a wide variety of da
 
 | Format | Extension(s) | Read | Write | Description |
 |--------|-------------|------|-------|-------------|
-| **XML** | `.xml` | 🚧 | ❌ | XML documents (planned) |
-| **Parquet** | `.parquet` | 🚧 | ❌ | Apache Parquet columnar format (planned) |
-| **SQL** | `.sql`, `.db` | 🚧 | ❌ | SQLite databases (planned) |
+| **XML** | `.xml` | ✅ | ❌ | XML documents with DOM parsing |
+| **Parquet** | `.parquet` | 🔶 | ❌ | Apache Parquet columnar format (requires Apache Arrow) |
+| **SQLite** | `.sql`, `.db`, `.sqlite`, `.sqlite3` | ✅ | ❌ | SQLite database files |
+| **pgvector** | N/A (connection) | ✅ | ✅ | PostgreSQL with pgvector extension |
 
 ### Legend
 - ✅ Fully implemented
-- 🚧 Planned for future release
+- 🔶 Partial implementation (requires optional dependency)
 - ❌ Not supported
 
 ---
@@ -326,6 +327,292 @@ enum class CellType {
 - `row_number`: Row position within sheet
 - `column_*`: Each column value
 - Numerical cells → stored in `numerical_features`
+
+---
+
+### 7. XML (`.xml`)
+
+**Purpose**: Structured documents, configuration files, data exchange formats
+
+**Requirements**:
+- Valid XML syntax (well-formed)
+- UTF-8 encoding (preferred)
+- Maximum file size: 100MB
+
+**Features**:
+- DOM-based parsing with tree traversal
+- Text content extraction from all nodes
+- Attribute extraction and storage in metadata
+- Hierarchy preservation in metadata paths
+- Namespace handling (optional flattening)
+- CDATA section support
+
+**Configuration Options**:
+```cpp
+XMLConfig config;
+config.extract_text_content = true;    // Extract all text nodes
+config.extract_attributes = true;      // Extract element attributes
+config.preserve_hierarchy = true;      // Maintain XML structure in metadata
+config.root_element = "";              // Root element to start extraction (empty = document root)
+config.text_elements = {};             // Specific elements to extract text from (empty = all)
+config.remove_cdata = false;           // Strip CDATA sections
+config.flatten_namespaces = true;      // Remove namespace prefixes
+```
+
+**Metadata Extracted**:
+- `root_element`: Name of the root XML element
+- Element attributes stored as `path.attribute_name`
+- Hierarchical structure preserved in dot notation (e.g., `book.chapter.title`)
+
+**Example**:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+    <book id="1" category="technical">
+        <title>Vector Databases</title>
+        <author>Jane Doe</author>
+        <year>2025</year>
+        <description>Comprehensive guide to vector databases</description>
+    </book>
+</catalog>
+```
+
+Extracts:
+- Content: "Vector Databases Jane Doe 2025 Comprehensive guide to vector databases"
+- Metadata: `book.id="1"`, `book.category="technical"`, etc.
+
+**Use Cases**:
+- Configuration files (Maven POM, Spring XML configs)
+- RSS/Atom feeds
+- SOAP web service responses
+- SVG graphics metadata
+- Office document formats (DOCX, XLSX internals)
+
+---
+
+### 8. Apache Parquet (`.parquet`)
+
+**Purpose**: Columnar data storage, big data analytics, data lake exports
+
+**Requirements**:
+- Valid Parquet file format
+- Apache Arrow C++ library (optional dependency)
+- Maximum file size: 1GB
+
+**Features**:
+- Columnar data reading for efficient processing
+- Row-based or column-based chunking
+- Schema extraction and metadata
+- Type-aware column parsing
+- Batch reading for memory efficiency
+- Predicate pushdown support (planned)
+
+**Configuration Options**:
+```cpp
+ParquetConfig config;
+config.row_based_chunks = true;        // True: one chunk per row, False: one chunk per column
+config.columns = {};                   // Specific columns to read (empty = all)
+config.batch_size = 1000;              // Number of rows to read at once
+config.extract_schema = true;          // Include schema info in metadata
+config.include_column_names = true;    // Prefix column name in content
+```
+
+**Metadata Extracted**:
+- Schema information (column names and types)
+- Row counts and batch information
+- Compression codec used
+- File metadata
+
+**Note**: Full Parquet support requires Apache Arrow library. Build with `-DVDB_USE_ARROW=ON` and install Arrow:
+```bash
+# Ubuntu
+sudo apt-get install libarrow-dev libparquet-dev
+
+# macOS
+brew install apache-arrow
+
+# Windows (vcpkg)
+vcpkg install arrow:x64-windows
+```
+
+**Use Cases**:
+- Data lake exports (Databricks, Snowflake)
+- Pandas DataFrame serialization
+- Apache Spark data processing outputs
+- Machine learning dataset storage
+- Time-series analytics data
+
+---
+
+### 9. SQLite (`.db`, `.sqlite`, `.sqlite3`, `.sql`)
+
+**Purpose**: Relational database data extraction and vector ingestion
+
+**Requirements**:
+- Valid SQLite3 database file
+- Not encrypted/password-protected
+- libsqlite3 library (widely available)
+
+**Features**:
+- Multiple table support
+- Custom SQL query execution
+- Schema information extraction
+- Row-based or table-based chunking
+- Type-aware column parsing (INTEGER, REAL, TEXT, BLOB)
+- Batch reading for large tables
+
+**Configuration Options**:
+```cpp
+SQLiteConfig config;
+config.tables = {};                   // Specific tables to query (empty = all)
+config.query = "";                    // Custom SQL query (overrides tables)
+config.include_schema = true;         // Include table schema in metadata
+config.row_based_chunks = true;       // True: one chunk per row, False: one chunk per table
+config.batch_size = 1000;             // Number of rows to fetch at once
+config.extract_column_names = true;   // Include column names in content
+```
+
+**Metadata Per Chunk**:
+- `table`: Table name
+- `row_number`: Row index within table
+- Column names and values
+- Numerical columns → stored in `numerical_features`
+
+**Example**:
+```cpp
+#include "vdb/adapters/sqlite_adapter.hpp"
+
+SQLiteConfig config;
+config.tables = {"products", "customers"};
+config.row_based_chunks = true;
+
+SQLiteAdapter adapter(config);
+auto result = adapter.parse("store.db");
+
+if (result) {
+    for (const auto& chunk : result->chunks) {
+        std::cout << "Table: " << chunk.metadata.at("table") << "\n";
+        std::cout << "Content: " << chunk.content << "\n";
+    }
+}
+```
+
+**Use Cases**:
+- Application databases (Django, Rails)
+- Mobile app data (iOS Core Data, Android Room)
+- Data exports from SQLite-based systems
+- Offline data synchronization
+- Configuration and cache databases
+
+---
+
+### 10. PostgreSQL with pgvector (connection-based)
+
+**Purpose**: Distributed vector storage with PostgreSQL's pgvector extension
+
+**Requirements**:
+- PostgreSQL 12+ with pgvector extension installed
+- libpq (PostgreSQL client library)
+- Network connection to PostgreSQL server
+- Appropriate database permissions
+
+**Features**:
+- Bidirectional vector sync (read and write)
+- Native vector similarity search using pgvector
+- IVFFlat and HNSW index support
+- Batch insert operations
+- Distance threshold filtering
+- Custom metadata columns
+
+**Configuration Options**:
+```cpp
+PgvectorConfig config;
+config.host = "localhost";
+config.port = 5432;
+config.database = "vector_db";
+config.user = "postgres";
+config.password = "password";
+config.table = "embeddings";
+config.vector_column = "embedding";     // Name of vector column
+config.content_column = "content";      // Name of text content column
+config.metadata_columns = {"author", "date", "category"};
+config.batch_size = 1000;
+config.create_table_if_missing = false;
+```
+
+**Setup PostgreSQL with pgvector**:
+```sql
+-- Install pgvector extension
+CREATE EXTENSION vector;
+
+-- Create table with vector column
+CREATE TABLE embeddings (
+    id SERIAL PRIMARY KEY,
+    content TEXT,
+    embedding vector(384),  -- dimension matches your model
+    author TEXT,
+    date DATE,
+    category TEXT
+);
+
+-- Create index for fast similarity search
+CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops);
+-- or HNSW index:
+-- CREATE INDEX ON embeddings USING hnsw (embedding vector_cosine_ops);
+```
+
+**Usage Example**:
+```cpp
+#include "vdb/adapters/pgvector_adapter.hpp"
+
+PgvectorConfig config;
+config.host = "localhost";
+config.database = "vector_db";
+config.user = "postgres";
+config.table = "embeddings";
+config.metadata_columns = {"author", "date"};
+
+PgvectorAdapter adapter(config);
+
+// Connect to database
+auto conn_result = adapter.connect();
+if (!conn_result) {
+    std::cerr << "Connection failed\n";
+    return;
+}
+
+// Query similar vectors
+std::vector<float> query_vector = {0.1, 0.2, ...}; // 384-dim vector
+auto results = adapter.query_similar(query_vector, 10);
+
+if (results) {
+    for (const auto& chunk : *results) {
+        std::cout << "Distance: " << chunk.metadata.at("distance") << "\n";
+        std::cout << "Content: " << chunk.content << "\n";
+    }
+}
+
+// Insert vectors
+std::vector<std::vector<float>> vectors = {...};
+std::vector<std::string> contents = {...};
+std::vector<std::unordered_map<std::string, std::string>> metadata = {...};
+
+auto inserted = adapter.insert_vectors(vectors, contents, metadata);
+std::cout << "Inserted " << *inserted << " vectors\n";
+```
+
+**Distance Operators**:
+- `<->` : Euclidean distance (L2)
+- `<#>` : Negative inner product
+- `<=>` : Cosine distance (1 - cosine similarity)
+
+**Use Cases**:
+- Distributed vector storage across multiple servers
+- Hybrid SQL + vector queries
+- Enterprise-scale vector databases
+- Multi-tenant vector applications
+- Real-time vector analytics with PostgreSQL
+- Seamless integration with existing PostgreSQL infrastructure
 
 ---
 
