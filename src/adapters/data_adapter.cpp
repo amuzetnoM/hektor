@@ -6,6 +6,10 @@
 #include "vdb/adapters/csv_adapter.hpp"
 #include "vdb/adapters/json_adapter.hpp"
 #include "vdb/adapters/fred_adapter.hpp"
+#include "vdb/adapters/xml_adapter.hpp"
+#include "vdb/adapters/parquet_adapter.hpp"
+#include "vdb/adapters/sqlite_adapter.hpp"
+#include "vdb/adapters/pgvector_adapter.hpp"
 #include <algorithm>
 #include <regex>
 #include <cctype>
@@ -20,7 +24,11 @@ DataAdapterManager::DataAdapterManager() {
     // Register built-in adapters
     register_adapter(std::make_unique<CSVAdapter>());
     register_adapter(std::make_unique<JSONAdapter>());
+    register_adapter(std::make_unique<XMLAdapter>());
+    register_adapter(std::make_unique<ParquetAdapter>());
+    register_adapter(std::make_unique<SQLiteAdapter>());
     // FRED adapter requires API key, registered separately
+    // PgvectorAdapter requires configuration, registered separately when needed
 }
 
 void DataAdapterManager::register_adapter(std::unique_ptr<IDataAdapter> adapter) {
@@ -182,6 +190,7 @@ DataFormat detect_from_extension(const fs::path& path) {
     if (ext == ".jpg" || ext == ".jpeg") return DataFormat::JPEG;
     if (ext == ".xlsx" || ext == ".xls") return DataFormat::Excel;
     if (ext == ".parquet") return DataFormat::Parquet;
+    if (ext == ".db" || ext == ".sqlite" || ext == ".sqlite3" || ext == ".sql") return DataFormat::SQL;
     
     return DataFormat::Unknown;
 }

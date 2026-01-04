@@ -259,6 +259,10 @@ set(VDB_CORE_SOURCES
     src/adapters/pdf_adapter.cpp
     src/adapters/text_adapter.cpp
     src/adapters/excel_adapter.cpp
+    src/adapters/xml_adapter.cpp
+    src/adapters/parquet_adapter.cpp
+    src/adapters/sqlite_adapter.cpp
+    src/adapters/pgvector_adapter.cpp
     src/storage/sqlite_store.cpp
     src/quantization/product_quantizer.cpp
     src/quantization/scalar_quantizer.cpp
@@ -308,6 +312,7 @@ endif()
 
 if(SQLite3_FOUND)
     target_link_libraries(vdb_core PUBLIC SQLite::SQLite3)
+    target_compile_definitions(vdb_core PUBLIC HAVE_SQLITE3)
 endif()
 
 if(ZLIB_FOUND)
@@ -329,6 +334,7 @@ endif()
 
 if(PostgreSQL_FOUND)
     target_link_libraries(vdb_core PUBLIC PostgreSQL::PostgreSQL)
+    target_compile_definitions(vdb_core PUBLIC HAVE_LIBPQ)
 endif()
 
 # Platform-specific threading
