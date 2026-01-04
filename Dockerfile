@@ -5,8 +5,8 @@ FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        build-essential cmake ninja-build git ca-certificates \
-        libsqlite3-dev libpq-dev libarrow-dev pkg-config python3 python3-pip \
+    build-essential cmake ninja-build git ca-certificates \
+    libsqlite3-dev libpq-dev libarrow-dev pkg-config python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
