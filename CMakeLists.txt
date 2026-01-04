@@ -169,6 +169,7 @@ add_library(vdb_core STATIC
     src/core/thread_pool.cpp
     src/index/hnsw.cpp
     src/index/flat.cpp
+    src/index/metadata_index.cpp
     src/storage/mmap_store.cpp
     src/storage/metadata.cpp
     src/embeddings/onnx_runtime.cpp
@@ -186,6 +187,8 @@ add_library(vdb_core STATIC
     src/adapters/text_adapter.cpp
     src/adapters/excel_adapter.cpp
     src/storage/sqlite_store.cpp
+    src/quantization/product_quantizer.cpp
+    src/quantization/scalar_quantizer.cpp
 )
 
 target_include_directories(vdb_core PUBLIC
