@@ -551,6 +551,10 @@ Result<HnswIndex> HnswIndex::load(std::string_view path) {
 // Flat Index (Brute Force)
 // ============================================================================
 
+// File format magic numbers
+constexpr uint32_t FLAT_INDEX_MAGIC = 0x464C4154;  // "FLAT"
+constexpr uint32_t FLAT_INDEX_VERSION = 1;
+
 FlatIndex::FlatIndex(Dim dimension, DistanceMetric metric)
     : dimension_(dimension)
     , metric_(metric)
@@ -606,10 +610,8 @@ Result<void> FlatIndex::save(std::string_view path) const {
     }
     
     // Write header
-    uint32_t magic = 0x464C4154;  // "FLAT"
-    uint32_t version = 1;
-    file.write(reinterpret_cast<const char*>(&magic), sizeof(magic));
-    file.write(reinterpret_cast<const char*>(&version), sizeof(version));
+    file.write(reinterpret_cast<const char*>(&FLAT_INDEX_MAGIC), sizeof(FLAT_INDEX_MAGIC));
+    file.write(reinterpret_cast<const char*>(&FLAT_INDEX_VERSION), sizeof(FLAT_INDEX_VERSION));
     
     // Write config
     file.write(reinterpret_cast<const char*>(&dimension_), sizeof(dimension_));
@@ -641,7 +643,7 @@ Result<FlatIndex> FlatIndex::load(std::string_view path) {
     file.read(reinterpret_cast<char*>(&magic), sizeof(magic));
     file.read(reinterpret_cast<char*>(&version), sizeof(version));
     
-    if (magic != 0x464C4154) {
+    if (magic != FLAT_INDEX_MAGIC) {
         return std::unexpected(Error{ErrorCode::IndexCorrupted, "Invalid file format"});
     }
     

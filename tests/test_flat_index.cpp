@@ -37,12 +37,13 @@ protected:
     void TearDown() override {
         // Clean up test files
         namespace fs = std::filesystem;
-        if (fs::exists("test_flat_index.bin")) {
-            fs::remove("test_flat_index.bin");
+        if (fs::exists(test_file_path_)) {
+            fs::remove(test_file_path_);
         }
     }
     
     std::vector<Vector> vectors_;
+    std::string test_file_path_ = std::tmpnam(nullptr) + std::string("_flat_index.bin");
 };
 
 TEST_F(FlatIndexTest, Construction) {
@@ -78,11 +79,11 @@ TEST_F(FlatIndexTest, SaveAndLoad) {
     }
     
     // Save to file
-    auto save_result = index1.save("test_flat_index.bin");
+    auto save_result = index1.save(test_file_path_);
     EXPECT_TRUE(save_result.has_value());
     
     // Load from file
-    auto load_result = FlatIndex::load("test_flat_index.bin");
+    auto load_result = FlatIndex::load(test_file_path_);
     ASSERT_TRUE(load_result.has_value());
     
     FlatIndex& index2 = *load_result;

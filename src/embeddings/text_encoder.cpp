@@ -196,11 +196,9 @@ Result<std::vector<std::vector<float>>> TextEncoder::encode_batch(
     
     // Pad all sequences to max_length
     for (size_t i = 0; i < texts.size(); ++i) {
-        while (all_input_ids[i].size() < max_length) {
-            all_input_ids[i].push_back(0);
-            all_attention_masks[i].push_back(0);
-            all_token_type_ids[i].push_back(0);
-        }
+        all_input_ids[i].resize(max_length, 0);
+        all_attention_masks[i].resize(max_length, 0);
+        all_token_type_ids[i].resize(max_length, 0);
     }
     
     // Flatten to batch format [batch_size, max_length]

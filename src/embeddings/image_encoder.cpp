@@ -286,12 +286,8 @@ Result<std::vector<std::vector<float>>> ImageEncoder::encode_batch(
         
         // Output shape should be [batch_size, embed_dim]
         size_t output_batch_size = static_cast<size_t>(output_shape[0]);
-        size_t embed_dim = 1;
-        for (size_t i = 1; i < output_shape.size(); ++i) {
-            if (output_shape[i] > 1) {
-                embed_dim = static_cast<size_t>(output_shape[i]);
-            }
-        }
+        size_t embed_dim = (output_shape.size() >= 2) ? 
+            static_cast<size_t>(output_shape[1]) : config_.output_dim;
         
         const float* output_data = output.GetTensorData<float>();
         
