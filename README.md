@@ -10,13 +10,16 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 
 <p align="center">
 
+<!-- Version -->
+[![Version](https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
+
 <!-- Build Status -->
 [![Build](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=cmake&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
 [![Tests](https://img.shields.io/badge/tests-passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green?style=for-the-badge&logo=codecov&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
 
 <!-- Tech Stack -->
-[![C++](https://img.shields.io/badge/C%2B%2B-20-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
+[![C++](https://img.shields.io/badge/C%2B%2B-23-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
 [![CMake](https://img.shields.io/badge/CMake-3.20+-064F8C?style=for-the-badge&logo=cmake&logoColor=white)](https://cmake.org/)
 [![ONNX](https://img.shields.io/badge/ONNX-Runtime-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnxruntime.ai/)
 [![Python](https://img.shields.io/badge/Python-3.10--3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
@@ -30,6 +33,22 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey?style=for-the-badge)](#)
 
 </p>
+
+---
+
+## 🎉 What's New in v2.0
+
+**Major Release: Full Bidirectional Support + Comprehensive Logging**
+
+- ✅ **4 New Data Adapters**: XML, Apache Parquet (with Arrow), SQLite, PostgreSQL pgvector
+- ✅ **Complete Read/Write Support**: All adapters now support bidirectional data flow
+- ✅ **Comprehensive Logging System**: Thread-safe logging with 15 anomaly types - nothing goes blind
+- ✅ **Apache Arrow Integration**: Full Parquet support with row/column-based chunking
+- ✅ **PDF Write Support**: Generate PDF documents from normalized data
+- ✅ **Security Hardening**: SQL injection protection, input validation, proper escaping
+- ✅ **Enterprise-Grade**: Real-world applications documented with performance benchmarks
+
+**See**: [CHANGELOG.md](CHANGELOG.md) | [NEW_FEATURES.md](NEW_FEATURES.md) | [docs/REAL_WORLD_APPLICATIONS.md](docs/REAL_WORLD_APPLICATIONS.md)
 
 ---
 
@@ -58,11 +77,14 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 | **Local Embeddings** | ONNX Runtime inference for text and images without API calls |
 | **Cross-Modal Search** | Unified 512-dim space for text and image embeddings |
 | **Memory-Mapped Storage** | Zero-copy vector access via mmap for efficient I/O |
+| **Universal Data Ingestion** | Support for XML, JSON, CSV, Excel, PDF, Parquet, SQLite, and pgvector with read & write |
+| **Comprehensive Logging** | Thread-safe logging with anomaly detection - nothing goes blind |
 | **Gold Standard Integration** | Native ingestion of journals, charts, and analysis reports |
 | **Python Bindings** | pybind11-based Python API for seamless integration |
 | **Thread-Safe Operations** | Concurrent reads with exclusive writes |
 | **AI Training Export** | Export vector pairs and triplets for model fine-tuning |
 | **Rich Metadata** | JSONL storage with full attribute filtering |
+| **Database Connectors** | Direct integration with SQLite and PostgreSQL with pgvector extension |
 
 ---
 

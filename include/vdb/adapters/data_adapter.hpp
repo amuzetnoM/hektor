@@ -112,7 +112,7 @@ public:
     [[nodiscard]] virtual bool can_handle(const fs::path& path) const = 0;
     [[nodiscard]] virtual bool can_handle(std::string_view content) const = 0;
     
-    /// Parse and normalize data
+    /// Parse and normalize data (Read operation)
     [[nodiscard]] virtual Result<NormalizedData> parse(
         const fs::path& path,
         const ChunkConfig& config = {}
@@ -124,12 +124,27 @@ public:
         std::string_view source_hint = ""
     ) = 0;
     
+    /// Write normalized data to file/database (Write operation)
+    [[nodiscard]] virtual Result<void> write(
+        const NormalizedData& data,
+        const fs::path& path
+    ) {
+        // Default implementation returns not implemented
+        return std::unexpected(Error{ErrorCode::NotImplemented, 
+            "Write operation not implemented for " + name() + " adapter"});
+    }
+    
     /// Validate and sanitize data
     [[nodiscard]] virtual Result<void> sanitize(NormalizedData& data) = 0;
     
     /// Get adapter name and capabilities
     [[nodiscard]] virtual std::string name() const = 0;
     [[nodiscard]] virtual std::vector<DataFormat> supported_formats() const = 0;
+    
+    /// Check if adapter supports write operations
+    [[nodiscard]] virtual bool supports_write() const {
+        return false;  // Default: read-only
+    }
 };
 
 // ============================================================================
