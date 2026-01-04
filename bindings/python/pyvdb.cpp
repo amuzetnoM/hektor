@@ -10,6 +10,10 @@
 #include "vdb/database.hpp"
 #include "vdb/ingest.hpp"
 
+#ifdef VDB_USE_ONNX_RUNTIME
+#include "vdb/embeddings/onnx_runtime.hpp"
+#endif
+
 #ifdef VDB_USE_LLAMA_CPP
 #include "vdb/llm/llm_engine.hpp"
 #endif
@@ -83,12 +87,14 @@ PYBIND11_MODULE(pyvdb, m) {
         .value("Unknown", DocumentType::Unknown)
         .export_values();
     
+#ifdef VDB_USE_ONNX_RUNTIME
     // Device enum for execution (CPU/CUDA/DirectML)
     py::enum_<embeddings::Device>(m, "Device")
         .value("CPU", embeddings::Device::CPU)
         .value("CUDA", embeddings::Device::CUDA)
         .value("DirectML", embeddings::Device::DirectML)
         .export_values();
+#endif
     
     // ========================================================================
     // Metadata
@@ -419,11 +425,13 @@ PYBIND11_MODULE(pyvdb, m) {
     // Utility Functions
     // ========================================================================
     
+#ifdef VDB_USE_ONNX_RUNTIME
     m.def("detect_best_device", &embeddings::detect_best_device,
           "Detect the best available execution device (CPU/CUDA/DirectML)");
     
     m.def("is_provider_available", &is_provider_available, py::arg("provider"),
           "Check if a specific execution provider is available");
+#endif
     
     // ========================================================================
     // LLM Engine (llama.cpp integration)
@@ -516,7 +524,9 @@ PYBIND11_MODULE(pyvdb, m) {
           "Check if LLM support (llama.cpp) is compiled in");
 #endif
 
+#ifdef VDB_USE_ONNX_RUNTIME
     // Add device_name utility exposed to Python
     m.def("device_name", &embeddings::device_name, py::arg("device"),
           "Get human-readable name for device");
+#endif
 }
