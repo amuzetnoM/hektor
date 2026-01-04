@@ -1,0 +1,306 @@
+# New Features: XML, Parquet, SQLite, and pgvector Support
+
+## Overview
+
+Vector Studio now supports four additional data formats for universal data ingestion:
+- XML documents (.xml)
+- Apache Parquet columnar files (.parquet)
+- SQLite databases (.db, .sqlite, .sqlite3, .sql)
+- PostgreSQL with pgvector extension (connection-based)
+
+## Features Summary
+
+### 1. XML Document Support ✅
+
+**File Extensions**: `.xml`
+
+**Capabilities**:
+- DOM-based XML parsing with tree traversal
+- Automatic text content extraction from all nodes
+- Attribute extraction and metadata storage
+- Hierarchical path preservation (dot notation)
+- Namespace handling with optional flattening
+- CDATA section support
+- Safety checks for malformed XML
+
+**Usage Example**:
+```cpp
+#include "vdb/adapters/xml_adapter.hpp"
+
+XMLAdapter adapter;
+auto result = adapter.parse("catalog.xml");
+
+if (result) {
+    for (const auto& chunk : result->chunks) {
+        std::cout << "Content: " << chunk.content << "\n";
+        // Access XML attributes from metadata
+        for (const auto& [key, value] : chunk.metadata) {
+            std::cout << "  " << key << ": " << value << "\n";
+        }
+    }
+}
+```
+
+### 2. Apache Parquet Support 🔶
+
+**File Extensions**: `.parquet`
+
+**Capabilities**:
+- Columnar data reading (requires Apache Arrow library)
+- Row-based or column-based chunking
+- Schema extraction and metadata
+- Batch processing for memory efficiency
+- Type-aware column parsing
+
+**Note**: Full implementation requires Apache Arrow C++ library:
+```bash
+# Ubuntu
+sudo apt-get install libarrow-dev libparquet-dev
+
+# macOS
+brew install apache-arrow
+
+# Build with Arrow support
+cmake .. -DVDB_USE_ARROW=ON
+```
+
+### 3. SQLite Database Support ✅
+
+**File Extensions**: `.db`, `.sqlite`, `.sqlite3`, `.sql`
+
+**Capabilities**:
+- Multiple table support with automatic discovery
+- Custom SQL query execution
+- Schema information extraction
+- Row-based or table-based chunking
+- Type-aware column parsing (INTEGER, REAL, TEXT, BLOB)
+- Batch reading for large tables
+- **SQL injection protection via identifier quoting**
+
+**Usage Example**:
+```cpp
+#include "vdb/adapters/sqlite_adapter.hpp"
+
+SQLiteConfig config;
+config.tables = {"products", "customers"};
+config.row_based_chunks = true;
+
+SQLiteAdapter adapter(config);
+auto result = adapter.parse("store.db");
+
+if (result) {
+    for (const auto& chunk : result->chunks) {
+        std::cout << "Table: " << chunk.metadata.at("table") << "\n";
+        std::cout << "Data: " << chunk.content << "\n";
+    }
+}
+```
+
+### 4. PostgreSQL pgvector Support ✅
+
+**Connection-Based** (not file-based)
+
+**Capabilities**:
+- Bidirectional vector sync (read and write operations)
+- Native vector similarity search using pgvector
+- IVFFlat and HNSW index support
+- Batch insert operations
+- Distance threshold filtering
+- Custom metadata columns
+- **SQL injection protection via identifier quoting and literal escaping**
+
+**Setup Example**:
+```sql
+-- Install pgvector extension
+CREATE EXTENSION vector;
+
+-- Create table
+CREATE TABLE embeddings (
+    id SERIAL PRIMARY KEY,
+    content TEXT,
+    embedding vector(384),
+    author TEXT,
+    date DATE
+);
+
+-- Create index
+CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops);
+```
+
+**Usage Example**:
+```cpp
+#include "vdb/adapters/pgvector_adapter.hpp"
+
+PgvectorConfig config;
+config.host = "localhost";
+config.database = "vector_db";
+config.table = "embeddings";
+
+PgvectorAdapter adapter(config);
+adapter.connect();
+
+// Query similar vectors
+std::vector<float> query = {0.1, 0.2, ...};
+auto results = adapter.query_similar(query, 10);
+
+// Insert vectors
+std::vector<std::vector<float>> vectors = {...};
+std::vector<std::string> contents = {...};
+auto inserted = adapter.insert_vectors(vectors, contents, {});
+```
+
+## Integration
+
+All new adapters are automatically registered with the DataAdapterManager:
+
+```cpp
+#include "vdb/adapters/data_adapter.hpp"
+
+DataAdapterManager manager;
+
+// Auto-detect format and parse
+auto result = manager.auto_parse("data.xml");     // XML
+auto result = manager.auto_parse("data.parquet"); // Parquet
+auto result = manager.auto_parse("data.db");      // SQLite
+
+// pgvector requires explicit configuration
+PgvectorAdapter pgvector(config);
+auto result = pgvector.parse({});
+```
+
+## Security Features
+
+### SQL Injection Protection
+- All SQL identifiers (table names, column names) are properly quoted
+- String literals are escaped to prevent injection attacks
+- Custom SQL queries should still be validated by the application
+
+### XML Safety
+- Empty tag handling to prevent undefined behavior
+- Malformed XML detection and error reporting
+- Safe string operations with bounds checking
+
+## Documentation
+
+Comprehensive documentation is available:
+
+1. **Format Specifications**: `docs/04_DATA_FORMATS.md`
+   - Detailed specifications for each format
+   - Configuration options
+   - Metadata extraction details
+   - Security considerations
+
+2. **Usage Guide**: `docs/05_DATA_INGESTION.md`
+   - Usage examples for each adapter
+   - Integration patterns
+   - Best practices
+
+3. **Examples**: `examples/`
+   - Sample XML file
+   - Usage instructions
+   - Testing guidelines
+
+## Dependencies
+
+### Required
+- C++23 compiler
+- CMake 3.20+
+- nlohmann/json
+- fmt
+
+### Optional (for specific adapters)
+- **SQLite**: libsqlite3 (for SQLite adapter)
+  ```bash
+  sudo apt-get install libsqlite3-dev  # Ubuntu
+  brew install sqlite3                  # macOS
+  ```
+
+- **pgvector**: libpq (for pgvector adapter)
+  ```bash
+  sudo apt-get install libpq-dev       # Ubuntu
+  brew install postgresql              # macOS
+  ```
+
+- **Parquet**: Apache Arrow (for Parquet adapter)
+  ```bash
+  sudo apt-get install libarrow-dev libparquet-dev  # Ubuntu
+  brew install apache-arrow                         # macOS
+  ```
+
+## Build Instructions
+
+```bash
+# Standard build
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+
+# With all features enabled
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+         -DVDB_USE_ARROW=ON
+
+# The build system automatically detects SQLite3 and PostgreSQL
+```
+
+## Testing
+
+Example data files are provided in the `examples/` directory:
+
+```bash
+# Test XML parsing
+./build/vdb_cli parse examples/sample_data.xml
+
+# Test with your own files
+./build/vdb_cli parse your_data.xml
+./build/vdb_cli parse your_database.db
+```
+
+## Migration Guide
+
+If you have existing code using Vector Studio, no changes are required. The new adapters are automatically registered and available through the existing API:
+
+```cpp
+// This works for all supported formats
+DataAdapterManager manager;
+auto result = manager.auto_parse(file_path);
+```
+
+## Performance Notes
+
+- **XML**: Fast parsing for documents up to 100MB
+- **Parquet**: Efficient columnar access (with Arrow library)
+- **SQLite**: Batch processing for optimal memory usage
+- **pgvector**: Native PostgreSQL performance with vector indexes
+
+## Limitations
+
+1. **XML**: Simplified parser handles most common XML. For complex XML with namespaces, consider integrating libxml2 or pugixml.
+
+2. **Parquet**: Requires Apache Arrow library for full functionality. Without Arrow, a placeholder implementation is provided.
+
+3. **SQLite**: Cannot parse from memory (requires file-based access).
+
+4. **pgvector**: Requires network connection and appropriate database permissions.
+
+## Future Enhancements
+
+- Full Apache Arrow integration for Parquet
+- HTML/web scraping adapter
+- Word document (.docx) support
+- PowerPoint (.pptx) support
+- Semantic chunking strategy
+- Enhanced XML parser with full namespace support
+
+## Contributing
+
+Contributions are welcome! Please see CONTRIBUTING.md for guidelines.
+
+## License
+
+This feature is part of Vector Studio and is licensed under the MIT License.
+
+---
+
+**Version**: 2.0.0  
+**Release Date**: 2026-01-04  
+**Status**: Production Ready
