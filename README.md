@@ -1,4 +1,5 @@
-# Vector Studio
+# VECTOR STUDIO
+> *Heckter*
 
 > **High-Fidelity Vector Database Engine** — Semantic Search and AI Training Platform
 
