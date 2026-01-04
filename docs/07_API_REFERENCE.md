@@ -366,71 +366,6 @@ JSONAdapter();
 
 Parse JSON file (objects, arrays, JSONL).
 
-### FREDAdapter
-
-Federal Reserve Economic Data API adapter.
-
-#### Constructor
-
-```cpp
-explicit FREDAdapter(const FREDConfig& config);
-```
-
-**Example:**
-```cpp
-FREDConfig config;
-config.api_key = "your_api_key";
-
-FREDAdapter fred(config);
-```
-
-#### fetch_series()
-
-```cpp
-[[nodiscard]] Result<FREDSeries> fetch_series(
-    const std::string& series_id,
-    std::optional<std::string> start_date = std::nullopt,
-    std::optional<std::string> end_date = std::nullopt
-);
-```
-
-Fetch time series data.
-
-**Parameters:**
-- `series_id`: Series identifier (e.g., "GDP")
-- `start_date`: Optional start date (YYYY-MM-DD)
-- `end_date`: Optional end date (YYYY-MM-DD)
-
-**Returns:** `Result<FREDSeries>` - Series data or error
-
-**Example:**
-```cpp
-auto series = fred.fetch_series("GDP", "2020-01-01", "2024-01-01");
-if (series) {
-    std::cout << series->title << std::endl;
-    for (const auto& obs : series->observations) {
-        std::cout << obs.date << ": " << obs.value << std::endl;
-    }
-}
-```
-
-#### search_series()
-
-```cpp
-[[nodiscard]] Result<std::vector<std::string>> search_series(
-    const std::string& query,
-    size_t limit = 100
-);
-```
-
-Search for series by keyword.
-
-**Parameters:**
-- `query`: Search query
-- `limit`: Maximum results
-
-**Returns:** `Result<std::vector<std::string>>` - Series IDs or error
-
 ---
 
 ## Embedding Models API
@@ -886,15 +821,29 @@ enum class DocumentType {
 
 ```cpp
 enum class DataFormat {
+    // Text formats
     PlainText, Markdown, JSON, CSV, XML,
+    
+    // Document formats
     PDF, DOCX, TXT,
+    
+    // Structured data
     SQL, Excel, Parquet,
+    
+    // Web & APIs
     HTML, API_JSON, RSS,
+    
+    // External APIs (not functional - HTTP client not implemented)
     FRED, Yahoo_Finance, Alpha_Vantage,
+    
+    // Images
     PNG, JPEG,
+    
     Unknown
 };
 ```
+
+**Note:** The external API formats (FRED, Yahoo_Finance, Alpha_Vantage) are defined but not functional as the HTTP client is not yet implemented. Use file-based adapters (CSV, JSON, PDF, Excel, Text) for data ingestion.
 
 ### ChunkStrategy
 

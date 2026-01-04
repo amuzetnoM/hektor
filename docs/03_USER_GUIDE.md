@@ -586,64 +586,6 @@ metadata: {
 }
 ```
 
-### FRED API Adapter
-
-**Features:**
-- Federal Reserve Economic Data integration
-- Time series fetching
-- Popular indicators built-in
-- Search functionality
-
-**Configuration:**
-
-```cpp
-FREDConfig config;
-config.api_key = "your_api_key_here";
-config.base_url = "https://api.stlouisfed.org/fred";
-config.timeout = std::chrono::seconds(30);
-
-FREDAdapter fred(config);
-```
-
-**Fetching Data:**
-
-```cpp
-// Fetch GDP data
-auto series = fred.fetch_series("GDP", "2020-01-01", "2024-01-01");
-
-if (series) {
-    std::cout << "Series: " << series->title << std::endl;
-    std::cout << "Observations: " << series->observations.size() << std::endl;
-    
-    for (const auto& obs : series->observations) {
-        std::cout << obs.date << ": " << obs.value << std::endl;
-    }
-}
-```
-
-**Popular Series:**
-
-| Series ID | Description |
-|-----------|-------------|
-| `GDP` | Gross Domestic Product |
-| `UNRATE` | Unemployment Rate |
-| `CPIAUCSL` | Consumer Price Index |
-| `FEDFUNDS` | Federal Funds Rate |
-| `DGS10` | 10-Year Treasury Rate |
-| `SP500` | S&P 500 Index |
-| `GOLDAMGBD228NLBM` | Gold Price (London) |
-| `DCOILWTICO` | WTI Crude Oil Price |
-
-**Searching Series:**
-
-```cpp
-auto results = fred.search_series("unemployment", 10);
-
-for (const auto& series_id : *results) {
-    std::cout << series_id << std::endl;
-}
-```
-
 ### Chunking Strategies
 
 **Available Strategies:**
@@ -1590,43 +1532,37 @@ int main() {
 }
 ```
 
-### Example 2: Financial Data Analysis
+### Example 2: CSV Data Analysis
 
 ```python
 import pyvdb
-from pyvdb.adapters import DataAdapterManager, FREDAdapter, FREDConfig
+from pyvdb.adapters import DataAdapterManager
 
 # Initialize database
 db = pyvdb.create_gold_standard_db("financial_db")
 
-# Setup FRED adapter
-fred_config = FREDConfig()
-fred_config.api_key = "your_api_key"
+# Initialize data adapter
+manager = DataAdapterManager()
 
-fred = FREDAdapter(fred_config)
-
-# Fetch economic indicators
-gdp = fred.fetch_series("GDP", "2020-01-01", "2024-01-01")
-unemployment = fred.fetch_series("UNRATE", "2020-01-01", "2024-01-01")
+# Ingest CSV file with financial data
+result = manager.auto_parse("financial_data.csv")
 
 # Process and add to database
-for series in [gdp, unemployment]:
-    normalized = fred.series_to_normalized(series)
+for chunk in result.chunks:
+    # Each chunk is a row from the CSV
+    # Generate embedding from content
+    embedding = db.encode_text(chunk.content)
     
-    for chunk in normalized.chunks:
-        # Generate embedding from time series
-        embedding = generate_time_series_embedding(chunk.numerical_features)
-        
-        # Add to database
-        db.add_vector(embedding, chunk.metadata)
+    # Add to database with metadata
+    db.add_vector(embedding, chunk.metadata)
 
-# Search for similar economic patterns
-query_embedding = generate_time_series_embedding(recent_data)
-results = db.search(query_embedding, k=10)
+# Search for similar patterns
+query = "Q4 revenue growth above 10%"
+results = db.search_text(query, k=10)
 
-print("Similar economic patterns:")
+print("Similar financial patterns:")
 for result in results:
-    print(f"{result.metadata['series_id']}: {result.metadata['title']}")
+    print(f"{result.metadata.get('date', 'N/A')}: {result.content[:100]}...")
 ```
 
 ### Example 3: Image Search
