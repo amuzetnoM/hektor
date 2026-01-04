@@ -1,8 +1,8 @@
 # Vector Studio
 
-> **High-Performance Vector Database Engine** — Semantic Search and AI Training Platform
+> **High-Fidelity Vector Database Engine** — Semantic Search and AI Training Platform
 
-A high-fidelity, C++ vector database with SIMD-optimized similarity search and local ONNX-based embeddings. Designed for sub-millisecond queries on millions of vectors.
+A performance C++ vector database with SIMD-optimized similarity search and local ONNX-based embeddings. Designed for sub-millisecond queries on millions of vectors.
 
 ---
 
