@@ -1,6 +1,6 @@
 # VECTOR STUDIO
 
-> **Hecktor** <br>
+> **Hektor** <br>
 > *High-Fidelity Vector Database Engine* <br>
 > Semantic Search and AI Training Platform
 
