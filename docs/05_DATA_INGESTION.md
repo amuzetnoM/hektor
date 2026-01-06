@@ -1,4 +1,15 @@
+---
+title: "Data Ingestion System"
+version: "2.0.0"
+last_updated: "2026-01-06"
+sidebar_position: 5
+---
+
 # INGESTION
+
+![Version](https://img.shields.io/badge/version-2.0.0-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--06-green?style=flat-square)
+![Adapters](https://img.shields.io/badge/adapters-10_types-success?style=flat-square)
 
 **Universal data ingestion system with intelligent type detection, normalization, and support for multiple data formats**
 
