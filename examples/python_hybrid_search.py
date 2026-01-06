@@ -5,7 +5,6 @@ Demonstrates BM25 and hybrid fusion in Python
 """
 
 import sys
-import numpy as np
 
 try:
     import pyvdb

@@ -7,8 +7,6 @@ Demonstrates integration with TensorFlow, PyTorch, LangChain, and LlamaIndex
 import sys
 sys.path.insert(0, '../bindings/python')
 
-import pyvdb
-
 def demo_tensorflow_integration():
  """Demonstrate TensorFlow SavedModel integration"""
  print(f"\n{'='*80}")

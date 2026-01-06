@@ -149,7 +149,7 @@ struct HybridResult {
     std::vector<std::string> matched_keywords;
     
     bool operator<(const HybridResult& other) const {
-        return combined_score > other.score;
+        return combined_score > other.combined_score;
     }
 };
 

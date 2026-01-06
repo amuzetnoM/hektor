@@ -49,9 +49,6 @@ struct HybridSearchEngine::Impl {
             auto& hr = result_map[lr.id];
             hr.id = lr.id;
             hr.lexical_score = lr.score;
-            if (hr.vector_score == 0.0f) {
-                hr.vector_score = 0.0f; // Document only in lexical results
-            }
             hr.matched_keywords = lr.matched_terms;
         }
         

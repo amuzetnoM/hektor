@@ -38,14 +38,21 @@ fi
 
 echo -e "${GREEN}[1/6] Updating version numbers...${NC}"
 
+# Detect OS for sed portability
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_INPLACE=(-i '')
+else
+    SED_INPLACE=(-i)
+fi
+
 # Update CMakeLists.txt version
-sed -i 's/VERSION_MAJOR [0-9]*/VERSION_MAJOR 2/' CMakeLists.txt 2>/dev/null || true
-sed -i 's/VERSION_MINOR [0-9]*/VERSION_MINOR 2/' CMakeLists.txt 2>/dev/null || true
-sed -i 's/VERSION_PATCH [0-9]*/VERSION_PATCH 0/' CMakeLists.txt 2>/dev/null || true
+sed "${SED_INPLACE[@]}" 's/VERSION_MAJOR [0-9]*/VERSION_MAJOR 2/' CMakeLists.txt 2>/dev/null || true
+sed "${SED_INPLACE[@]}" 's/VERSION_MINOR [0-9]*/VERSION_MINOR 2/' CMakeLists.txt 2>/dev/null || true
+sed "${SED_INPLACE[@]}" 's/VERSION_PATCH [0-9]*/VERSION_PATCH 0/' CMakeLists.txt 2>/dev/null || true
 
 # Update Python setup.py if it exists
 if [ -f "setup.py" ]; then
-    sed -i "s/version=[\"'][0-9.]*[\"']/version=\"${VERSION}\"/" setup.py
+    sed "${SED_INPLACE[@]}" "s/version=[\"'][0-9.]*[\"']/version=\"${VERSION}\"/" setup.py
 fi
 
 echo -e "${GREEN}[2/6] Checking build...${NC}"

@@ -231,7 +231,7 @@ void test_bm25_update_document() {
 void test_bm25_save_load() {
     std::cout << "Testing BM25 save and load...\n";
     
-    const std::string test_file = "/tmp/test_bm25_engine.dat";
+    const std::string test_file = "test_bm25_engine.dat";
     
     // Create and populate engine
     BM25Engine engine1;
