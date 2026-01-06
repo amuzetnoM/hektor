@@ -36,7 +36,7 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 
 ---
 
-## 🎉 What's New in v2.0
+## v2.0
 
 **Major Release: Full Bidirectional Support + Comprehensive Logging**
 
