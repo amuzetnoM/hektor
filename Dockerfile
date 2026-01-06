@@ -27,6 +27,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     zlib1g-dev \
     libssl-dev \
+    # SIMD/AVX2 support for llama.cpp
+    gcc-multilib \
+    g++-multilib \
     # Python
     python3.11 \
     python3.11-dev \
@@ -51,10 +54,14 @@ RUN pip3 install --no-cache-dir -r requirements.txt && \
 # Download ONNX models
 RUN python3 scripts/download_models.py --all || echo "Model download failed, continuing..."
 
-# Configure and build C++ backend
-RUN cmake -B build -G Ninja \
+# Configure and build C++ backend with explicit AVX2 support
+RUN export CFLAGS="-mavx2 -mfma -mf16c" && \
+    export CXXFLAGS="-mavx2 -mfma -mf16c" && \
+    cmake -B build -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_C_FLAGS="-mavx2 -mfma -mf16c" \
+    -DCMAKE_CXX_FLAGS="-mavx2 -mfma -mf16c" \
     -DVDB_BUILD_PYTHON=ON \
     -DVDB_BUILD_TESTS=OFF \
     -DVDB_USE_AVX2=ON \
