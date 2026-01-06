@@ -282,6 +282,8 @@ set(VDB_CORE_SOURCES
     src/quantization/scalar_quantizer.cpp
     src/hybrid/bm25_engine.cpp
     src/hybrid/hybrid_search_engine.cpp
+    src/framework/rag_engine.cpp
+    src/framework/adapters.cpp
 )
 
 # Add SQLite-dependent sources only if SQLite3 is available
@@ -439,6 +441,7 @@ if(VDB_BUILD_TESTS)
         tests/test_ingest.cpp
         tests/test_bm25.cpp
         tests/test_hybrid_search.cpp
+        tests/test_rag.cpp
     )
     
     target_link_libraries(vdb_tests PRIVATE
