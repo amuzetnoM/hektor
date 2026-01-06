@@ -31,9 +31,11 @@ option(VDB_USE_AVX512 "Enable AVX-512 SIMD optimizations" OFF)
 option(VDB_ENABLE_GPU "Enable GPU acceleration via ONNX DirectML/CUDA" OFF)
 option(VDB_USE_LLAMA_CPP "Enable llama.cpp for local LLM inference" ON)
 option(VDB_USE_ONNX_RUNTIME "Enable ONNX Runtime for text/image encoders (requires MSVC)" OFF)
-option(VDB_USE_TENSORFLOW "Enable TensorFlow C++ API for embeddings (requires ~150MB)" OFF)
-option(VDB_USE_TORCH "Enable PyTorch C++ API (LibTorch) for embeddings (requires ~200MB)" OFF)
-option(VDB_ENABLE_DISTRIBUTED "Enable distributed features (requires gRPC, deferred to v2.3.0)" OFF)
+option(VDB_USE_TENSORFLOW "Enable TensorFlow C++ API for embeddings" OFF)
+option(VDB_USE_PYTORCH "Enable PyTorch C++ API (LibTorch) for embeddings" OFF)
+option(VDB_USE_GRPC "Enable gRPC for distributed networking" OFF)
+option(VDB_BUILD_DISTRIBUTED "Build distributed features (replication, sharding)" OFF)
+option(VDB_USE_PROMETHEUS "Enable Prometheus metrics export" OFF)
 
 # ============================================================================
 # Compiler Flags
@@ -297,6 +299,52 @@ if(VDB_USE_TORCH)
         message(WARNING "  See docs/FRAMEWORK_INTEGRATION.md for details")
         message(WARNING "  Then set: export Torch_ROOT=/path/to/libtorch")
         set(VDB_USE_TORCH OFF CACHE BOOL "" FORCE)
+    endif()
+endif()
+
+# ============================================================================
+# gRPC - Distributed Networking
+# ============================================================================
+if(VDB_USE_GRPC)
+    message(STATUS "Searching for gRPC...")
+    find_package(gRPC CONFIG)
+    find_package(Protobuf CONFIG)
+    
+    if(gRPC_FOUND AND Protobuf_FOUND)
+        message(STATUS "gRPC found - Distributed networking enabled")
+        message(STATUS "  gRPC version: ${gRPC_VERSION}")
+        message(STATUS "  Protobuf version: ${Protobuf_VERSION}")
+        set(HAVE_GRPC TRUE)
+        
+        # Find gRPC C++ plugin
+        find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
+        if(GRPC_CPP_PLUGIN)
+            message(STATUS "  gRPC C++ plugin: ${GRPC_CPP_PLUGIN}")
+        else()
+            message(WARNING "gRPC C++ plugin not found")
+        endif()
+    else()
+        message(WARNING "gRPC or Protobuf not found - Distributed features disabled")
+        message(WARNING "  Install: vcpkg install grpc:x64-windows protobuf:x64-windows")
+        set(VDB_USE_GRPC OFF CACHE BOOL "" FORCE)
+        set(VDB_BUILD_DISTRIBUTED OFF CACHE BOOL "" FORCE)
+    endif()
+endif()
+
+# ============================================================================
+# Prometheus C++ Client - Metrics Export
+# ============================================================================
+if(VDB_USE_PROMETHEUS)
+    message(STATUS "Searching for Prometheus C++ client...")
+    find_package(prometheus-cpp CONFIG)
+    
+    if(prometheus-cpp_FOUND)
+        message(STATUS "Prometheus C++ found - Metrics export enabled")
+        set(HAVE_PROMETHEUS TRUE)
+    else()
+        message(WARNING "Prometheus C++ not found - Metrics export disabled")
+        message(WARNING "  Install: vcpkg install prometheus-cpp:x64-windows")
+        set(VDB_USE_PROMETHEUS OFF CACHE BOOL "" FORCE)
     endif()
 endif()
 
