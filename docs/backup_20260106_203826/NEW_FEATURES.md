@@ -572,22 +572,22 @@ config.table = "user_data";  // Becomes `user_data`
 
 ### New Documentation
 
-1. **docs/15_LOGGING_MONITORING.md** (350+ lines)
+1. **docs/11_LOGGING.md** (350+ lines)
    - Complete logging system guide
    - Anomaly types reference
    - Configuration examples
 
-2. **docs/19_REAL_WORLD_APPLICATIONS.md** (600+ lines)
+2. **docs/14_REAL_WORLD_APPLICATIONS.md** (600+ lines)
    - 6 production use cases
    - Performance benchmarks
    - Architecture patterns
 
-3. **Enhanced docs/07_DATA_INGESTION.md** (650+ new lines)
+3. **Enhanced docs/05_DATA_INGESTION.md** (650+ new lines)
    - All 10 adapters documented
    - Read/write examples
    - Security considerations
 
-4. **docs/06_DATA_FORMATS.md** (updated)
+4. **docs/04_DATA_FORMATS.md** (updated)
    - XML format specifications
    - Parquet format details
    - SQLite schema guidelines
@@ -655,10 +655,10 @@ config.table = "user_data";  // Becomes `user_data`
 
 ### Documentation
 
-- **Installation**: [docs/02_INSTALLATION.md](docs/02_INSTALLATION.md)
-- **User Guide**: [docs/04_USER_GUIDE.md](docs/04_USER_GUIDE.md)
-- **API Reference**: [docs/20_API_REFERENCE.md](docs/20_API_REFERENCE.md)
-- **Data Ingestion**: [docs/07_DATA_INGESTION.md](docs/07_DATA_INGESTION.md)
+- **Installation**: [docs/02_GETTING_STARTED.md](docs/02_GETTING_STARTED.md)
+- **User Guide**: [docs/03_USER_GUIDE.md](docs/03_USER_GUIDE.md)
+- **API Reference**: [docs/07_API_REFERENCE.md](docs/07_API_REFERENCE.md)
+- **Data Ingestion**: [docs/05_DATA_INGESTION.md](docs/05_DATA_INGESTION.md)
 
 ### Community
 

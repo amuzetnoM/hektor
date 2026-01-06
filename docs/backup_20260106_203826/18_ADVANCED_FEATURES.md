@@ -724,10 +724,10 @@ auto results = ivf.search(query, 10);
 
 ## See Also
 
-- [Quantization Guide](14_QUANTIZATION.md) - Detailed quantization techniques
-- [Architecture](05_ARCHITECTURE.md) - System architecture
-- [API Reference](20_API_REFERENCE.md) - Complete API documentation
-- [Deployment](16_DEPLOYMENT.md) - Production deployment guide
+- [Quantization Guide](16_QUANTIZATION.md) - Detailed quantization techniques
+- [Architecture](06_ARCHITECTURE.md) - System architecture
+- [API Reference](07_API_REFERENCE.md) - Complete API documentation
+- [Deployment](13_DEPLOYMENT.md) - Production deployment guide
 
 ---
 

@@ -454,14 +454,14 @@ Comprehensive documentation is available in the `docs/` directory:
 | # | Document | Description |
 |---|----------|-------------|
 | 01 | [README](docs/01_README.md) | Documentation overview and index |
-| 02 | [GETTING_STARTED](docs/02_INSTALLATION.md) | Installation, quick start, basic usage |
-| 03 | [USER_GUIDE](docs/04_USER_GUIDE.md) | Complete user guide |
-| 04 | [DATA_FORMATS](docs/06_DATA_FORMATS.md) | **NEW** - Supported data types and format specifications |
-| 05 | [DATA_INGESTION](docs/07_DATA_INGESTION.md) | Data ingestion with adapters (CSV, JSON, PDF, Excel, Text) |
-| 06 | [ARCHITECTURE](docs/05_ARCHITECTURE.md) | System design, data flow, component diagrams |
-| 07 | [API_REFERENCE](docs/20_API_REFERENCE.md) | Complete API documentation |
-| 08 | [MODELS](docs/08_EMBEDDINGS_MODELS.md) | Model specifications, benchmarks |
-| 09 | [MATH](docs/09_VECTOR_OPERATIONS.md) | Mathematical foundations, HNSW algorithm |
+| 02 | [GETTING_STARTED](docs/02_GETTING_STARTED.md) | Installation, quick start, basic usage |
+| 03 | [USER_GUIDE](docs/03_USER_GUIDE.md) | Complete user guide |
+| 04 | [DATA_FORMATS](docs/04_DATA_FORMATS.md) | **NEW** - Supported data types and format specifications |
+| 05 | [DATA_INGESTION](docs/05_DATA_INGESTION.md) | Data ingestion with adapters (CSV, JSON, PDF, Excel, Text) |
+| 06 | [ARCHITECTURE](docs/06_ARCHITECTURE.md) | System design, data flow, component diagrams |
+| 07 | [API_REFERENCE](docs/07_API_REFERENCE.md) | Complete API documentation |
+| 08 | [MODELS](docs/08_MODELS.md) | Model specifications, benchmarks |
+| 09 | [MATH](docs/09_MATH.md) | Mathematical foundations, HNSW algorithm |
 | 10 | [AI_TRAINING](docs/10_AI_TRAINING.md) | Training custom models, fine-tuning |
 
 ---

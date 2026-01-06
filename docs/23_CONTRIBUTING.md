@@ -1,3 +1,11 @@
+---
+title: "Contributing Guide"
+description: "How to contribute to Vector Studio"
+version: "2.3.0"
+last_updated: "2026-01-06"
+sidebar_position: 23
+category: "Guide"
+---
 # Contributing to Vector Studio
 
 Thank you for your interest in contributing to Vector Studio. This document provides guidelines and instructions for contributing.

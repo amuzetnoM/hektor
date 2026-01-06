@@ -534,8 +534,8 @@ client.download(
 
 ## See Also
 
-- [Data Ingestion](07_DATA_INGESTION.md) - Complete data adapter guide
-- [API Reference](20_API_REFERENCE.md) - Full API documentation
+- [Data Ingestion](05_DATA_INGESTION.md) - Complete data adapter guide
+- [API Reference](07_API_REFERENCE.md) - Full API documentation
 - [Usage Examples](12_USAGE_EXAMPLES.md) - More examples
 
 ---

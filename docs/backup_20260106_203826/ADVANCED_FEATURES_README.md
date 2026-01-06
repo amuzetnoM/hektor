@@ -162,8 +162,8 @@ python examples/distributed_demo.py
 ## 📖 Documentation
 
 - **API Reference**: `docs/18_ADVANCED_FEATURES.md`
-- **Architecture**: `docs/05_ARCHITECTURE.md`
-- **Deployment**: `docs/16_DEPLOYMENT.md`
+- **Architecture**: `docs/06_ARCHITECTURE.md`
+- **Deployment**: `docs/13_DEPLOYMENT.md`
 
 ## Next Steps
 
