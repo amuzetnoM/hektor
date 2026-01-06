@@ -233,11 +233,54 @@ Result<void> BM25Engine::add_document(VectorId id, const std::string& content) {
 }
 
 Result<void> BM25Engine::remove_document(VectorId id) {
-    return Error("Not implemented yet");
+    auto it = impl_->documents.find(id);
+    if (it == impl_->documents.end()) {
+        return Error("Document not found: " + std::to_string(id));
+    }
+    
+    const auto& doc = it->second;
+    
+    // Update inverted index
+    for (const auto& [term, term_data] : doc.terms) {
+        auto& postings = impl_->inverted_index[term];
+        postings.erase(
+            std::remove_if(postings.begin(), postings.end(),
+                [id](const auto& p) { return p.first == id; }),
+            postings.end()
+        );
+        
+        // Update document frequency
+        impl_->document_frequency[term]--;
+        if (impl_->document_frequency[term] == 0) {
+            impl_->document_frequency.erase(term);
+            impl_->inverted_index.erase(term);
+        }
+    }
+    
+    // Update statistics
+    impl_->total_terms -= doc.length;
+    impl_->documents.erase(it);
+    impl_->total_documents--;
+    
+    if (impl_->total_documents > 0) {
+        impl_->avg_doc_length = static_cast<double>(impl_->total_terms) / impl_->total_documents;
+    } else {
+        impl_->avg_doc_length = 0.0;
+    }
+    
+    return {};
 }
 
 Result<void> BM25Engine::update_document(VectorId id, const std::string& content) {
-    return Error("Not implemented yet");
+    // Remove old document
+    auto remove_result = remove_document(id);
+    if (!remove_result) {
+        // Document doesn't exist, just add it
+        return impl_->add_document(id, content);
+    }
+    
+    // Add new document
+    return impl_->add_document(id, content);
 }
 
 Result<std::vector<BM25Result>> BM25Engine::search(const std::string& query,
@@ -259,11 +302,131 @@ float BM25Engine::average_document_length() const {
 }
 
 Result<void> BM25Engine::save(const std::string& path) const {
-    return Error("Not implemented yet");
+    std::ofstream file(path, std::ios::binary);
+    if (!file) {
+        return Error("Failed to open file for writing: " + path);
+    }
+    
+    // Write header
+    file << "BM25_ENGINE_V1\n";
+    
+    // Write configuration
+    file << "k1=" << impl_->config.k1 << "\n";
+    file << "b=" << impl_->config.b << "\n";
+    file << "min_term_length=" << impl_->config.min_term_length << "\n";
+    file << "use_stemming=" << (impl_->config.use_stemming ? "1" : "0") << "\n";
+    file << "case_sensitive=" << (impl_->config.case_sensitive ? "1" : "0") << "\n";
+    
+    // Write statistics
+    file << "total_documents=" << impl_->total_documents << "\n";
+    file << "total_terms=" << impl_->total_terms << "\n";
+    file << "avg_doc_length=" << impl_->avg_doc_length << "\n";
+    
+    // Write documents
+    file << "DOCUMENTS_START\n";
+    for (const auto& [id, doc] : impl_->documents) {
+        // Escape newlines in content
+        std::string escaped_content = doc.content;
+        size_t pos = 0;
+        while ((pos = escaped_content.find('\n', pos)) != std::string::npos) {
+            escaped_content.replace(pos, 1, "\\n");
+            pos += 2;
+        }
+        file << id << "\t" << doc.length << "\t" << escaped_content << "\n";
+    }
+    file << "DOCUMENTS_END\n";
+    
+    file.close();
+    
+    LOG_INFO("Saved BM25 engine to: " + path);
+    return {};
 }
 
 Result<BM25Engine> BM25Engine::load(const std::string& path) {
-    return Error("Not implemented yet");
+    std::ifstream file(path);
+    if (!file) {
+        return Error("Failed to open file for reading: " + path);
+    }
+    
+    std::string line;
+    
+    // Read header
+    std::getline(file, line);
+    if (line != "BM25_ENGINE_V1") {
+        return Error("Invalid BM25 engine file format");
+    }
+    
+    // Read configuration
+    BM25Config config;
+    std::unordered_map<std::string, std::string> config_values;
+    
+    while (std::getline(file, line)) {
+        if (line == "DOCUMENTS_START") {
+            break;
+        }
+        
+        size_t eq_pos = line.find('=');
+        if (eq_pos != std::string::npos) {
+            std::string key = line.substr(0, eq_pos);
+            std::string value = line.substr(eq_pos + 1);
+            config_values[key] = value;
+        }
+    }
+    
+    // Parse configuration
+    if (config_values.count("k1")) {
+        config.k1 = std::stof(config_values["k1"]);
+    }
+    if (config_values.count("b")) {
+        config.b = std::stof(config_values["b"]);
+    }
+    if (config_values.count("min_term_length")) {
+        config.min_term_length = std::stoul(config_values["min_term_length"]);
+    }
+    if (config_values.count("use_stemming")) {
+        config.use_stemming = (config_values["use_stemming"] == "1");
+    }
+    if (config_values.count("case_sensitive")) {
+        config.case_sensitive = (config_values["case_sensitive"] == "1");
+    }
+    
+    // Create engine
+    BM25Engine engine(config);
+    
+    // Read documents
+    while (std::getline(file, line)) {
+        if (line == "DOCUMENTS_END") {
+            break;
+        }
+        
+        std::istringstream iss(line);
+        VectorId id;
+        size_t length;
+        std::string content;
+        
+        if (iss >> id >> length) {
+            iss.get(); // skip tab
+            std::getline(iss, content);
+            
+            // Unescape newlines
+            size_t pos = 0;
+            while ((pos = content.find("\\n", pos)) != std::string::npos) {
+                content.replace(pos, 2, "\n");
+                pos += 1;
+            }
+            
+            // Add document
+            auto result = engine.add_document(id, content);
+            if (!result) {
+                return Error("Failed to load document " + std::to_string(id) + ": " + result.error().message);
+            }
+        }
+    }
+    
+    file.close();
+    
+    LOG_INFO("Loaded BM25 engine from: " + path);
+    return engine;
 }
 
 } // namespace hybrid

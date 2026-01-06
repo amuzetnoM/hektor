@@ -7,8 +7,8 @@ sidebar_position: 18
 
 # Advanced Features Guide
 
-**Version**: 2.1.0  
-**Status**: Production Ready  
+**Version**: 2.1.0
+**Status**: Production Ready
 **Target Release**: Q1 2026
 
 ---
@@ -61,9 +61,9 @@ config.min_replicas = 2;
 
 // Add replica nodes
 config.nodes = {
-    {.node_id = "primary", .host = "localhost", .port = 8080, .is_primary = true, .priority = 100},
-    {.node_id = "replica1", .host = "localhost", .port = 8081, .is_primary = false, .priority = 50},
-    {.node_id = "replica2", .host = "localhost", .port = 8082, .is_primary = false, .priority = 50}
+ {.node_id = "primary", .host = "localhost", .port = 8080, .is_primary = true, .priority = 100},
+ {.node_id = "replica1", .host = "localhost", .port = 8081, .is_primary = false, .priority = 50},
+ {.node_id = "replica2", .host = "localhost", .port = 8082, .is_primary = false, .priority = 50}
 };
 
 // Create replication manager
@@ -80,8 +80,8 @@ Synchronous replication ensuring data durability at the cost of latency.
 
 ```cpp
 config.mode = ReplicationMode::Sync;
-config.sync_timeout_ms = 5000;  // Wait up to 5 seconds
-config.min_replicas = 2;        // Must replicate to at least 2 nodes
+config.sync_timeout_ms = 5000; // Wait up to 5 seconds
+config.min_replicas = 2; // Must replicate to at least 2 nodes
 
 ReplicationManager replication(config);
 replication.start();
@@ -89,7 +89,7 @@ replication.start();
 // Blocks until replicated to min_replicas
 auto result = replication.replicate_add(id, vector, metadata);
 if (!result) {
-    std::cerr << "Replication failed: " << result.error().message << "\n";
+ std::cerr << "Replication failed: " << result.error().message << "\n";
 }
 ```
 
@@ -99,7 +99,7 @@ Balance between performance and durability.
 
 ```cpp
 config.mode = ReplicationMode::SemiSync;
-config.min_replicas = 1;  // Only need one replica to acknowledge
+config.min_replicas = 1; // Only need one replica to acknowledge
 ```
 
 ### Sharding
@@ -119,10 +119,10 @@ shard_config.num_shards = 4;
 
 // Define shards
 shard_config.shards = {
-    {.shard_id = "shard0", .replicas = {primary1, replica1}},
-    {.shard_id = "shard1", .replicas = {primary2, replica2}},
-    {.shard_id = "shard2", .replicas = {primary3, replica3}},
-    {.shard_id = "shard3", .replicas = {primary4, replica4}}
+ {.shard_id = "shard0", .replicas = {primary1, replica1}},
+ {.shard_id = "shard1", .replicas = {primary2, replica2}},
+ {.shard_id = "shard2", .replicas = {primary3, replica3}},
+ {.shard_id = "shard3", .replicas = {primary4, replica4}}
 };
 
 ShardingManager sharding(shard_config);
@@ -138,10 +138,10 @@ auto shard = sharding.get_shard_for_id(vector_id);
 shard_config.strategy = ShardingStrategy::Range;
 
 shard_config.shards = {
-    {.shard_id = "shard0", .start_range = 0, .end_range = 250000},
-    {.shard_id = "shard1", .start_range = 250000, .end_range = 500000},
-    {.shard_id = "shard2", .start_range = 500000, .end_range = 750000},
-    {.shard_id = "shard3", .start_range = 750000, .end_range = 1000000}
+ {.shard_id = "shard0", .start_range = 0, .end_range = 250000},
+ {.shard_id = "shard1", .start_range = 250000, .end_range = 500000},
+ {.shard_id = "shard2", .start_range = 500000, .end_range = 750000},
+ {.shard_id = "shard3", .start_range = 750000, .end_range = 1000000}
 };
 ```
 
@@ -153,7 +153,7 @@ For dynamic resharding without massive data movement.
 shard_config.strategy = ShardingStrategy::Consistent;
 shard_config.enable_auto_resharding = true;
 shard_config.reshard_threshold_items = 1000000;
-shard_config.reshard_threshold_imbalance = 0.2f;  // 20%
+shard_config.reshard_threshold_imbalance = 0.2f; // 20%
 ```
 
 ### Distributed Vector Database
@@ -192,13 +192,13 @@ bool healthy = dist_db.is_cluster_healthy();
 ```cpp
 // Set up failover callback
 replication.set_failover_callback([](const std::string& new_primary) {
-    LOG_INFO("Failover to new primary: " + new_primary);
-    // Reconfigure clients to point to new primary
+ LOG_INFO("Failover to new primary: " + new_primary);
+ // Reconfigure clients to point to new primary
 });
 
 // Manual failover trigger
 if (!replication.is_healthy()) {
-    replication.trigger_failover();
+ replication.trigger_failover();
 }
 
 // Promote replica to primary
@@ -220,8 +220,8 @@ using namespace vdb::hybrid;
 
 // Create BM25 engine
 BM25Config bm25_config;
-bm25_config.k1 = 1.2f;  // Term frequency saturation
-bm25_config.b = 0.75f;  // Length normalization
+bm25_config.k1 = 1.2f; // Term frequency saturation
+bm25_config.b = 0.75f; // Length normalization
 bm25_config.use_stemming = true;
 
 BM25Engine bm25(bm25_config);
@@ -235,12 +235,12 @@ bm25.add_document(3, "Dollar weakens against precious metals");
 auto lexical_results = bm25.search("gold silver prices", 10);
 
 for (const auto& result : *lexical_results) {
-    std::cout << "Doc " << result.id << ": " << result.score << "\n";
-    std::cout << "Matched terms: ";
-    for (const auto& term : result.matched_terms) {
-        std::cout << term << " ";
-    }
-    std::cout << "\n";
+ std::cout << "Doc " << result.id << ": " << result.score << "\n";
+ std::cout << "Matched terms: ";
+ for (const auto& term : result.matched_terms) {
+ std::cout << term << " ";
+ }
+ std::cout << "\n";
 }
 ```
 
@@ -256,7 +256,7 @@ using namespace vdb::hybrid;
 HybridSearchConfig hybrid_config;
 hybrid_config.vector_weight = 0.7f;
 hybrid_config.lexical_weight = 0.3f;
-hybrid_config.fusion = FusionMethod::RRF;  // Reciprocal Rank Fusion
+hybrid_config.fusion = FusionMethod::RRF; // Reciprocal Rank Fusion
 
 HybridSearchEngine hybrid(hybrid_config);
 
@@ -268,10 +268,10 @@ auto lexical_results = bm25.search(query_text, 20);
 auto combined = hybrid.combine(*vector_results, *lexical_results, 10);
 
 for (const auto& result : *combined) {
-    std::cout << "ID: " << result.id << "\n";
-    std::cout << "Combined score: " << result.combined_score << "\n";
-    std::cout << "Vector score: " << result.vector_score << "\n";
-    std::cout << "Lexical score: " << result.lexical_score << "\n";
+ std::cout << "ID: " << result.id << "\n";
+ std::cout << "Combined score: " << result.combined_score << "\n";
+ std::cout << "Vector score: " << result.vector_score << "\n";
+ std::cout << "Lexical score: " << result.lexical_score << "\n";
 }
 ```
 
@@ -281,7 +281,7 @@ for (const auto& result : *combined) {
 
 ```cpp
 hybrid_config.fusion = FusionMethod::RRF;
-hybrid_config.rrf_k = 60;  // RRF constant
+hybrid_config.rrf_k = 60; // RRF constant
 ```
 
 **Formula**: `score = Σ(1 / (k + rank))`
@@ -330,7 +330,7 @@ extractor.train(corpus);
 auto keywords = extractor.extract("Gold and silver prices surge amid inflation fears");
 
 for (const auto& kw : *keywords) {
-    std::cout << kw.term << ": " << kw.score << " (freq=" << kw.frequency << ")\n";
+ std::cout << kw.term << ": " << kw.score << " (freq=" << kw.frequency << ")\n";
 }
 ```
 
@@ -383,7 +383,7 @@ auto embeddings = embedder.embed_batch(texts);
 
 // Add to database
 for (size_t i = 0; i < embeddings->size(); ++i) {
-    db.add((*embeddings)[i], create_metadata(texts[i]));
+ db.add((*embeddings)[i], create_metadata(texts[i]));
 }
 ```
 
@@ -395,14 +395,14 @@ std::vector<Vector> vectors;
 std::vector<std::string> labels;
 
 for (const auto& item : dataset) {
-    vectors.push_back(item.embedding);
-    labels.push_back(item.label);
+ vectors.push_back(item.embedding);
+ labels.push_back(item.label);
 }
 
 TensorFlowEmbedder::export_for_training(
-    vectors,
-    labels,
-    "training_data/tfrecords/"
+ vectors,
+ labels,
+ "training_data/tfrecords/"
 );
 ```
 
@@ -418,8 +418,8 @@ using namespace vdb::framework;
 // Load TorchScript model
 PyTorchConfig pt_config;
 pt_config.model_path = "models/my_encoder.pt";
-pt_config.device = "cuda";  // Use GPU
-pt_config.use_half_precision = true;  // FP16 for speed
+pt_config.device = "cuda"; // Use GPU
+pt_config.use_half_precision = true; // FP16 for speed
 
 PyTorchEmbedder embedder(pt_config);
 
@@ -439,20 +439,20 @@ std::vector<std::pair<Vector, Vector>> negative_pairs;
 
 // Generate pairs from database
 for (size_t i = 0; i < dataset.size(); ++i) {
-    for (size_t j = i + 1; j < dataset.size(); ++j) {
-        if (dataset[i].label == dataset[j].label) {
-            positive_pairs.push_back({dataset[i].vec, dataset[j].vec});
-        } else {
-            negative_pairs.push_back({dataset[i].vec, dataset[j].vec});
-        }
-    }
+ for (size_t j = i + 1; j < dataset.size(); ++j) {
+ if (dataset[i].label == dataset[j].label) {
+ positive_pairs.push_back({dataset[i].vec, dataset[j].vec});
+ } else {
+ negative_pairs.push_back({dataset[i].vec, dataset[j].vec});
+ }
+ }
 }
 
 TrainingExporter exporter;
 exporter.export_contrastive_pairs(
-    positive_pairs,
-    negative_pairs,
-    "training_data/pairs.jsonl"
+ positive_pairs,
+ negative_pairs,
+ "training_data/pairs.jsonl"
 );
 ```
 
@@ -485,8 +485,8 @@ std::string document = load_long_document();
 auto chunks = rag.chunk_document(document);
 
 for (const auto& chunk : *chunks) {
-    auto embedding = embedder.embed(chunk);
-    db.add(*embedding, create_metadata(chunk));
+ auto embedding = embedder.embed(chunk);
+ db.add(*embedding, create_metadata(chunk));
 }
 
 // Query with RAG
@@ -515,7 +515,7 @@ Drop-in replacement for LangChain's vector store.
 using namespace vdb::framework;
 
 LangChainConfig lc_config;
-lc_config.use_mmr = true;  // Maximal Marginal Relevance
+lc_config.use_mmr = true; // Maximal Marginal Relevance
 lc_config.mmr_lambda = 0.5f;
 
 LangChainAdapter langchain(lc_config);
@@ -528,10 +528,10 @@ auto results_with_scores = langchain.similarity_search_with_score("gold", 4);
 
 // MMR search (diversity)
 auto diverse_results = langchain.max_marginal_relevance_search(
-    "gold prices",
-    4,    // k: final results
-    20,   // fetch_k: initial retrieval
-    0.5f  // lambda: 0=diversity, 1=relevance
+ "gold prices",
+ 4, // k: final results
+ 20, // fetch_k: initial retrieval
+ 0.5f // lambda: 0=diversity, 1=relevance
 );
 
 // As retriever (returns text only)
@@ -577,7 +577,7 @@ Smart document splitting strategies.
 
 ```cpp
 ChunkingConfig chunk_config;
-chunk_config.strategy = ChunkingStrategy::Semantic;  // Best for RAG
+chunk_config.strategy = ChunkingStrategy::Semantic; // Best for RAG
 chunk_config.chunk_size = 512;
 chunk_config.chunk_overlap = 50;
 
@@ -588,14 +588,14 @@ auto chunks = chunker.chunk(long_document);
 
 // With metadata preservation
 auto chunks_with_meta = chunker.chunk_with_metadata(
-    long_document,
-    base_metadata
+ long_document,
+ base_metadata
 );
 
 for (const auto& chunk : *chunks_with_meta) {
-    std::cout << "Chunk [" << chunk.start_char << ":" << chunk.end_char << "]\n";
-    std::cout << chunk.text << "\n";
-    std::cout << "Metadata: " << chunk.metadata.to_json() << "\n";
+ std::cout << "Chunk [" << chunk.start_char << ":" << chunk.end_char << "]\n";
+ std::cout << chunk.text << "\n";
+ std::cout << "Metadata: " << chunk.metadata.to_json() << "\n";
 }
 ```
 
@@ -616,7 +616,7 @@ ProductQuantizerConfig pq_config;
 pq_config.dimension = 512;
 pq_config.num_subquantizers = 8;
 pq_config.num_centroids = 256;
-pq_config.use_gpu = true;  // Enable GPU acceleration
+pq_config.use_gpu = true; // Enable GPU acceleration
 
 ProductQuantizer pq(pq_config);
 
@@ -635,9 +635,9 @@ Inverted File index with Product Quantization.
 #include "vdb/quantization/ivf_index.hpp"
 
 IVFConfig ivf_config;
-ivf_config.num_clusters = 256;      // Number of Voronoi cells
-ivf_config.probe_count = 8;         // Cells to search
-ivf_config.use_pq = true;           // Product Quantization
+ivf_config.num_clusters = 256; // Number of Voronoi cells
+ivf_config.probe_count = 8; // Cells to search
+ivf_config.use_pq = true; // Product Quantization
 ivf_config.pq_subquantizers = 8;
 ivf_config.use_gpu = true;
 
@@ -648,7 +648,7 @@ ivf.train(training_vectors);
 
 // Add vectors
 for (const auto& vec : vectors) {
-    ivf.add(vec, metadata);
+ ivf.add(vec, metadata);
 }
 
 // Search (much faster for large datasets)
@@ -663,18 +663,18 @@ auto results = ivf.search(query, 10);
 
 | Dataset Size | Vector Only | Lexical Only | Hybrid (RRF) | Accuracy Improvement |
 |--------------|-------------|--------------|--------------|---------------------|
-| 10K docs     | 2ms         | 5ms          | 7ms          | +12%                |
-| 100K docs    | 5ms         | 15ms         | 20ms         | +15%                |
-| 1M docs      | 12ms        | 50ms         | 62ms         | +18%                |
+| 10K docs | 2ms | 5ms | 7ms | +12% |
+| 100K docs | 5ms | 15ms | 20ms | +15% |
+| 1M docs | 12ms | 50ms | 62ms | +18% |
 
 ### Distributed Performance
 
 | Configuration | Throughput | Latency (p99) | Availability |
 |--------------|------------|---------------|--------------|
-| Single node  | 500 qps    | 5ms           | 99.5%        |
-| 2x replicas  | 800 qps    | 6ms           | 99.99%       |
-| 4x shards    | 1800 qps   | 8ms           | 99.99%       |
-| 4x shards + 2x replicas | 3000 qps | 10ms | 99.999%     |
+| Single node | 500 qps | 5ms | 99.5% |
+| 2x replicas | 800 qps | 6ms | 99.99% |
+| 4x shards | 1800 qps | 8ms | 99.99% |
+| 4x shards + 2x replicas | 3000 qps | 10ms | 99.999% |
 
 ### Framework Integration
 
@@ -731,6 +731,6 @@ auto results = ivf.search(query, 10);
 
 ---
 
-**Last Updated**: 2026-01-06  
-**Version**: 2.1.0  
-**Status**: Production Ready ✅
+**Last Updated**: 2026-01-06
+**Version**: 2.1.0
+**Status**: Production Ready

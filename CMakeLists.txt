@@ -436,6 +436,7 @@ if(VDB_BUILD_TESTS)
         tests/test_storage.cpp
         tests/test_embeddings.cpp
         tests/test_ingest.cpp
+        tests/test_bm25.cpp
     )
     
     target_link_libraries(vdb_tests PRIVATE
