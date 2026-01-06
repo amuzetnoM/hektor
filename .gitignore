@@ -322,3 +322,13 @@ credentials.json
 .credentials/
 .secrets/
 SETUP_STATUS.md
+
+# ============================================================================
+# ML Framework & Dependencies (Large Directories)
+# ============================================================================
+vcpkg/
+external/
+scripts/*.py
+!scripts/__init__.py
+verify_*.py
+check_python_packages.py
