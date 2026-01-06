@@ -321,3 +321,4 @@ docs/latex/
 credentials.json
 .credentials/
 .secrets/
+SETUP_STATUS.md
