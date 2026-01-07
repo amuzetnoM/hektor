@@ -10,6 +10,7 @@ namespace vdb::cli {
 // Forward declarations
 class CommandBase;
 class OutputFormatter;
+class InteractiveShell;
 
 /**
  * Main CLI class - Entry point for Hektor CLI
@@ -22,12 +23,20 @@ public:
     // Main execution
     int run();
 
+    // Get registered commands (for shell)
+    const std::unordered_map<std::string, std::shared_ptr<CommandBase>>& get_commands() const {
+        return commands_;
+    }
+
 private:
     // Parse command line arguments
     bool parse_arguments();
     
     // Execute the command
     int execute_command();
+    
+    // Run interactive shell
+    int run_interactive_shell();
     
     // Register all available commands
     void register_commands();

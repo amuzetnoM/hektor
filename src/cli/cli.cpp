@@ -1,6 +1,8 @@
 #include "vdb/cli/cli.hpp"
 #include "vdb/cli/command_base.hpp"
 #include "vdb/cli/output_formatter.hpp"
+#include "vdb/cli/interactive_shell.hpp"
+#include "vdb/cli/colors.hpp"
 #include "vdb/cli/commands/db_commands.hpp"
 #include "vdb/cli/commands/data_commands.hpp"
 #include "vdb/cli/commands/search_commands.hpp"
@@ -23,6 +25,9 @@ CLI::CLI(int argc, char** argv)
 CLI::~CLI() = default;
 
 int CLI::run() {
+    // Initialize colors
+    Colors::enable(Colors::supports_colors());
+    
     if (argc_ < 2) {
         show_help();
         return 1;
@@ -41,6 +46,11 @@ int CLI::run() {
     if (command_ == "version" || command_ == "--version" || command_ == "-V") {
         show_version();
         return 0;
+    }
+    
+    // Handle interactive shell
+    if (command_ == "shell" || command_ == "interactive" || command_ == "repl") {
+        return run_interactive_shell();
     }
     
     return execute_command();
@@ -269,118 +279,118 @@ std::shared_ptr<CommandBase> CLI::get_command(const std::string& name) {
 }
 
 void CLI::show_help() {
-    std::cout << R"(
-Hektor - High-Performance Vector Database CLI
-Version 2.3.0 - Phase 2 Extended
-
-Usage: hektor [OPTIONS] <COMMAND> [ARGS]
-
-Global Options:
-  -v, --verbose         Verbose output
-  -q, --quiet           Quiet mode
-  -d, --debug           Debug mode
-  -f, --format FORMAT   Output format (table|json|csv)
-  -o, --output FILE     Write output to file
-  -h, --help            Show help
-      --version         Show version
-
-Commands:
-  Database Management:
-    init <path>           Initialize a new database
-    info <path>           Show database information
-    optimize <path>       Optimize database
-    backup <path> <dest>  Backup database
-    restore <src> <path>  Restore from backup
-    health <path>         Health check
-    db:list               List all databases
-  
-  Data Operations:
-    add <db>              Add a document
-    get <db> <id>         Get document by ID
-    update <db> <id>      Update a document
-    delete <db> <id>      Delete a document (alias: rm)
-    batch <db> <file>     Batch insert from file
-    list <db>             List documents (alias: ls)
-  
-  Search:
-    search <db> <query>   Semantic search (alias: s)
+    std::cout << Colors::bold(Colors::blue("\nHektor - High-Performance Vector Database CLI\n"));
+    std::cout << Colors::gray("Version 2.3.0 - Phase 3: Interactive Mode + Advanced Features\n\n");
     
-  Hybrid Search:
-    hybrid:search <db>    Hybrid vector+BM25 search (alias: hs)
-    hybrid:bm25 <db>      BM25 full-text search only
-  
-  Ingestion:
-    ingest <db> <source>  Import external data
-    ingest:scan <source>  Scan source without importing
-  
-  Index Management:
-    index:build <db>      Build or rebuild index
-    index:optimize <db>   Optimize index
-    index:stats <db>      Show index statistics
-    index:benchmark <db>  Benchmark index performance
-  
-  Collections:
-    collection:create     Create collection
-    collection:list       List collections (alias: collection:ls)
-    collection:delete     Delete collection
-    collection:info       Show collection info
-  
-  Export:
-    export:data <db>      Export database data
-    export:pairs <db>     Export training pairs
-    export:triplets <db>  Export training triplets
-  
-  General:
-    help                  Show this help message
-    version               Show version information
-
-Examples:
-  # Initialize and add documents
-  hektor init ./mydb --preset gold-standard
-  hektor add ./mydb --text "Gold prices rising"
-  hektor batch ./mydb documents.jsonl
-
-  # Search
-  hektor search ./mydb "gold outlook" -k 20
-  hektor hs ./mydb "analysis" --fusion rrf
-
-  # Ingestion
-  hektor ingest ./mydb ./docs --format pdf --recursive
-  hektor ingest ./mydb data.csv --chunk-strategy sentence
-
-  # Index management
-  hektor index:build ./mydb --type hnsw --hnsw-m 32
-  hektor index:benchmark ./mydb --queries 1000
-
-  # Collections
-  hektor collection:create ./mydb journals
-  hektor collection:list ./mydb
-
-  # Export for ML training
-  hektor export:triplets ./mydb training.jsonl --negative-samples 10
-
-  # Database maintenance
-  hektor optimize ./mydb
-  hektor backup ./mydb ./backup.tar.gz
-  hektor health ./mydb
-
-For detailed command help: hektor <command> --help
-For more information: https://github.com/amuzetnoM/hektor
-)";
+    std::cout << Colors::bold("Usage: ") << "hektor [OPTIONS] <COMMAND> [ARGS]\n\n";
+    
+    std::cout << Colors::bold("Global Options:\n");
+    std::cout << "  -v, --verbose         Verbose output\n";
+    std::cout << "  -q, --quiet           Quiet mode\n";
+    std::cout << "  -d, --debug           Debug mode\n";
+    std::cout << "  -f, --format FORMAT   Output format (table|json|csv)\n";
+    std::cout << "  -o, --output FILE     Write output to file\n";
+    std::cout << "  -h, --help            Show help\n";
+    std::cout << "      --version         Show version\n\n";
+    
+    std::cout << Colors::cyan("Commands:\n");
+    std::cout << Colors::bold("  Database Management:\n");
+    std::cout << "    init <path>           Initialize a new database\n";
+    std::cout << "    info <path>           Show database information\n";
+    std::cout << "    optimize <path>       Optimize database\n";
+    std::cout << "    backup <path> <dest>  Backup database\n";
+    std::cout << "    restore <src> <path>  Restore from backup\n";
+    std::cout << "    health <path>         Health check\n";
+    std::cout << "    db:list               List all databases\n\n";
+    
+    std::cout << Colors::bold("  Data Operations:\n");
+    std::cout << "    add <db>              Add a document\n";
+    std::cout << "    get <db> <id>         Get document by ID\n";
+    std::cout << "    update <db> <id>      Update a document\n";
+    std::cout << "    delete <db> <id>      Delete a document (alias: rm)\n";
+    std::cout << "    batch <db> <file>     Batch insert from file\n";
+    std::cout << "    list <db>             List documents (alias: ls)\n\n";
+    
+    std::cout << Colors::bold("  Search:\n");
+    std::cout << "    search <db> <query>   Semantic search (alias: s)\n\n";
+    
+    std::cout << Colors::bold("  Hybrid Search:\n");
+    std::cout << "    hybrid:search <db>    Hybrid vector+BM25 search (alias: hs)\n";
+    std::cout << "    hybrid:bm25 <db>      BM25 full-text search only\n\n";
+    
+    std::cout << Colors::bold("  Ingestion:\n");
+    std::cout << "    ingest <db> <source>  Import external data\n";
+    std::cout << "    ingest:scan <source>  Scan source without importing\n\n";
+    
+    std::cout << Colors::bold("  Index Management:\n");
+    std::cout << "    index:build <db>      Build or rebuild index\n";
+    std::cout << "    index:optimize <db>   Optimize index\n";
+    std::cout << "    index:stats <db>      Show index statistics\n";
+    std::cout << "    index:benchmark <db>  Benchmark index performance\n\n";
+    
+    std::cout << Colors::bold("  Collections:\n");
+    std::cout << "    collection:create     Create collection\n";
+    std::cout << "    collection:list       List collections (alias: col:ls)\n";
+    std::cout << "    collection:delete     Delete collection\n";
+    std::cout << "    collection:info       Show collection info\n\n";
+    
+    std::cout << Colors::bold("  Export:\n");
+    std::cout << "    export:data <db>      Export database data\n";
+    std::cout << "    export:pairs <db>     Export training pairs\n";
+    std::cout << "    export:triplets <db>  Export training triplets\n\n";
+    
+    std::cout << Colors::bold("  Interactive Mode:\n");
+    std::cout << Colors::highlight("    shell [db]            ") << "Start interactive REPL shell\n";
+    std::cout << Colors::highlight("    repl [db]             ") << "Alias for shell\n";
+    std::cout << Colors::highlight("    interactive [db]      ") << "Alias for shell\n\n";
+    
+    std::cout << Colors::bold("  General:\n");
+    std::cout << "    help                  Show this help message\n";
+    std::cout << "    version               Show version information\n\n";
+    
+    std::cout << Colors::bold("Examples:\n");
+    std::cout << Colors::gray("  # Interactive shell\n");
+    std::cout << "  hektor shell ./mydb\n\n";
+    
+    std::cout << Colors::gray("  # Initialize and add documents\n");
+    std::cout << "  hektor init ./mydb --preset gold-standard\n";
+    std::cout << "  hektor add ./mydb --text \"Gold prices rising\"\n";
+    std::cout << "  hektor batch ./mydb documents.jsonl\n\n";
+    
+    std::cout << Colors::gray("  # Search\n");
+    std::cout << "  hektor search ./mydb \"gold outlook\" -k 20\n";
+    std::cout << "  hektor hs ./mydb \"analysis\" --fusion rrf\n\n";
+    
+    std::cout << Colors::gray("  # Ingestion\n");
+    std::cout << "  hektor ingest ./mydb ./docs --format pdf --recursive\n";
+    std::cout << "  hektor ingest ./mydb data.csv --chunk-strategy sentence\n\n";
+    
+    std::cout << Colors::gray("  # Index management\n");
+    std::cout << "  hektor index:build ./mydb --type hnsw --hnsw-m 32\n";
+    std::cout << "  hektor index:benchmark ./mydb --queries 1000\n\n";
+    
+    std::cout << Colors::gray("For detailed command help: ") << "hektor <command> --help\n";
+    std::cout << Colors::gray("For more information: ") << Colors::cyan("https://github.com/amuzetnoM/hektor\n\n");
 }
 
 void CLI::show_version() {
-    std::cout << "Hektor CLI version 2.3.0 - Phase 2 Extended\n";
-    std::cout << "Vector Database Engine\n";
-    std::cout << "\nPhase 2 Features:\n";
-    std::cout << "  • 35+ commands across 8 categories\n";
-    std::cout << "  • Hybrid search (vector + BM25)\n";
-    std::cout << "  • Data ingestion with 10+ adapters\n";
-    std::cout << "  • Index management and optimization\n";
-    std::cout << "  • Collection management\n";
-    std::cout << "  • Export for ML training\n";
-    std::cout << "  • Database backup/restore\n";
-    std::cout << "  • Advanced data operations\n";
+    std::cout << Colors::bold(Colors::blue("Hektor Vector Database\n"));
+    std::cout << Colors::cyan("Version: ") << "2.3.0\n";
+    std::cout << Colors::cyan("Build: ") << "Phase 3 - Interactive Mode + Advanced Features\n";
+    std::cout << Colors::cyan("Features: ") << "43+ Commands, Interactive REPL, Progress Indicators, Color Output\n";
+    std::cout << Colors::gray("Copyright © 2025 Hektor Project\n");
+}
+
+int CLI::run_interactive_shell() {
+    std::string db_path;
+    
+    // Get database path if provided
+    if (!args_.empty()) {
+        db_path = args_[0];
+    }
+    
+    InteractiveShell shell(this, db_path);
+    return shell.run();
 }
 
 } // namespace vdb::cli
