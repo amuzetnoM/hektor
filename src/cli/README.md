@@ -2,6 +2,302 @@
 
 This is the Phase 3 implementation of the Hektor CLI, providing a comprehensive command-line interface with 43+ operational commands, interactive REPL shell, progress indicators, and color output.
 
+## 📸 Visual Guide - Major Screens & Features
+
+### Interactive REPL Shell - Welcome Screen
+
+```
+╔═══════════════════════════════════════════════════════╗
+║     Hektor Vector Database - Interactive Shell    ║
+║                   Version 2.3.0                    ║
+╚═══════════════════════════════════════════════════════╝
+
+Type help for available commands, exit to quit
+
+hektor > _
+```
+
+### Color-Coded Output Examples
+
+```
+✓ Success message (green, bold)
+  └─ Database initialized successfully
+  
+✗ Error message (red, bold)
+  └─ Database not found at ./mydb
+     Did you mean: ./my_db?
+     
+⚠ Warning message (yellow, bold)
+  └─ Index not optimized for 7 days
+     Consider running 'hektor optimize'
+     
+ℹ Info message (cyan)
+  └─ Total documents: 10,523
+     Index type: HNSW (M=32, ef=200)
+```
+
+### Progress Indicators in Action
+
+```
+📦 Batch importing documents...
+[████████████████░░░░] 65.3% 653/1000 (32.5 items/s, ETA: 10s)
+
+🔍 Building HNSW index...
+⠹ Processing vectors... (45.2s elapsed)
+
+✓ Completed! 1000 documents processed in 30.7s
+```
+
+### Interactive Session - Complete Workflow
+
+```
+$ hektor shell
+
+╔═══════════════════════════════════════════════════════╗
+║     Hektor Vector Database - Interactive Shell    ║
+║                   Version 2.3.0                    ║
+╚═══════════════════════════════════════════════════════╝
+
+Type help for available commands, exit to quit
+
+hektor > use ./mydb
+✓ Database set to: ./mydb
+
+hektor:./mydb > init --preset gold-standard
+🔧 Initializing database with gold-standard preset...
+✓ Database initialized successfully
+ℹ Dimension: 1536
+ℹ Index type: HNSW (M=32, ef=200)
+ℹ Metric: cosine
+
+hektor:./mydb > add --text "Gold prices rising on inflation fears"
+📝 Adding document...
+✓ Document added with ID: 12345
+ℹ Embedding generated (1536-dim)
+
+hektor:./mydb > search "gold outlook" -k 10
+🔍 Searching for similar documents...
+[████████████████████] 100% (0.18s)
+
+┌─────────┬────────────────────────────────────┬────────┐
+│ ID      │ Text                               │ Score  │
+├─────────┼────────────────────────────────────┼────────┤
+│ 12345   │ Gold prices rising on inflation... │ 0.953  │
+│ 23456   │ Gold market outlook positive       │ 0.921  │
+│ 34567   │ Inflation fears drive gold higher  │ 0.908  │
+└─────────┴────────────────────────────────────┴────────┘
+
+✓ Found 10 results in 0.18s
+
+hektor:./mydb > history
+1  use ./mydb
+2  init --preset gold-standard
+3  add --text "Gold prices rising on inflation fears"
+4  search "gold outlook" -k 10
+
+hektor:./mydb > exit
+👋 Goodbye!
+```
+
+### Hybrid Search with Fusion Methods
+
+```
+hektor:./mydb > hybrid:search "market analysis" --fusion rrf -k 20
+🔍 Searching with hybrid fusion (RRF)...
+  ├─ Vector search: [████████████████████] 100%
+  ├─ BM25 search:   [████████████████████] 100%
+  └─ Fusion (RRF):  [████████████████████] 100%
+  
+⏱️  Vector: 0.12s | BM25: 0.08s | Fusion: 0.03s | Total: 0.23s
+
+┌──────┬────────────────────────────────┬───────┬────────┐
+│ ID   │ Text                           │ Score │ Method │
+├──────┼────────────────────────────────┼───────┼────────┤
+│ 1234 │ Comprehensive market analysis  │ 0.953 │ Hybrid │
+│ 5678 │ Market forecast for next qtr   │ 0.921 │ Hybrid │
+│ 9012 │ Technical analysis gold prices │ 0.908 │ Hybrid │
+└──────┴────────────────────────────────┴───────┴────────┘
+
+ℹ Fusion method: Reciprocal Rank Fusion (RRF)
+ℹ Vector weight: 0.5 | Lexical weight: 0.5
+✓ Found 20 results in 0.23s
+```
+
+### Data Ingestion Pipeline with Progress
+
+```
+hektor:./mydb > ingest ./docs --format pdf --recursive --chunk-strategy semantic
+📄 Scanning directory: ./docs
+  ├─ Found 127 PDF files
+  └─ Total size: 234.5 MB
+  
+🔄 Processing with semantic chunking...
+[████████████████████] 100% 127/127 files (5.2 files/s)
+
+📊 Chunking statistics:
+  ├─ Documents processed: 127
+  ├─ Chunks created: 3,456
+  ├─ Avg chunk size: 512 tokens
+  ├─ Avg chunks/doc: 27.2
+  └─ Processing time: 24.3s
+  
+🚀 Generating embeddings...
+[████████████████████] 100% 3456/3456 (142.3 emb/s)
+
+✓ Successfully ingested 3,456 chunks from 127 documents
+ℹ Total time: 48.6s (scan: 0.8s, chunk: 24.3s, embed: 24.3s)
+```
+
+### Collection Management Workflow
+
+```
+hektor:./mydb > collection:create journals --description "Market journals and reports"
+✓ Collection 'journals' created successfully
+
+hektor:./mydb > collection:list
+┌────────────┬─────────────────────────┬───────────┬──────────┐
+│ Name       │ Description             │ Documents │ Created  │
+├────────────┼─────────────────────────┼───────────┼──────────┤
+│ journals   │ Market journals and...  │ 0         │ Just now │
+│ reports    │ Financial reports       │ 1,234     │ 2 days   │
+│ news       │ News articles           │ 5,678     │ 1 week   │
+└────────────┴─────────────────────────┴───────────┴──────────┘
+
+✓ Found 3 collections
+
+hektor:./mydb > collection:info journals
+📁 Collection: journals
+  ├─ Description: Market journals and reports
+  ├─ Documents: 0
+  ├─ Created: 2026-01-07 16:43:09
+  ├─ Modified: 2026-01-07 16:43:09
+  └─ Size: 0 bytes
+```
+
+### Export Operations with Progress
+
+```
+hektor:./mydb > export:triplets training.jsonl --negative-samples 10 --strategy hard
+🔄 Generating training triplets...
+  ├─ Strategy: Hard negatives
+  ├─ Negatives per anchor: 10
+  └─ Total documents: 10,523
+  
+[████████████████████] 100% 10523/10523 (245.2 triplets/s)
+
+📊 Export statistics:
+  ├─ Triplets generated: 10,523
+  ├─ Anchors: 10,523
+  ├─ Positives: 10,523
+  ├─ Hard negatives: 105,230
+  └─ File size: 234.5 MB
+  
+✓ Triplets exported to training.jsonl
+ℹ Processing time: 42.9s
+```
+
+### Help System with Color Highlighting
+
+```
+hektor:./mydb > help hybrid:search
+
+🔍 HYBRID:SEARCH - Hybrid Vector + BM25 Search
+   Alias: hs
+
+USAGE:
+  hektor hybrid:search <database> <query> [OPTIONS]
+
+DESCRIPTION:
+  Combines vector similarity search with BM25 full-text search using
+  configurable fusion methods for optimal retrieval performance.
+
+OPTIONS:
+  -k, --top-k NUM              Number of results (default: 10)
+  --fusion METHOD              Fusion method: rrf, weighted, combsum, combmnz, borda
+  --vector-weight WEIGHT       Weight for vector results (0.0-1.0, default: 0.5)
+  --lexical-weight WEIGHT      Weight for BM25 results (0.0-1.0, default: 0.5)
+  --format FORMAT              Output format: table, json, csv
+  --explain                    Show ranking explanation
+
+FUSION METHODS:
+  rrf         Reciprocal Rank Fusion (recommended)
+  weighted    Weighted combination of scores
+  combsum     CombSUM score aggregation
+  combmnz     CombMNZ score aggregation  
+  borda       Borda count ranking fusion
+
+EXAMPLES:
+  # Basic hybrid search
+  hektor hs ./mydb "gold prices" -k 20
+  
+  # Weighted fusion favoring vector search
+  hektor hybrid:search ./mydb "analysis" --fusion weighted --vector-weight 0.8
+  
+  # RRF fusion with explanation
+  hektor hs ./mydb "forecast" --fusion rrf --explain
+
+SEE ALSO:
+  search, hybrid:bm25, index:build
+```
+
+### Tab Completion Example
+
+```
+hektor:./mydb > col[TAB]
+collection:create   collection:delete   collection:info   collection:list
+
+hektor:./mydb > collection:[TAB]
+create   delete   info   list
+
+hektor:./mydb > collection:l[TAB]
+collection:list
+
+hektor:./mydb > collection:list _
+```
+
+### Command History Navigation
+
+```
+hektor:./mydb > [UP ARROW]
+hektor:./mydb > search "gold outlook" -k 10
+
+hektor:./mydb > [UP ARROW]  
+hektor:./mydb > add --text "Gold prices rising on inflation fears"
+
+hektor:./mydb > [DOWN ARROW]
+hektor:./mydb > search "gold outlook" -k 10
+
+hektor:./mydb > history
+1  use ./mydb
+2  init --preset gold-standard
+3  add --text "Gold prices rising on inflation fears"
+4  search "gold outlook" -k 10
+5  hybrid:search "market analysis" --fusion rrf
+```
+
+### Error Handling with Suggestions
+
+```
+hektor:./mydb > search ./nonexistent "query"
+✗ Error: Database not found at ./nonexistent
+
+💡 Suggestions:
+  • Did you mean: ./mydb?
+  • Use 'hektor init ./nonexistent' to create it
+  • Use 'hektor db:list' to see available databases
+
+hektor:./mydb > add --invalid-flag
+✗ Error: Unknown option: --invalid-flag
+
+💡 Valid options for 'add':
+  --text TEXT          Text content to add
+  --file PATH          Read content from file
+  --type TYPE          Document type (journal, report, news)
+  --metadata JSON      Additional metadata
+  
+  Use 'hektor help add' for more information
+```
+
 ## Features Implemented
 
 ### Phase 1 (Foundation) ✅
