@@ -950,37 +950,37 @@ std::string generate_help_text(const CommandBase& cmd) {
 
 ## Next Steps
 
-1. **Phase 1: Foundation** (Week 1)
+1. **Phase 1: Foundation**
    - Implement argument parser
    - Create command base interface
    - Build output formatters
    - Setup configuration system
 
-2. **Phase 2: Core Commands** (Week 2)
+2. **Phase 2: Core Commands**
    - Implement database commands
    - Implement data operations
    - Implement search commands
    - Add basic error handling
 
-3. **Phase 3: Advanced Features** (Week 3)
+3. **Phase 3: Advanced Features**
    - Implement hybrid search commands
    - Add ingestion commands
    - Build index management
    - Add collection management
 
-4. **Phase 4: Interactive** (Week 4)
+4. **Phase 4: Interactive**
    - Build interactive shell
    - Add tab completion
    - Implement command history
    - Add progress indicators
 
-5. **Phase 5: Polish** (Week 5)
+5. **Phase 5: Polish**
    - Comprehensive testing
    - Documentation
    - Error message improvement
    - Performance optimization
 
-6. **Phase 6: Extended Features** (Week 6+)
+6. **Phase 6: Extended Features**
    - Distributed commands
    - RAG commands
    - Monitoring commands

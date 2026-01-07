@@ -689,10 +689,11 @@ hektor report coverage ./mydb
 
 #### User Management
 ```bash
-# Create user
-hektor auth create-user john \
-  --password secret123 \
-  --role user
+# Create user (password will be prompted interactively)
+hektor auth create-user john --role user
+
+# Create user with password from stdin (for automation)
+echo "$SECURE_PASSWORD" | hektor auth create-user john --password-stdin --role user
 
 # List users
 hektor auth list-users

@@ -631,8 +631,10 @@ hektor report coverage <db>
 hektor auth create-user <username> [OPTIONS]
 
 Options:
-  --password PASSWORD      Password
+  --password-stdin         Read password from stdin (recommended)
   --role ROLE              Role: admin|user|readonly
+
+Note: For security, password will be prompted interactively if not provided via stdin
 
 # List users
 hektor auth list-users
