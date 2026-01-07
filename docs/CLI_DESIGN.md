@@ -24,6 +24,228 @@ status: "Design"
 - **Subcommands**: Grouped by domain (e.g., `db init`, `index build`)
 - **Flags**: Long form `--verbose` with short form `-v`
 
+## Complete CLI Flow Diagram
+
+```mermaid
+flowchart TD
+    Start([User Input]) --> InputType{Input Type?}
+    
+    InputType -->|Command Line| ParseArgs[Parse Arguments & Flags]
+    InputType -->|Interactive Shell| REPL[REPL Loop]
+    
+    ParseArgs --> ValidateArgs{Valid Arguments?}
+    ValidateArgs -->|No| ShowError[Show Error & Suggestions]
+    ShowError --> End([Exit])
+    
+    ValidateArgs -->|Yes| LoadConfig[Load Configuration]
+    LoadConfig --> ResolveProfile[Resolve Profile & Env Vars]
+    ResolveProfile --> RouteCommand[Route to Command Handler]
+    
+    REPL --> ParseREPL[Parse REPL Input]
+    ParseREPL --> TabComplete{Tab Pressed?}
+    TabComplete -->|Yes| ShowSuggestions[Show Completions]
+    ShowSuggestions --> REPL
+    TabComplete -->|No| RouteCommand
+    
+    RouteCommand --> CommandType{Command Category}
+    
+    CommandType -->|Database| DBCommands[Database Management]
+    CommandType -->|Data| DataCommands[Data Operations]
+    CommandType -->|Search| SearchCommands[Search & Query]
+    CommandType -->|Hybrid| HybridCommands[Hybrid Search]
+    CommandType -->|Ingest| IngestCommands[Data Ingestion]
+    CommandType -->|Index| IndexCommands[Index Management]
+    CommandType -->|Collection| CollectionCommands[Collections]
+    CommandType -->|Metadata| MetaCommands[Metadata Ops]
+    CommandType -->|Export| ExportCommands[Export/Import]
+    CommandType -->|Model| ModelCommands[Model Management]
+    CommandType -->|Cluster| ClusterCommands[Distributed]
+    CommandType -->|Monitor| MonitorCommands[Monitoring]
+    CommandType -->|Report| ReportCommands[Reports]
+    CommandType -->|Auth| AuthCommands[Authentication]
+    CommandType -->|Config| ConfigCommands[Configuration]
+    CommandType -->|RAG| RAGCommands[RAG Pipeline]
+    CommandType -->|Quantize| QuantizeCommands[Quantization]
+    CommandType -->|Util| UtilCommands[Utilities]
+    
+    DBCommands --> DBAction{DB Action}
+    DBAction -->|init| CreateDB[Initialize Database]
+    DBAction -->|info| ShowInfo[Show Statistics]
+    DBAction -->|optimize| OptimizeDB[Optimize & Compact]
+    DBAction -->|backup| BackupDB[Backup Database]
+    DBAction -->|restore| RestoreDB[Restore from Backup]
+    
+    CreateDB --> SetupDB[Create Directories & Files]
+    SetupDB --> InitIndex[Initialize HNSW Index]
+    InitIndex --> SaveConfig[Save Configuration]
+    
+    DataCommands --> DataAction{Data Action}
+    DataAction -->|add| AddDocument[Add Document]
+    DataAction -->|update| UpdateDocument[Update Document]
+    DataAction -->|delete| DeleteDocument[Delete Document]
+    DataAction -->|get| GetDocument[Get by ID]
+    DataAction -->|batch| BatchInsert[Batch Insert]
+    
+    AddDocument --> ValidateData{Valid Data?}
+    ValidateData -->|No| ShowError
+    ValidateData -->|Yes| GenerateEmbedding[Generate Embedding]
+    GenerateEmbedding --> LoadModel[Load ONNX Model]
+    LoadModel --> RunInference[Run Inference]
+    RunInference --> StoreVector[Store Vector]
+    StoreVector --> UpdateIndex[Update HNSW Index]
+    UpdateIndex --> SaveMetadata[Save Metadata]
+    
+    SearchCommands --> SearchAction{Search Type}
+    SearchAction -->|search| VectorSearch[Vector Search]
+    SearchAction -->|query| AdvancedQuery[Advanced Query]
+    SearchAction -->|similar| FindSimilar[Find Similar]
+    
+    VectorSearch --> QueryEmbedding[Generate Query Embedding]
+    QueryEmbedding --> HNSWSearch[HNSW Search]
+    HNSWSearch --> ApplyFilters[Apply Metadata Filters]
+    ApplyFilters --> RankResults[Rank & Score Results]
+    RankResults --> FormatOutput[Format Output]
+    
+    HybridCommands --> HybridAction{Hybrid Action}
+    HybridAction -->|search| CombinedSearch[Vector + BM25]
+    HybridAction -->|bm25| BM25Only[BM25 Full-Text]
+    HybridAction -->|rerank| RerankResults[Rerank Results]
+    
+    CombinedSearch --> ParallelSearch[Execute in Parallel]
+    ParallelSearch --> VectorBranch[Vector Search Branch]
+    ParallelSearch --> BM25Branch[BM25 Search Branch]
+    VectorBranch --> FusionMethod[Apply Fusion Method]
+    BM25Branch --> FusionMethod
+    FusionMethod --> FusionType{Fusion Type}
+    FusionType -->|RRF| RRFFusion[Reciprocal Rank Fusion]
+    FusionType -->|Weighted| WeightedFusion[Weighted Sum]
+    FusionType -->|CombSUM| CombSUMFusion[CombSUM]
+    FusionType -->|CombMNZ| CombMNZFusion[CombMNZ]
+    FusionType -->|Borda| BordaFusion[Borda Count]
+    
+    IngestCommands --> IngestAction{Ingest Source}
+    IngestAction -->|file| FileIngest[File Ingestion]
+    IngestAction -->|directory| DirIngest[Directory Scan]
+    IngestAction -->|api| APIIngest[API/HTTP Ingest]
+    IngestAction -->|database| DBIngest[Database Ingest]
+    
+    FileIngest --> DetectFormat[Detect File Format]
+    DetectFormat --> SelectAdapter[Select Adapter]
+    SelectAdapter --> AdapterType{Adapter Type}
+    AdapterType -->|CSV| CSVAdapter[CSV Parser]
+    AdapterType -->|JSON| JSONAdapter[JSON Parser]
+    AdapterType -->|PDF| PDFAdapter[PDF Extractor]
+    AdapterType -->|Excel| ExcelAdapter[Excel Reader]
+    AdapterType -->|XML| XMLAdapter[XML Parser]
+    AdapterType -->|Parquet| ParquetAdapter[Parquet Reader]
+    
+    CSVAdapter --> ParseData[Parse & Normalize]
+    JSONAdapter --> ParseData
+    PDFAdapter --> ParseData
+    ExcelAdapter --> ParseData
+    XMLAdapter --> ParseData
+    ParquetAdapter --> ParseData
+    
+    ParseData --> ChunkStrategy{Chunking Strategy}
+    ChunkStrategy -->|fixed| FixedChunk[Fixed Size Chunks]
+    ChunkStrategy -->|sentence| SentenceChunk[Sentence-based]
+    ChunkStrategy -->|paragraph| ParagraphChunk[Paragraph-based]
+    ChunkStrategy -->|semantic| SemanticChunk[Semantic Chunking]
+    ChunkStrategy -->|recursive| RecursiveChunk[Recursive Chunking]
+    
+    FixedChunk --> BatchEmbed[Batch Embedding]
+    SentenceChunk --> BatchEmbed
+    ParagraphChunk --> BatchEmbed
+    SemanticChunk --> BatchEmbed
+    RecursiveChunk --> BatchEmbed
+    
+    BatchEmbed --> BulkInsert[Bulk Insert]
+    BulkInsert --> ShowProgress[Show Progress Bar]
+    
+    IndexCommands --> IndexAction{Index Action}
+    IndexAction -->|build| BuildIndex[Build HNSW Index]
+    IndexAction -->|rebuild| RebuildIndex[Rebuild from Scratch]
+    IndexAction -->|optimize| OptimizeIndex[Optimize Index]
+    IndexAction -->|validate| ValidateIndex[Validate Integrity]
+    IndexAction -->|benchmark| BenchmarkIndex[Benchmark Performance]
+    
+    ExportCommands --> ExportAction{Export Type}
+    ExportAction -->|data| ExportData[Export Raw Data]
+    ExportAction -->|pairs| ExportPairs[Export Training Pairs]
+    ExportAction -->|triplets| ExportTriplets[Export Triplets]
+    ExportAction -->|embeddings| ExportEmbeddings[Export Embeddings]
+    
+    ExportTriplets --> FindPositive[Find Positive Pairs]
+    FindPositive --> GenerateNegative[Generate Hard Negatives]
+    GenerateNegative --> WriteTraining[Write Training File]
+    
+    MonitorCommands --> MonitorAction{Monitor Type}
+    MonitorAction -->|metrics| ShowMetrics[Show Metrics]
+    MonitorAction -->|logs| ShowLogs[Show Logs]
+    MonitorAction -->|trace| TraceOps[Trace Operations]
+    
+    ShowMetrics --> MetricsSource{Metrics Source}
+    MetricsSource -->|prometheus| PrometheusFormat[Prometheus Format]
+    MetricsSource -->|json| JSONFormat[JSON Format]
+    
+    FormatOutput --> OutputFormat{Output Format}
+    OutputFormat -->|table| TableFormat[ASCII Table]
+    OutputFormat -->|json| JSONOutput[JSON Output]
+    OutputFormat -->|csv| CSVOutput[CSV Output]
+    OutputFormat -->|yaml| YAMLOutput[YAML Output]
+    OutputFormat -->|markdown| MarkdownOutput[Markdown Table]
+    
+    TableFormat --> ColorOutput{Color Enabled?}
+    JSONOutput --> WriteOutput[Write Output]
+    CSVOutput --> WriteOutput
+    YAMLOutput --> WriteOutput
+    MarkdownOutput --> WriteOutput
+    
+    ColorOutput -->|Yes| ApplyColors[Apply ANSI Colors]
+    ColorOutput -->|No| WriteOutput
+    ApplyColors --> WriteOutput
+    
+    WriteOutput --> OutputDest{Output Destination}
+    OutputDest -->|stdout| DisplayStdout[Display to Terminal]
+    OutputDest -->|file| WriteFile[Write to File]
+    OutputDest -->|pipe| PipeOutput[Pipe to Next Command]
+    
+    SaveConfig --> Success[Success Message]
+    SaveMetadata --> Success
+    DisplayStdout --> Success
+    WriteFile --> Success
+    PipeOutput --> Success
+    WriteTraining --> Success
+    ShowProgress --> Success
+    
+    Success --> CleanupCheck{Cleanup Needed?}
+    CleanupCheck -->|Yes| Cleanup[Cleanup Resources]
+    CleanupCheck -->|No| End
+    Cleanup --> End
+    
+    %% Error handling paths
+    LoadModel -.->|Error| ModelError[Model Load Error]
+    RunInference -.->|Error| InferenceError[Inference Error]
+    HNSWSearch -.->|Error| SearchError[Search Error]
+    ParseData -.->|Error| ParseError[Parse Error]
+    
+    ModelError --> ErrorHandler[Error Handler]
+    InferenceError --> ErrorHandler
+    SearchError --> ErrorHandler
+    ParseError --> ErrorHandler
+    ErrorHandler --> LogError[Log Error]
+    LogError --> ShowError
+    
+    style Start fill:#90EE90
+    style End fill:#FFB6C1
+    style Success fill:#98FB98
+    style ShowError fill:#FF6B6B
+    style ErrorHandler fill:#FF8C00
+    style RouteCommand fill:#87CEEB
+    style FormatOutput fill:#DDA0DD
+    style FusionMethod fill:#F0E68C
+```
+
 ## Command Structure
 
 ```
