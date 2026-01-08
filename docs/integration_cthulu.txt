@@ -1,3 +1,4 @@
+<
 # Integration: Vector Studio (Hektor) <-> Cthulu
 
 This note documents recommended settings and patterns when using Vector Studio with Cthulu.
@@ -12,3 +13,4 @@ This note documents recommended settings and patterns when using Vector Studio w
 
 ## Example roundtrip
 - See `examples/cthulu_roundtrip.py` for a minimal demonstration of creating a database, adding text, and searching.
+>
