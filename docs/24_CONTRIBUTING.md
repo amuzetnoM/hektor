@@ -52,16 +52,20 @@ This project adheres to a code of conduct. By participating, you are expected to
 
 ```bash
 # Fork the repository on GitHub, then:
-git clone https://github.com/YOUR_USERNAME/vector_database.git
-cd vector_database
-git remote add upstream https://github.com/amuzetnoM/gold_standard.git
+git clone https://github.com/YOUR_USERNAME/hektor.git
+cd hektor
+git remote add upstream https://github.com/amuzetnoM/hektor.git
 ```
 
 ---
 
 ## Development Setup
 
-### Windows
+> **For basic installation instructions, see [02_INSTALLATION.md](02_INSTALLATION.md).**
+
+### Development Build
+
+**Windows:**
 
 ```powershell
 # Run automated setup with development dependencies
@@ -71,7 +75,7 @@ git remote add upstream https://github.com/amuzetnoM/gold_standard.git
 .\scripts\build.ps1 -Debug
 ```
 
-### Unix/Linux/macOS
+**Unix/Linux/macOS:**
 
 ```bash
 # Run automated setup
@@ -211,14 +215,14 @@ def search(query: str, k: int = 10) -> list[SearchResult]:
 def add_text(text: str, metadata: dict | None = None) -> int:
     """
     Add a text document to the database.
-    
+
     Args:
         text: The text content to embed and store.
         metadata: Optional metadata dictionary.
-        
+
     Returns:
         The ID of the newly added document.
-        
+
     Raises:
         ValueError: If text is empty.
     """
@@ -266,7 +270,7 @@ pytest tests/ --cov=pyvdb --cov-report=html
 TEST(DistanceTest, CosineNormalized) {
     std::vector<float> a = {1.0f, 0.0f, 0.0f};
     std::vector<float> b = {0.0f, 1.0f, 0.0f};
-    
+
     float dist = cosine_distance(a.data(), b.data(), 3);
     EXPECT_NEAR(dist, 1.0f, 1e-6f);  // Orthogonal = max distance
 }
@@ -276,10 +280,10 @@ TEST(DistanceTest, CosineNormalized) {
 ```python
 def test_add_and_search():
     db = pyvdb.create_database(":memory:")
-    
+
     doc_id = db.add_text("test document")
     assert doc_id >= 0
-    
+
     results = db.search("test", k=1)
     assert len(results) == 1
     assert results[0].id == doc_id
@@ -309,7 +313,7 @@ def test_add_and_search():
    .\scripts\build.ps1 -Debug
    ctest --output-on-failure
    pytest tests/
-   
+
    # Lint
    clang-format --dry-run -Werror src/**/*.cpp
    black --check scripts/
