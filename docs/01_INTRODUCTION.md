@@ -12,32 +12,32 @@ category: "Introduction"
 ![Docs](https://img.shields.io/badge/docs-17_files-orange?style=flat-square)
 
 
-# ⬜HECKTOR
-> Advance Vector Database
+# ⬜️ HECKTOR 
+> Vestor Studio
 
 Meet Hecktor, the AI Vector Studio. This comprehensive guide covers everything from basic usage to advanced topics and API reference.
 
-## Documentation Index
+## INDEX
 
-| # | Document | Description | Audience |
-|---|----------|-------------|----------|
-| 01 | [**README**](01_README.md) | This file - documentation overview and quick start | All users |
-| 02 | [**GETTING_STARTED**](02_INSTALLATION.md) | Installation, quick start, basic usage, CLI reference | Beginners |
-| 03 | [**USER_GUIDE**](04_USER_GUIDE.md) | Complete user guide from installation to advanced usage | All users |
-| 04 | [**DATA_FORMATS**](06_DATA_FORMATS.md) | Supported data types, formats, and specifications | Data engineers, developers |
-| 05 | [**DATA_INGESTION**](07_DATA_INGESTION.md) | Data ingestion module with adapters (CSV, JSON, PDF, Excel, Text) | Data engineers |
-| 06 | [**ARCHITECTURE**](05_ARCHITECTURE.md) | System design, data flow, component diagrams | Architects, contributors |
-| 07 | [**API_REFERENCE**](20_API_REFERENCE.md) | Detailed API documentation for all classes and functions | Developers |
-| 08 | [**MODELS**](08_EMBEDDINGS_MODELS.md) | Model specifications, benchmarks, integration | ML practitioners |
-| 09 | [**MATH**](09_VECTOR_OPERATIONS.md) | Mathematical foundations, HNSW algorithm, distance metrics | ML engineers |
-| 10 | [**AI_TRAINING**](10_AI_TRAINING.md) | Training custom models, fine-tuning, contrastive learning | AI researchers |
-| 11 | [**LOGGING**](15_LOGGING_MONITORING.md) | Comprehensive logging system with anomaly detection | DevOps, developers |
-| 12 | [**USAGE_EXAMPLES**](12_USAGE_EXAMPLES.md) | Code examples and common usage patterns | All developers |
-| 13 | [**DEPLOYMENT**](16_DEPLOYMENT.md) | Production deployment guide | DevOps, architects |
-| 14 | [**REAL_WORLD_APPLICATIONS**](19_REAL_WORLD_APPLICATIONS.md) | Production use cases and benchmarks | Solution architects |
-| 15 | [**LLM_ENGINE**](13_LLM_ENGINE.md) | **NEW** - Local text generation with llama.cpp | AI developers |
-| 16 | [**QUANTIZATION**](14_QUANTIZATION.md) | **NEW** - Vector compression techniques (4-32x) | Performance engineers |
-| 17 | [**HTTP_ADAPTER**](17_HTTP_ADAPTER.md) | **NEW** - HTTP adapter for web API data ingestion | Data engineers |
+| #   | Document                                                     | Description                                                       | Audience                   |
+| --- | ------------------------------------------------------------ | ----------------------------------------------------------------- | -------------------------- |
+| 01  | [**README**](01_README.md)                                   | This file - Introduction, documentation overview and quick start  | All users                  |
+| 02  | [**GETTING_STARTED**](02_INSTALLATION.md)                    | Installation, quick start, basic usage, CLI reference             | Beginners                  |
+| 03  | [**USER_GUIDE**](04_USER_GUIDE.md)                           | Complete user guide from installation to advanced usage           | All users                  |
+| 04  | [**DATA_FORMATS**](06_DATA_FORMATS.md)                       | Supported data types, formats, and specifications                 | Data engineers, developers |
+| 05  | [**DATA_INGESTION**](07_DATA_INGESTION.md)                   | Data ingestion module with adapters (CSV, JSON, PDF, Excel, Text) | Data engineers             |
+| 06  | [**ARCHITECTURE**](05_ARCHITECTURE.md)                       | System design, data flow, component diagrams                      | Architects, contributors   |
+| 07  | [**API_REFERENCE**](20_API_REFERENCE.md)                     | Detailed API documentation for all classes and functions          | Developers                 |
+| 08  | [**MODELS**](08_EMBEDDINGS_MODELS.md)                        | Model specifications, benchmarks, integration                     | ML practitioners           |
+| 09  | [**MATH**](09_VECTOR_OPERATIONS.md)                          | Mathematical foundations, HNSW algorithm, distance metrics        | ML engineers               |
+| 10  | [**AI_TRAINING**](10_AI_TRAINING.md)                         | Training custom models, fine-tuning, contrastive learning         | AI researchers             |
+| 11  | [**LOGGING**](15_LOGGING_MONITORING.md)                      | Comprehensive logging system with anomaly detection               | DevOps, developers         |
+| 12  | [**USAGE_EXAMPLES**](12_USAGE_EXAMPLES.md)                   | Code examples and common usage patterns                           | All developers             |
+| 13  | [**DEPLOYMENT**](16_DEPLOYMENT.md)                           | Production deployment guide                                       | DevOps, architects         |
+| 14  | [**REAL_WORLD_APPLICATIONS**](19_REAL_WORLD_APPLICATIONS.md) | Production use cases and benchmarks                               | Solution architects        |
+| 15  | [**LLM_ENGINE**](13_LLM_ENGINE.md)                           | **NEW** - Local text generation with llama.cpp                    | AI developers              |
+| 16  | [**QUANTIZATION**](14_QUANTIZATION.md)                       | **NEW** - Vector compression techniques (4-32x)                   | Performance engineers      |
+| 17  | [**HTTP_ADAPTER**](17_HTTP_ADAPTER.md)                       | **NEW** - HTTP adapter for web API data ingestion                 | Data engineers             |
 
 ## Quick Links by Task
 
@@ -85,45 +85,47 @@ Vector Studio is a high-performance vector database and AI training platform des
 
 ## Architecture Overview
 
-```
-┌────────────────────────────────────────────────────────────────────────────┐
-│                              VECTOR STUDIO                                  │
-├────────────────────────────────────────────────────────────────────────────┤
-│                                                                            │
-│  USER INTERFACES                                                          │
-│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   │
-│  │   Python    │   │   C++ CLI   │   │  REST API   │   │    GUI      │   │
-│  │   pyvdb     │   │     vdb     │   │  (planned)  │   │  (planned)  │   │
-│  └──────┬──────┘   └──────┬──────┘   └──────┬──────┘   └──────┬──────┘   │
-│         │                 │                 │                 │           │
-│         └────────────────┬┴─────────────────┴─────────────────┘           │
-│                          │                                                 │
-│  CORE ENGINE (C++23)                                                      │
-│  ┌───────────────────────┴───────────────────────────────────────────┐    │
-│  │                                                                     │    │
-│  │  DATA INGESTION              VECTOR OPS         STORAGE           │    │
-│  │  ┌──────────────┐          ┌───────────┐    ┌────────────┐       │    │
-│  │  │  Adapters    │          │   HNSW    │    │  Memory    │       │    │
-│  │  │  • CSV       │  ──────→ │   Index   │    │  Mapped    │       │    │
-│  │  │  • JSON      │          │           │    │  Storage   │       │    │
-│  │  │  • PDF       │          │  O(log n) │    │            │       │    │
-│  │  │  • Excel     │          │  Search   │    │  vectors   │       │    │
-│  │  │  • Text      │          │           │    │  .bin      │       │    │
-│  │  └──────────────┘          │  99%+     │    │  index     │       │    │
-│  │                            │  Recall   │    │  .hnsw     │       │    │
-│  │                            └───────────┘    └────────────┘       │    │
-│  │                                                                     │    │
-│  │  EMBEDDINGS                                                        │    │
-│  │  ┌───────────────────────────────────────────────────────────┐    │    │
-│  │  │  ONNX Runtime                                              │    │    │
-│  │  │  • Text: MiniLM-L6 (384-dim)                              │    │    │
-│  │  │  • Image: CLIP ViT (512-dim)                              │    │    │
-│  │  │  • Local inference, no API calls                          │    │    │
-│  │  └───────────────────────────────────────────────────────────┘    │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-└────────────────────────────────────────────────────────────────────────────┘
-```
-└────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+
+graph TD
+    subgraph VS [VECTOR STUDIO]
+        
+        subgraph UI [USER INTERFACES]
+            direction LR
+            Python["Python (pyvdb)"]
+            CPP["C++ CLI (vdb)"]
+            REST["REST API (planned)"]
+            GUI["GUI (planned)"]
+        end
+
+        subgraph Core [CORE ENGINE - C++23]
+            
+            subgraph Ingestion [DATA INGESTION]
+                Adapters["Adapters:<br/>• CSV<br/>• JSON<br/>• PDF<br/>• Excel<br/>• Text"]
+            end
+
+            subgraph Embed [EMBEDDINGS]
+                ONNX["ONNX Runtime<br/>• Text: MiniLM-L6 (384-dim)<br/>• Image: CLIP ViT (512-dim)<br/>• Local inference"]
+            end
+
+            subgraph Ops [VECTOR OPS]
+                HNSW["HNSW Index<br/>• O(log n) Search<br/>• 99%+ Recall"]
+            end
+
+            subgraph Storage [STORAGE]
+                MemMap["Memory Mapped Storage<br/>• vectors (.bin)<br/>• index (.hnsw)"]
+            end
+
+            %% Internal Core Flow
+            Adapters --> ONNX
+            ONNX --> Ops
+            Ops <--> MemMap
+        end
+    end
+
+    %% Interface to Core connection
+    Python & CPP & REST & GUI ==> Core
+
 ```
 
 ## Getting Started
@@ -164,7 +166,7 @@ results = db.search("gold outlook", k=5)
 
 ## Key Features
 
-### 🚀 Performance
+### Performance
 
 | Metric | Value |
 |--------|-------|
@@ -173,99 +175,19 @@ results = db.search("gold outlook", k=5)
 | Recall@10 | 99%+ |
 | Memory per vector | ~1.2 KB |
 
-### 🧠 AI Capabilities
+### AI Capabilities
 
 - **Text Embeddings**: MiniLM, MPNet, E5 models
 - **Image Embeddings**: CLIP ViT (cross-modal search)
 - **Custom Training**: Fine-tune or train from scratch
 - **Local Inference**: No cloud dependency
 
-### 🔧 Integration
+### Integration
 
-- **Gold Standard**: Automatic journal ingestion
 - **Python**: Full pyvdb bindings
 - **CLI**: vdb command-line tool
 - **Export**: Training data extraction
 
-## Document Summaries
-
-### 02_INSTALLATION.md
-
-Practical quick start guide including:
-- Step-by-step installation
-- Building from source
-- First database creation
-- Python API tutorial
-- CLI reference
-- Basic troubleshooting
-
-### 04_USER_GUIDE.md
-
-Complete user guide covering:
-- Detailed installation and configuration
-- Core concepts and operations
-- Advanced usage patterns
-- Performance tuning
-- Best practices
-- Comprehensive troubleshooting
-
-### 06_DATA_FORMATS.md **(NEW)**
-
-**Comprehensive data format specifications:**
-- Complete list of supported formats (CSV, JSON, PDF, Excel, Text, Markdown)
-- Format requirements and constraints
-- Data type specifications
-- Metadata structure guidelines
-- Chunking strategy explanations
-- Data preparation best practices
-- Format-specific examples
-
-### 07_DATA_INGESTION.md **(UPDATED)**
-
-Data ingestion module guide:
-- Architecture overview
-- Implemented adapters (CSV, JSON, Text, PDF, Excel)
-- Usage examples and integration
-- Batch processing
-- Custom adapter development
-- Performance considerations
-
-### 05_ARCHITECTURE.md
-
-Comprehensive system design document covering:
-- Component diagrams and data flow
-- Memory layout and file formats
-- Threading model and concurrency
-- API design patterns
-- Performance characteristics
-
-### 09_VECTOR_OPERATIONS.md
-
-Mathematical foundations:
-- Vector spaces and embeddings
-- Distance metrics (cosine, Euclidean)
-- HNSW algorithm analysis
-- Complexity proofs
-- Quantization techniques
-
-### 10_AI_TRAINING.md
-
-Complete AI training guide:
-- Pretrained model usage
-- Fine-tuning strategies
-- Training from scratch
-- Contrastive learning
-- Multi-modal training
-- ONNX deployment
-
-### 08_EMBEDDINGS_MODELS.md
-
-Model reference:
-- Detailed specifications
-- Benchmark results
-- Model cards
-- Custom integration
-- Provider selection
 
 ## License
 
