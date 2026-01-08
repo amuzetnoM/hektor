@@ -129,10 +129,12 @@ TelemetrySpan::TelemetrySpan(const std::string& operation_name,
     }
 #endif
     
-    // Log span start
-    LOG_DEBUG("Starting trace span: " + operation_name + 
-              " [trace_id=" + impl_->context.trace_id + 
-              ", span_id=" + impl_->context.span_id + "]");
+    // Log span start (only if debug logging enabled)
+    if (Logger::instance().config().min_level <= LogLevel::DEBUG) {
+        LOG_DEBUG("Starting trace span: " + operation_name + 
+                  " [trace_id=" + impl_->context.trace_id + 
+                  ", span_id=" + impl_->context.span_id + "]");
+    }
 }
 
 TelemetrySpan::~TelemetrySpan() {
@@ -147,9 +149,13 @@ TelemetrySpan::~TelemetrySpan() {
         }
 #endif
         
-        // Log span completion
-        LOG_DEBUG("Completed trace span: " + operation_name_ + 
-                  " (duration: " + std::to_string(duration_ms) + "ms)");
+        // Log span completion (only if debug logging enabled)
+        if (Logger::instance().config().min_level <= LogLevel::DEBUG) {
+            std::ostringstream oss;
+            oss << "Completed trace span: " << operation_name_ 
+                << " (duration: " << duration_ms << "ms)";
+            LOG_DEBUG(oss.str());
+        }
     }
 }
 
@@ -229,7 +235,9 @@ void TelemetrySpan::add_event(const std::string& name,
         impl_->span->AddEvent(name);
     }
 #endif
-    LOG_DEBUG("Trace event: " + name);
+    if (Logger::instance().config().min_level <= LogLevel::DEBUG) {
+        LOG_DEBUG("Trace event: " + name);
+    }
 }
 
 void TelemetrySpan::record_error(const std::string& error_message) {

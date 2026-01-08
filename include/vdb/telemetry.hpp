@@ -174,7 +174,7 @@ struct TelemetryConfig {
     
     // Prometheus
     std::string prometheus_host = "0.0.0.0";
-    int prometheus_port = 9090;
+    int prometheus_port = 8888;  // Standard Prometheus exporter port
     
     // Resource attributes
     std::unordered_map<std::string, std::string> resource_attributes;
