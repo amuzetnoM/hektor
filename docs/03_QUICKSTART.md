@@ -159,8 +159,8 @@ This section provides a quick overview for local development. For detailed steps
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/vector_database.git
-cd vector_database
+git clone https://github.com/amuzetnoM/vector_studio.git
+cd vector_studio
 
 # Install dependencies (see 02_INSTALLATION.md for OS-specific commands)
 # Build, download models, and run (see 02_INSTALLATION.md for details)
