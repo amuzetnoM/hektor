@@ -12,7 +12,8 @@ category: "Feature"
 ![Type](https://img.shields.io/badge/type-theory-purple?style=flat-square)
 
 > **What is Hybrid Search?** <BR>
-Hybrid search combines **vector similarity** (semantic understanding) with **BM25 full-text search** (keyword matching) for superior retrieval accuracy.
+ Hybrid search combines **vector similarity** (semantic understanding) with **BM25 full-text search** (keyword matching) for superior retrieval accuracy.
+ > 
 
 **Benefits:**
 - 15-20% accuracy improvement over vector-only

@@ -13,7 +13,7 @@ category: "Feature"
 
 ## Overview
 
-Vector Studio v2.2.0 provides integration with TensorFlow and PyTorch for custom embedding models. This guide explains how to enable and use these features.
+Vector Studio provides integration with TensorFlow and PyTorch for custom embedding models. This guide explains how to enable and use these features.
 
 ## TensorFlow Integration
 

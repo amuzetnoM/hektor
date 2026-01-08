@@ -11,10 +11,6 @@ category: "Guide"
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--06-green?style=flat-square)
 ![Adapters](https://img.shields.io/badge/adapters-10_types-success?style=flat-square)
 
-**Universal data ingestion system with intelligent type detection, normalization, and support for multiple data formats**
-
----
-
 ## Table of Contents
 
 1. [Overview](#overview)

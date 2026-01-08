@@ -11,11 +11,6 @@ category: "Reference"
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--06-green?style=flat-square)
 ![Formats](https://img.shields.io/badge/formats-11_types-orange?style=flat-square)
 
-
-**Comprehensive guide to data formats, types, and structures supported by Vector Studio**
-
----
-
 ## Table of Contents
 
 1. [Overview](#overview)
