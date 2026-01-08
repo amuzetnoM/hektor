@@ -1,7 +1,7 @@
 ---
 title: "HTTP Adapter"
 description: "Generic HTTP adapter for fetching and parsing data from web APIs"
-version: "2.3.0"
+version: "3.0.0"
 last_updated: "2026-01-07"
 sidebar_position: 17
 category: "Data Ingestion"

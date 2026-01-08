@@ -1,7 +1,7 @@
 ---
 title: "Documentation Index"
 description: "Complete documentation for Vector Studio - High-performance vector database with hybrid search, ML framework integration, and distributed features"
-version: "2.3.0"
+version: "3.0.0"
 last_updated: "2026-01-06"
 sidebar_position: 1
 category: "Introduction"

@@ -1,7 +1,7 @@
 ---
 title: "Quantization"
 description: "Vector compression and quantization techniques"
-version: "2.3.0"
+version: "3.0.0"
 last_updated: "2026-01-06"
 sidebar_position: 14
 category: "Optimization"

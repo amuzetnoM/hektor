@@ -1,7 +1,7 @@
 ---
 title: "Real-World Applications"
 description: "Production use cases and success stories"
-version: "2.3.0"
+version: "3.0.0"
 last_updated: "2026-01-06"
 sidebar_position: 19
 category: "Case Studies"

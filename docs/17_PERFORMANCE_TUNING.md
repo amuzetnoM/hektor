@@ -1,7 +1,7 @@
 ---
 title: "Performance Tuning"
 description: "Benchmarks, optimization techniques, and best practices"
-version: "2.3.0"
+version: "3.0.0"
 last_updated: "2026-01-06"
 sidebar_position: 17
 category: "Optimization"
