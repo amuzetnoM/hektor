@@ -4,33 +4,29 @@ import { FormsModule } from '@angular/forms';
 import { AuthService, LoginCredentials } from '../services/auth.service';
 
 @Component({
-    selector: 'app-login',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="min-h-screen flex items-center justify-center bg-[#020202] p-4">
       <!-- Ambient Glow Effect -->
       <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s"></div>
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-900/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-900/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 1s"></div>
       </div>
 
       <!-- Login Card -->
       <div class="relative w-full max-w-md">
         <!-- Card -->
-        <div class="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden">
+        <div class="bg-zinc-900/80 backdrop-blur-xl border border-zinc-800 rounded-xl shadow-2xl overflow-hidden">
           
           <!-- Header -->
           <div class="px-8 pt-8 pb-4 text-center">
-            <!-- Logo -->
-            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            </div>
+            <!-- Logo - White Square -->
+            <div class="w-14 h-14 mx-auto mb-4 bg-zinc-100 rounded shadow-lg shadow-white/10"></div>
             
-            <h1 class="text-2xl font-bold text-white mb-1">HEKTOR</h1>
-            <p class="text-sm text-zinc-400">Vector Operations Console</p>
+            <h1 class="text-2xl font-bold text-white mb-1">STUDIO</h1>
+            <p class="text-sm text-zinc-500">Vector Operations Console</p>
           </div>
 
           <!-- Form -->
@@ -106,18 +102,18 @@ import { AuthService, LoginCredentials } from '../services/auth.service';
                   type="checkbox" 
                   [(ngModel)]="rememberMe" 
                   name="rememberMe"
-                  class="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-primary focus:ring-primary focus:ring-offset-0"
+                  class="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-amber-500 focus:ring-amber-500 focus:ring-offset-0"
                 />
                 <span class="text-zinc-400 group-hover:text-zinc-300 transition-colors">Remember me</span>
               </label>
-              <a href="#" class="text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
+              <a href="#" class="text-amber-400 hover:text-amber-300 transition-colors">Forgot password?</a>
             </div>
 
             <!-- Submit Button -->
             <button 
               type="submit"
               [disabled]="auth.isLoading()"
-              class="w-full py-3 px-4 bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white font-medium rounded-lg shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              class="w-full py-3 px-4 bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg shadow-lg shadow-white/10 hover:shadow-white/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               @if (auth.isLoading()) {
                 <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -153,7 +149,7 @@ import { AuthService, LoginCredentials } from '../services/auth.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -165,45 +161,45 @@ import { AuthService, LoginCredentials } from '../services/auth.service';
   `]
 })
 export class LoginComponent {
-    auth = inject(AuthService);
+  auth = inject(AuthService);
 
-    // Form state
-    email = '';
-    password = '';
-    rememberMe = false;
-    showPassword = signal(false);
+  // Form state
+  email = '';
+  password = '';
+  rememberMe = false;
+  showPassword = signal(false);
 
-    // Validation
-    emailError = signal(false);
-    passwordError = signal(false);
+  // Validation
+  emailError = signal(false);
+  passwordError = signal(false);
 
-    async onSubmit() {
-        // Reset errors
-        this.emailError.set(false);
-        this.passwordError.set(false);
+  async onSubmit() {
+    // Reset errors
+    this.emailError.set(false);
+    this.passwordError.set(false);
 
-        // Validate
-        if (!this.email || !this.email.includes('@')) {
-            this.emailError.set(true);
-            return;
-        }
-
-        if (!this.password || this.password.length < 4) {
-            this.passwordError.set(true);
-            return;
-        }
-
-        const credentials: LoginCredentials = {
-            email: this.email,
-            password: this.password,
-            rememberMe: this.rememberMe
-        };
-
-        const success = await this.auth.login(credentials);
-
-        if (success) {
-            // Navigation will be handled by AppComponent watching isAuthenticated
-            console.log('Login successful!');
-        }
+    // Validate
+    if (!this.email || !this.email.includes('@')) {
+      this.emailError.set(true);
+      return;
     }
+
+    if (!this.password || this.password.length < 4) {
+      this.passwordError.set(true);
+      return;
+    }
+
+    const credentials: LoginCredentials = {
+      email: this.email,
+      password: this.password,
+      rememberMe: this.rememberMe
+    };
+
+    const success = await this.auth.login(credentials);
+
+    if (success) {
+      // Navigation will be handled by AppComponent watching isAuthenticated
+      console.log('Login successful!');
+    }
+  }
 }

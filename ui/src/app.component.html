@@ -3,7 +3,7 @@
 <app-login />
 } @else {
 <div
-  class="flex h-screen w-screen bg-[#09090b] text-zinc-200 overflow-hidden font-sans selection:bg-indigo-500/30 selection:text-white">
+  class="flex h-screen max-h-screen w-screen bg-[#020202] text-zinc-200 overflow-hidden font-sans selection:bg-amber-500/30 selection:text-white">
 
   <!-- Mobile Backdrop -->
   @if (isMobileSidebarOpen()) {
@@ -13,21 +13,14 @@
 
   <!-- Left Sidebar (Collections) -->
   <aside
-    class="fixed inset-y-0 left-0 z-40 w-[280px] border-r border-white/5 bg-[#09090b] flex flex-col transition-transform duration-300 md:translate-x-0 md:relative"
+    class="fixed inset-y-0 left-0 z-40 w-[260px] border-r border-white/5 bg-[#020202] flex flex-col transition-transform duration-300 md:translate-x-0 md:relative md:flex-shrink-0"
     [class.-translate-x-full]="!isMobileSidebarOpen()" [class.translate-x-0]="isMobileSidebarOpen()">
     <!-- Brand -->
-    <div class="h-16 border-b border-white/5 flex items-center px-6 gap-3 select-none flex-shrink-0">
+    <div class="h-14 border-b border-white/5 flex items-center px-5 gap-3 select-none flex-shrink-0">
       <div
-        class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.3)] ring-1 ring-white/10">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
+        class="w-6 h-6 rounded-sm bg-zinc-100 shadow-[0_0_12px_rgba(255,255,255,0.15)] flex-shrink-0">
       </div>
-      <div class="flex flex-col">
-        <h1 class="font-bold text-sm tracking-wide text-white leading-tight">HEKTOR</h1>
-        <span class="text-[10px] text-zinc-500 font-medium tracking-wider">VECTOR STUDIO</span>
-      </div>
+      <span class="text-lg font-bold tracking-tight text-white">STUDIO</span>
       <!-- Mobile Close -->
       <button class="ml-auto md:hidden text-zinc-500 p-1" (click)="isMobileSidebarOpen.set(false)">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,6 +28,7 @@
         </svg>
       </button>
     </div>
+
 
     <!-- Navigation -->
     <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">

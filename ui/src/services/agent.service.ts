@@ -19,22 +19,22 @@ export interface ChatMessage {
 export class AgentService {
   private dbService = inject(VectorDbService);
   private ai: GoogleGenAI;
-  
+
   // We hold the session manually to allow model-swapping (different tools per turn)
   private chatHistory: Content[] = [];
   private chatSession: Chat | null = null;
-  
+
   // State
   messages = signal<ChatMessage[]>([{
     role: 'model',
     text: 'Welcome to your database. \nI am connected to the Dynamic Tool Registry.',
     timestamp: Date.now()
   }]);
-  
+
   isThinking = signal(false);
 
   constructor() {
-    const apiKey = process.env['API_KEY'] || '';
+    const apiKey = localStorage.getItem('gemini_api_key') || '';
     this.ai = new GoogleGenAI({ apiKey });
   }
 
@@ -48,7 +48,7 @@ export class AgentService {
       // 1. Dynamic Tool Retrieval (RAG for Tools)
       //    We search the 'system_tools' collection for tools relevant to this specific prompt.
       const relevantTools = await this.dbService.retrieveTools(text, 3);
-      
+
       const toolNames = relevantTools.map(t => t.name);
       // Update the last message to show what we found (Optional UI enhancement)
       this.messages.update(msgs => {
@@ -74,7 +74,7 @@ export class AgentService {
 
       // 3. Send Message
       let response = await this.chatSession.sendMessage({ message: text });
-      
+
       // Update history tracking
       this.chatHistory = await this.chatSession.getHistory();
 
@@ -97,16 +97,16 @@ export class AgentService {
     // 1. If text response, show it
     const textPart = parts.find(p => p.text);
     if (textPart && textPart.text) {
-      this.messages.update(msgs => [...msgs, { 
-        role: 'model', 
-        text: textPart.text, 
-        timestamp: Date.now() 
+      this.messages.update(msgs => [...msgs, {
+        role: 'model',
+        text: textPart.text,
+        timestamp: Date.now()
       }]);
     }
 
     // 2. If tool calls, execute them
     const functionCalls = parts.filter(p => p.functionCall).map(p => p.functionCall);
-    
+
     if (functionCalls.length > 0) {
       const toolOutputs: any[] = [];
 
@@ -152,7 +152,7 @@ export class AgentService {
           });
 
           // Show Output UI
-           this.messages.update(msgs => [...msgs, {
+          this.messages.update(msgs => [...msgs, {
             role: 'tool',
             toolName: fnName,
             toolOutput: result,
@@ -160,7 +160,7 @@ export class AgentService {
           }]);
 
         } catch (e: any) {
-           toolOutputs.push({
+          toolOutputs.push({
             functionResponse: {
               name: fnName,
               response: { error: e.message }
@@ -178,22 +178,22 @@ export class AgentService {
       // Send tool outputs back to model to get final summary
       // We must reuse the same session to complete the function call loop
       if (this.chatSession) {
-         const finalResponse = await this.chatSession.sendMessage({
-            message: toolOutputs // Pass raw tool outputs
-         });
-         
-         // Sync History again
-         this.chatHistory = await this.chatSession.getHistory();
+        const finalResponse = await this.chatSession.sendMessage({
+          message: toolOutputs // Pass raw tool outputs
+        });
 
-         const finalParts = finalResponse.candidates?.[0]?.content?.parts || [];
-         const finalText = finalParts.find(p => p.text)?.text;
-         if (finalText) {
-             this.messages.update(msgs => [...msgs, { 
-                role: 'model', 
-                text: finalText, 
-                timestamp: Date.now() 
-            }]);
-         }
+        // Sync History again
+        this.chatHistory = await this.chatSession.getHistory();
+
+        const finalParts = finalResponse.candidates?.[0]?.content?.parts || [];
+        const finalText = finalParts.find(p => p.text)?.text;
+        if (finalText) {
+          this.messages.update(msgs => [...msgs, {
+            role: 'model',
+            text: finalText,
+            timestamp: Date.now()
+          }]);
+        }
       }
     }
   }

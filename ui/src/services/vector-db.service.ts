@@ -28,7 +28,7 @@ export class VectorDbService {
   });
 
   constructor() {
-    const apiKey = process.env['API_KEY'] || '';
+    const apiKey = localStorage.getItem('gemini_api_key') || '';
     this.ai = new GoogleGenAI({ apiKey });
 
     // Initialize the Dynamic Tool Registry
