@@ -6,7 +6,7 @@
 #include <cmath>
 #include <unordered_set>
 
-namespace vdb {
+namespace vdb::framework {
 
 // ============================================================================
 // LangChainAdapter Implementation
@@ -196,21 +196,21 @@ Result<IndexStats> LlamaIndexAdapter::get_index_stats() const {
 }
 
 // ============================================================================
-// TrainingDataExporter Implementation
+// TrainingExporter Implementation
 // ============================================================================
 
-struct TrainingDataExporter::Impl {
+struct TrainingExporter::Impl {
     ExportConfig config;
 };
 
-TrainingDataExporter::TrainingDataExporter(const ExportConfig& config)
+TrainingExporter::TrainingExporter(const ExportConfig& config)
     : impl_(std::make_unique<Impl>()) {
     impl_->config = config;
 }
 
-TrainingDataExporter::~TrainingDataExporter() = default;
+TrainingExporter::~TrainingExporter() = default;
 
-Result<size_t> TrainingDataExporter::export_to_tfrecord(
+Result<size_t> TrainingExporter::export_to_tfrecord(
     const std::string& output_path
 ) const {
     // Would export to TensorFlow TFRecord format
@@ -220,7 +220,7 @@ Result<size_t> TrainingDataExporter::export_to_tfrecord(
     );
 }
 
-Result<size_t> TrainingDataExporter::export_to_pytorch(
+Result<size_t> TrainingExporter::export_to_pytorch(
     const std::string& output_path
 ) const {
     // Would export to PyTorch tensor format
@@ -230,7 +230,7 @@ Result<size_t> TrainingDataExporter::export_to_pytorch(
     );
 }
 
-Result<size_t> TrainingDataExporter::export_to_huggingface(
+Result<size_t> TrainingExporter::export_to_huggingface(
     const std::string& output_path
 ) const {
     // Would export to HuggingFace datasets format (typically using Arrow/Parquet)
@@ -240,7 +240,7 @@ Result<size_t> TrainingDataExporter::export_to_huggingface(
     );
 }
 
-Result<size_t> TrainingDataExporter::export_to_jsonl(
+Result<size_t> TrainingExporter::export_to_jsonl(
     const std::string& output_path
 ) const {
     // Would export to JSONL format
@@ -251,7 +251,7 @@ Result<size_t> TrainingDataExporter::export_to_jsonl(
     );
 }
 
-Result<size_t> TrainingDataExporter::export_to_parquet(
+Result<size_t> TrainingExporter::export_to_parquet(
     const std::string& output_path
 ) const {
     // Would export to Parquet format
@@ -261,4 +261,5 @@ Result<size_t> TrainingDataExporter::export_to_parquet(
     );
 }
 
+} // namespace framework
 } // namespace vdb

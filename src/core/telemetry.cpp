@@ -3,6 +3,7 @@
 // ============================================================================
 
 #include "vdb/telemetry.hpp"
+#include "vdb/logging.hpp"
 #include <sstream>
 #include <iomanip>
 #include <random>
@@ -235,7 +236,7 @@ void TelemetrySpan::add_event(const std::string& name,
         impl_->span->AddEvent(name);
     }
 #endif
-    if (Logger::instance().config().min_level <= LogLevel::DEBUG) {
+    if (vdb::logging::Logger::instance().config().min_level <= vdb::logging::LogLevel::DEBUG) {
         LOG_DEBUG("Trace event: " + name);
     }
 }
