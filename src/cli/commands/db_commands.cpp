@@ -130,7 +130,7 @@ int DbInfoCommand::execute(
     return 0;
 }
 
-} // namespace vdb::cli
+
 
 int DbOptimizeCommand::execute(
     const std::vector<std::string>& args,
@@ -278,3 +278,5 @@ int DbListCommand::execute(
     
     return 0;
 }
+
+} // namespace vdb::cli

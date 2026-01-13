@@ -551,6 +551,8 @@ add_executable(hektor
     src/cli/main.cpp
     src/cli/cli.cpp
     src/cli/output_formatter.cpp
+    src/cli/colors.cpp
+    src/cli/interactive_shell.cpp
     src/cli/commands/db_commands.cpp
     src/cli/commands/data_commands.cpp
     src/cli/commands/search_commands.cpp

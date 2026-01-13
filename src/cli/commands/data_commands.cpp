@@ -112,7 +112,7 @@ int DataDeleteCommand::execute(
     return 0;
 }
 
-} // namespace vdb::cli
+
 
 int DataUpdateCommand::execute(
     const std::vector<std::string>& args,
@@ -214,3 +214,5 @@ int DataListCommand::execute(
     
     return 0;
 }
+
+} // namespace vdb::cli
