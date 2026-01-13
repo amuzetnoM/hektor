@@ -2,7 +2,9 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VectorDbService } from '../services/vector-db.service';
+import { HektorApiService } from '../services/hektor-api.service';
 import { DatabaseInfo, HealthStatus } from '../models/core';
+import { environment } from '../environments/environment';
 
 @Component({
     selector: 'app-database-ops',
@@ -255,6 +257,8 @@ import { DatabaseInfo, HealthStatus } from '../models/core';
 })
 export class DatabaseOpsComponent implements OnInit {
     private db = inject(VectorDbService);
+    private api = inject(HektorApiService);
+    private useBackend = environment.useBackend;
 
     dbInfo = signal<DatabaseInfo | null>(null);
     healthStatus = signal<HealthStatus | null>(null);
@@ -271,12 +275,30 @@ export class DatabaseOpsComponent implements OnInit {
 
     ngOnInit() {
         this.refreshInfo();
+        if (this.useBackend) {
+            this.runHealthCheck();
+        }
     }
 
     async refreshInfo() {
         try {
-            const info = await this.db.getDatabaseInfo();
-            this.dbInfo.set(info);
+            if (this.useBackend) {
+                const info = await this.api.getDatabaseInfo();
+                this.dbInfo.set(info);
+            } else {
+                // Mock data for development
+                this.dbInfo.set({
+                    path: './vectors',
+                    totalVectors: this.db.stats().totalDocs,
+                    totalCollections: this.db.collections().length,
+                    indexType: 'HNSW',
+                    memoryUsageBytes: parseInt(this.db.stats().memoryUsage) * 1024 * 1024,
+                    diskUsageBytes: parseInt(this.db.stats().memoryUsage) * 1024 * 1024 * 2,
+                    version: '3.0.0',
+                    createdAt: '2026-01-01',
+                    modifiedAt: new Date().toISOString().split('T')[0]
+                });
+            }
         } catch (error) {
             console.error('Failed to fetch database info:', error);
         }
@@ -285,10 +307,31 @@ export class DatabaseOpsComponent implements OnInit {
     async runHealthCheck() {
         this.isCheckingHealth.set(true);
         try {
-            const status = await this.db.healthCheck();
-            this.healthStatus.set(status);
+            if (this.useBackend) {
+                const status = await this.api.getHealthStatus();
+                this.healthStatus.set(status);
+            } else {
+                // Mock health check for development
+                this.healthStatus.set({
+                    status: 'healthy',
+                    uptimeSeconds: 86400,
+                    checks: [
+                        { name: 'Database Connection', status: 'pass', message: 'Connected' },
+                        { name: 'Memory Usage', status: 'pass', message: 'Normal' },
+                        { name: 'Disk Space', status: 'pass', message: '85% available' },
+                        { name: 'Index Integrity', status: 'pass', message: 'Valid' },
+                    ]
+                });
+            }
         } catch (error) {
             console.error('Health check failed:', error);
+            this.healthStatus.set({
+                status: 'unhealthy',
+                uptimeSeconds: 0,
+                checks: [
+                    { name: 'Backend Connection', status: 'fail', message: 'Cannot connect to API' }
+                ]
+            });
         } finally {
             this.isCheckingHealth.set(false);
         }
@@ -297,8 +340,15 @@ export class DatabaseOpsComponent implements OnInit {
     async createBackup() {
         this.isBackingUp.set(true);
         try {
-            await this.db.backup(this.backupPath, this.compressBackup);
-            // Show success notification
+            if (this.useBackend) {
+                const result = await this.api.backupDatabase(this.backupPath);
+                console.log('Backup created:', result);
+            } else {
+                // Simulate backup
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                console.log('Mock backup created to:', this.backupPath);
+            }
+            this.backupPath = '';
         } catch (error) {
             console.error('Backup failed:', error);
         } finally {
@@ -313,8 +363,16 @@ export class DatabaseOpsComponent implements OnInit {
 
         this.isRestoring.set(true);
         try {
-            await this.db.restore(this.restorePath);
+            if (this.useBackend) {
+                const result = await this.api.restoreDatabase(this.restorePath);
+                console.log('Database restored:', result);
+            } else {
+                // Simulate restore
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                console.log('Mock restore from:', this.restorePath);
+            }
             await this.refreshInfo();
+            this.restorePath = '';
         } catch (error) {
             console.error('Restore failed:', error);
         } finally {
@@ -325,7 +383,14 @@ export class DatabaseOpsComponent implements OnInit {
     async optimizeDb() {
         this.isOptimizing.set(true);
         try {
-            await this.db.optimize();
+            if (this.useBackend) {
+                const result = await this.api.optimizeDatabase();
+                console.log('Database optimized:', result);
+            } else {
+                // Simulate optimize
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                console.log('Mock database optimization complete');
+            }
             await this.refreshInfo();
         } catch (error) {
             console.error('Optimize failed:', error);
@@ -337,7 +402,14 @@ export class DatabaseOpsComponent implements OnInit {
     async syncDb() {
         this.isSyncing.set(true);
         try {
-            await this.db.sync();
+            if (this.useBackend) {
+                // Sync is typically part of optimize or happens automatically
+                await this.api.optimizeDatabase();
+            } else {
+                // Simulate sync
+                await new Promise(resolve => setTimeout(resolve, 500));
+                console.log('Mock sync to disk complete');
+            }
         } catch (error) {
             console.error('Sync failed:', error);
         } finally {
