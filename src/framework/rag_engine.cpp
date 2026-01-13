@@ -7,7 +7,7 @@
 #include <regex>
 #include <numeric>
 
-namespace vdb {
+namespace vdb::framework {
 
 // ============================================================================
 // RAGEngine Implementation
@@ -355,4 +355,5 @@ Result<std::vector<QueryResult>> RAGEngine::rerank(
     return Ok(reranked);
 }
 
+} // namespace framework
 } // namespace vdb
