@@ -280,7 +280,7 @@ if(VDB_USE_LLAMA_CPP)
                     GGML_IMPL_CONTENT "${GGML_IMPL_CONTENT}")
                 # Verify the replacement was successful
                 if("${GGML_IMPL_CONTENT}" STREQUAL "${ORIGINAL_CONTENT}")
-                    message(FATAL_ERROR "Failed to patch ggml-impl.h: pattern not found. This may indicate an incompatible llama.cpp version.")
+                    message(FATAL_ERROR "Failed to patch ggml-impl.h: Could not find pattern '#endif' followed by '#ifdef __cplusplus'. This may indicate an incompatible llama.cpp version. Please report this issue with your llama.cpp version.")
                 endif()
                 # Verify the patch was actually applied
                 string(FIND "${GGML_IMPL_CONTENT}" "#if defined(__AVX2__) || defined(__AVX__) || defined(__AVX512F__)" VERIFY_PATCH)
