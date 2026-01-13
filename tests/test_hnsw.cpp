@@ -6,6 +6,7 @@
 #include "vdb/index.hpp"
 #include <random>
 #include <fstream>
+#include <filesystem>
 
 namespace vdb::test
 {
@@ -233,12 +234,12 @@ namespace vdb::test
         }
 
         // Save to file
-        std::string temp_path = "/tmp/test_hnsw_save_load.bin";
-        auto save_result = index.save(temp_path);
+        auto temp_path = std::filesystem::temp_directory_path() / "test_hnsw_save_load.bin";
+        auto save_result = index.save(temp_path.string());
         EXPECT_TRUE(save_result.has_value());
 
         // Load from file
-        auto load_result = HnswIndex::load(temp_path);
+        auto load_result = HnswIndex::load(temp_path.string());
         EXPECT_TRUE(load_result.has_value());
         
         HnswIndex loaded_index = std::move(*load_result);
@@ -269,21 +270,23 @@ namespace vdb::test
         EXPECT_EQ(results[0].id, 1);
 
         // Clean up
-        std::remove(temp_path.c_str());
+        std::filesystem::remove(temp_path);
     }
 
     TEST_F(HNSWTest, BackwardCompatibilityVersion1)
     {
         // Test backward compatibility: loading a version 1 file should work
         // Create a version 1 file manually
-        std::string temp_path = "/tmp/test_hnsw_v1.bin";
+        auto temp_path = std::filesystem::temp_directory_path() / "test_hnsw_v1.bin";
         std::ofstream file(temp_path, std::ios::binary);
         
         // Write version 1 header
-        uint32_t magic = 0x564442;
-        uint32_t version = 1;
-        file.write(reinterpret_cast<const char*>(&magic), sizeof(magic));
-        file.write(reinterpret_cast<const char*>(&version), sizeof(version));
+        // Magic number from src/index/hnsw.cpp
+        constexpr uint32_t HNSW_MAGIC = 0x564442;  // "VDB"
+        constexpr uint32_t HNSW_VERSION_1 = 1;
+        
+        file.write(reinterpret_cast<const char*>(&HNSW_MAGIC), sizeof(HNSW_MAGIC));
+        file.write(reinterpret_cast<const char*>(&HNSW_VERSION_1), sizeof(HNSW_VERSION_1));
         
         // Write minimal config (version 1 format)
         Dim dimension = DIM;
@@ -324,7 +327,7 @@ namespace vdb::test
         file.close();
         
         // Load the version 1 file
-        auto load_result = HnswIndex::load(temp_path);
+        auto load_result = HnswIndex::load(temp_path.string());
         EXPECT_TRUE(load_result.has_value());
         
         HnswIndex loaded_index = std::move(*load_result);
@@ -350,7 +353,7 @@ namespace vdb::test
         EXPECT_EQ(loaded_index.size(), 10);
         
         // Clean up
-        std::remove(temp_path.c_str());
+        std::filesystem::remove(temp_path);
     }
 
 } // namespace vdb::test
