@@ -640,8 +640,9 @@ if(VDB_BUILD_PYTHON)
     target_link_libraries(pyvdb PRIVATE vdb_core)
     
     # Install Python module
+    # Note: scikit-build-core handles the installation path automatically
     install(TARGETS pyvdb
-        LIBRARY DESTINATION ${Python3_SITELIB}
+        LIBRARY DESTINATION .
     )
 endif()
 
