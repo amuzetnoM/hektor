@@ -40,42 +40,42 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 
 **Major Release: Distributed System, ML Framework Integration, and Production Hardening**
 
-### 🎉 New Features
+### Highlights
 
 #### Distributed System
-- ✅ **Replication**: Async, sync, and semi-sync modes with automatic failover
-- ✅ **Sharding**: Hash, range, and consistent hashing strategies with auto-resharding
-- ✅ **gRPC Networking**: High-performance RPC with HTTP/2, TLS/mTLS support
-- ✅ **Service Discovery**: Automatic node discovery and health monitoring
-- ✅ **Load Balancing**: Client-side and server-side balancing
+- **Replication**: Async, sync, and semi-sync modes with automatic failover
+- **Sharding**: Hash, range, and consistent hashing strategies with auto-resharding
+- **gRPC Networking**: High-performance RPC with HTTP/2, TLS/mTLS support
+- **Service Discovery**: Automatic node discovery and health monitoring
+- **Load Balancing**: Client-side and server-side balancing
 
 #### ML Framework Integration
-- ✅ **TensorFlow C++ API**: SavedModel loading, GPU acceleration, training export
-- ✅ **PyTorch C++ (LibTorch)**: TorchScript loading, CUDA/ROCm support, mixed precision
-- ✅ **GPU Acceleration**: Multi-GPU distribution, dynamic batching, memory management
-- ✅ **Training Export**: TFRecord, PyTorch Dataset, contrastive learning pipelines
+- **TensorFlow C++ API**: SavedModel loading, GPU acceleration, training export
+- **PyTorch C++ (LibTorch)**: TorchScript loading, CUDA/ROCm support, mixed precision
+- **GPU Acceleration**: Multi-GPU distribution, dynamic batching, memory management
+- **Training Export**: TFRecord, PyTorch Dataset, contrastive learning pipelines
 
 #### Hybrid Search (v3.0.0)
-- ✅ **BM25 Full-Text Search**: Porter stemming, stop-word filtering, inverted index
-- ✅ **5 Fusion Methods**: RRF, Weighted Sum, CombSUM, CombMNZ, Borda Count
-- ✅ **RAG Engine**: 5 chunking strategies (fixed, sentence, paragraph, semantic, recursive)
-- ✅ **Framework Adapters**: LangChain and LlamaIndex integration
-- ✅ **Performance**: +15-20% accuracy, +10-15% recall over vector-only search
+- **BM25 Full-Text Search**: Porter stemming, stop-word filtering, inverted index
+- **5 Fusion Methods**: RRF, Weighted Sum, CombSUM, CombMNZ, Borda Count
+- **RAG Engine**: 5 chunking strategies (fixed, sentence, paragraph, semantic, recursive)
+- **Framework Adapters**: LangChain and LlamaIndex integration
+- **Performance**: +15-20% accuracy, +10-15% recall over vector-only search
 
 #### Enhanced Observability
-- ✅ **Prometheus Metrics**: Comprehensive metrics export with 50+ metrics
-- ✅ **OpenTelemetry Tracing**: Distributed tracing with W3C Trace Context support
-- ✅ **eBPF Integration**: Zero-overhead continuous profiling and kernel-level observability
-- ✅ **Comprehensive Logging**: 15 anomaly types, structured JSON logs
-- ✅ **Unified Observability**: Traces + Metrics + Logs + Profiles correlation
+- **Prometheus Metrics**: Comprehensive metrics export with 50+ metrics
+- **OpenTelemetry Tracing**: Distributed tracing with W3C Trace Context support
+- **eBPF Integration**: Zero-overhead continuous profiling and kernel-level observability
+- **Comprehensive Logging**: 15 anomaly types, structured JSON logs
+- **Unified Observability**: Traces + Metrics + Logs + Profiles correlation
 
 #### Documentation & Quality
-- ✅ **23 Core Documents**: Professionally organized with frontmatter and navigation
-- ✅ **50+ Test Suites**: Comprehensive testing across all features
-- ✅ **Production Ready**: Security hardening, performance optimization
-- ✅ **Docker Images**: Multi-platform support (amd64, arm64)
+- **23 Core Documents**: Professionally organized with frontmatter and navigation
+- **50+ Test Suites**: Comprehensive testing across all features
+- **Production Ready**: Security hardening, performance optimization
+- **Docker Images**: Multi-platform support (amd64, arm64)
 
-### 📊 Performance Improvements
+### Performance Improvements
 
 | Metric | v2.3.0 | v3.0.0 | Improvement |
 |--------|--------|--------|-------------|
