@@ -309,7 +309,11 @@ TEST(IntegrationTest, MultipleDisplayProfiles) {
     
     std::vector<Vector> training_data;
     for (int i = 0; i < 50; ++i) {
-        Vector vec(512, static_cast<float>(i) / 50.0f);
+        Vector vec(512);
+        float fill_value = static_cast<float>(i) / 50.0f;
+        for (size_t j = 0; j < 512; ++j) {
+            vec[j] = fill_value;
+        }
         training_data.push_back(vec);
     }
     
@@ -352,11 +356,4 @@ TEST(PerformanceTest, PQEncodingSpeed) {
     EXPECT_LT(duration.count(), 1000);
 }
 
-// ============================================================================
-// Main
-// ============================================================================
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// Note: Tests are run via gtest_main - no custom main() needed

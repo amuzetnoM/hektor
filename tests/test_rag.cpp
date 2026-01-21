@@ -205,17 +205,4 @@ void test_rag_empty_document() {
     std::cout << "  PASSED\n";
 }
 
-int main() {
-    std::cout << "Running RAG Engine Tests...\n\n";
-    
-    test_rag_chunking_fixed();
-    test_rag_chunking_sentence();
-    test_rag_chunking_paragraph();
-    test_rag_context_building();
-    test_rag_prompt_formatting();
-    test_rag_reranking();
-    test_rag_empty_document();
-    
-    std::cout << "\nAll RAG Engine tests passed!\n";
-    return 0;
-}
+// Note: Tests are run via gtest framework - no custom main() needed

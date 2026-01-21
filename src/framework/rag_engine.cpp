@@ -43,7 +43,9 @@ struct RAGEngine::Impl {
         auto sentences_begin = std::sregex_iterator(text.begin(), text.end(), sentence_regex);
         auto sentences_end = std::sregex_iterator();
         
+        std::smatch last_match;
         for (std::sregex_iterator i = sentences_begin; i != sentences_end; ++i) {
+            last_match = *i;  // Keep track of the last match
             std::string sentence = (*i).str();
             // Trim whitespace
             sentence.erase(0, sentence.find_first_not_of(" \t\n\r"));
@@ -55,8 +57,7 @@ struct RAGEngine::Impl {
         
         // Handle remaining text without sentence terminators
         size_t last_pos = 0;
-        if (!sentences.empty()) {
-            std::smatch last_match = *std::prev(sentences_end);
+        if (!sentences.empty() && last_match.ready()) {
             last_pos = last_match.position() + last_match.length();
         }
         

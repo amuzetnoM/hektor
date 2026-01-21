@@ -149,7 +149,7 @@ Result<void> DisplayAwareQuantizer::train(std::span<const Vector> training_data)
 
 Result<std::vector<uint8_t>> DisplayAwareQuantizer::encode(VectorView vector) const {
     if (!trained_) {
-        return Error{ErrorCode::NotTrained, "DisplayAwareQuantizer not trained"};
+        return std::unexpected(Error{ErrorCode::NotTrained, "DisplayAwareQuantizer not trained"});
     }
     
     // Transform to perceptual space
@@ -161,7 +161,7 @@ Result<std::vector<uint8_t>> DisplayAwareQuantizer::encode(VectorView vector) co
 
 Result<Vector> DisplayAwareQuantizer::decode(std::span<const uint8_t> codes) const {
     if (!trained_) {
-        return Error{ErrorCode::NotTrained, "DisplayAwareQuantizer not trained"};
+        return std::unexpected(Error{ErrorCode::NotTrained, "DisplayAwareQuantizer not trained"});
     }
     
     // Decode from quantizer
@@ -181,16 +181,37 @@ Result<std::vector<uint8_t>> DisplayAwareQuantizer::requantize_for_display(
     // Decode with current display profile
     auto decoded_result = decode(codes);
     if (!decoded_result) {
-        return Error{decoded_result.error()};
+        return std::unexpected(decoded_result.error());
     }
     
-    // Create temporary quantizer for target display
-    DisplayAwareQuantizer target_quantizer(target_display);
-    target_quantizer.trained_ = trained_;
-    target_quantizer.quantizer_ = std::make_unique<ProductQuantizer>(*quantizer_);
+    // For requantization, we need the quantizer to be trained
+    if (!quantizer_ || !trained_) {
+        return std::unexpected(Error{ErrorCode::NotTrained, "Quantizer not trained for requantization"});
+    }
     
-    // Re-encode for target display
-    return target_quantizer.encode(*decoded_result);
+    // Determine target perceptual curve from display type
+    PerceptualCurve target_curve = PerceptualCurve::Linear;
+    switch (target_display.type) {
+        case DisplayType::SDR_BT709:
+            target_curve = PerceptualCurve::Gamma22;
+            break;
+        case DisplayType::HDR10:
+        case DisplayType::HDR10_PLUS:
+        case DisplayType::HDR1000:
+        case DisplayType::HDR4000:
+        case DisplayType::DolbyVision:
+            target_curve = PerceptualCurve::PQ_ST2084;
+            break;
+    }
+    
+    // Create transfer function for target display
+    PerceptualTransferFunction target_transfer(target_curve);
+    
+    // Transform to target perceptual space
+    auto perceptual = target_transfer.encode(*decoded_result);
+    
+    // Quantize using the same trained quantizer (codebooks are display-agnostic)
+    return quantizer_->encode(perceptual);
 }
 
 void DisplayAwareQuantizer::set_display_profile(const DisplayProfile& profile) {
@@ -268,7 +289,7 @@ Result<void> EnvironmentAwareQuantizer::train(std::span<const Vector> training_d
 
 Result<std::vector<uint8_t>> EnvironmentAwareQuantizer::encode(VectorView vector) const {
     if (!trained_) {
-        return Error{ErrorCode::NotTrained, "EnvironmentAwareQuantizer not trained"};
+        return std::unexpected(Error{ErrorCode::NotTrained, "EnvironmentAwareQuantizer not trained"});
     }
     
     // For now, delegate to base quantizer
@@ -278,7 +299,7 @@ Result<std::vector<uint8_t>> EnvironmentAwareQuantizer::encode(VectorView vector
 
 Result<Vector> EnvironmentAwareQuantizer::decode(std::span<const uint8_t> codes) const {
     if (!trained_) {
-        return Error{ErrorCode::NotTrained, "EnvironmentAwareQuantizer not trained"};
+        return std::unexpected(Error{ErrorCode::NotTrained, "EnvironmentAwareQuantizer not trained"});
     }
     
     return base_quantizer_->decode(codes);
@@ -296,6 +317,143 @@ void EnvironmentAwareQuantizer::set_display_profile(const DisplayProfile& profil
 
 void EnvironmentAwareQuantizer::set_environment_profile(const EnvironmentProfile& environment) {
     adapt_to_environment(environment);
+}
+
+// ============================================================================
+// SaliencyQuantizer Implementation
+// ============================================================================
+
+SaliencyQuantizer::SaliencyQuantizer(uint32_t total_bit_budget)
+    : total_bit_budget_(total_bit_budget), trained_(false) {
+}
+
+Result<void> SaliencyQuantizer::train(std::span<const Vector> training_data) {
+    if (training_data.empty()) {
+        return std::unexpected(Error{ErrorCode::InvalidInput, "Empty training data"});
+    }
+    
+    // Initialize base bit allocation (uniform)
+    size_t dim = training_data[0].size();
+    uint32_t bits_per_dim = total_bit_budget_ / static_cast<uint32_t>(dim);
+    base_bit_allocation_.assign(dim, bits_per_dim);
+    
+    trained_ = true;
+    return {};
+}
+
+Result<std::vector<uint8_t>> SaliencyQuantizer::encode(
+    VectorView vector,
+    const SaliencyMap& saliency
+) const {
+    if (!trained_) {
+        return std::unexpected(Error{ErrorCode::NotTrained, "SaliencyQuantizer not trained"});
+    }
+    
+    // Allocate bits based on saliency
+    auto bit_allocation = allocate_bits(saliency);
+    
+    // Quantize each dimension with allocated bits
+    std::vector<uint8_t> codes;
+    codes.reserve(total_bit_budget_ / 8);
+    
+    uint32_t bit_offset = 0;
+    uint8_t current_byte = 0;
+    
+    for (size_t i = 0; i < vector.size(); ++i) {
+        uint32_t bits = bit_allocation[i];
+        uint32_t code = quantize_value(vector[i], bits);
+        
+        // Pack bits into bytes (simplified - assumes byte-aligned output for now)
+        // Full implementation would do proper bit packing
+        if (bits >= 8) {
+            codes.push_back(static_cast<uint8_t>(code & 0xFF));
+        }
+    }
+    
+    return codes;
+}
+
+Result<Vector> SaliencyQuantizer::decode(std::span<const uint8_t> codes) const {
+    if (!trained_) {
+        return std::unexpected(Error{ErrorCode::NotTrained, "SaliencyQuantizer not trained"});
+    }
+    
+    // Simplified decoding (assumes uniform bit allocation for now)
+    Vector output(static_cast<Dim>(base_bit_allocation_.size()));
+    
+    for (size_t i = 0; i < base_bit_allocation_.size() && i < codes.size(); ++i) {
+        output[i] = dequantize_value(codes[i], base_bit_allocation_[i]);
+    }
+    
+    return output;
+}
+
+SaliencyMap SaliencyQuantizer::detect_saliency(VectorView vector) const {
+    SaliencyMap saliency;
+    saliency.dimension = vector.size();
+    saliency.importance.resize(vector.size());
+    
+    // Simple magnitude-based saliency detection
+    float max_val = 0.0f;
+    for (size_t i = 0; i < vector.size(); ++i) {
+        float abs_val = std::abs(vector[i]);
+        if (abs_val > max_val) max_val = abs_val;
+    }
+    
+    if (max_val > 0.0f) {
+        for (size_t i = 0; i < vector.size(); ++i) {
+            saliency.importance[i] = std::abs(vector[i]) / max_val;
+        }
+    } else {
+        std::fill(saliency.importance.begin(), saliency.importance.end(), 1.0f);
+    }
+    
+    return saliency;
+}
+
+std::vector<uint32_t> SaliencyQuantizer::allocate_bits(const SaliencyMap& saliency) const {
+    std::vector<uint32_t> allocation(saliency.dimension);
+    
+    // Compute total importance for normalization
+    float total_importance = 0.0f;
+    for (float imp : saliency.importance) {
+        total_importance += imp;
+    }
+    
+    if (total_importance <= 0.0f) {
+        // Uniform allocation if no importance
+        uint32_t bits_per_dim = total_bit_budget_ / static_cast<uint32_t>(saliency.dimension);
+        std::fill(allocation.begin(), allocation.end(), bits_per_dim);
+    } else {
+        // Allocate bits proportional to importance
+        uint32_t remaining_bits = total_bit_budget_;
+        for (size_t i = 0; i < saliency.dimension; ++i) {
+            float fraction = saliency.importance[i] / total_importance;
+            allocation[i] = static_cast<uint32_t>(fraction * total_bit_budget_);
+            allocation[i] = std::max(allocation[i], 1u);  // At least 1 bit per dimension
+            remaining_bits -= allocation[i];
+        }
+    }
+    
+    return allocation;
+}
+
+uint32_t SaliencyQuantizer::quantize_value(float value, uint32_t bits) const {
+    if (bits == 0) return 0;
+    
+    // Clamp to [0, 1] range
+    float clamped = std::max(0.0f, std::min(1.0f, value));
+    
+    // Quantize to bits levels
+    uint32_t max_val = (1u << bits) - 1;
+    return static_cast<uint32_t>(clamped * max_val + 0.5f);
+}
+
+float SaliencyQuantizer::dequantize_value(uint32_t code, uint32_t bits) const {
+    if (bits == 0) return 0.0f;
+    
+    uint32_t max_val = (1u << bits) - 1;
+    return static_cast<float>(code) / static_cast<float>(max_val);
 }
 
 // ============================================================================
@@ -320,7 +478,7 @@ Result<void> AdaptiveQuantizer::train(std::span<const Vector> training_data) {
         return env_quantizer_->train(training_data);
     }
     
-    return Error{ErrorCode::InvalidState, "No quantizer available"};
+    return std::unexpected(Error{ErrorCode::InvalidState, "No quantizer available"});
 }
 
 bool AdaptiveQuantizer::is_trained() const {
@@ -335,7 +493,7 @@ Result<std::vector<uint8_t>> AdaptiveQuantizer::encode(VectorView vector) const 
         return env_quantizer_->encode(vector);
     }
     
-    return Error{ErrorCode::InvalidState, "No quantizer available"};
+    return std::unexpected(Error{ErrorCode::InvalidState, "No quantizer available"});
 }
 
 Result<std::vector<uint8_t>> AdaptiveQuantizer::encode_with_saliency(
@@ -355,7 +513,7 @@ Result<Vector> AdaptiveQuantizer::decode(std::span<const uint8_t> codes) const {
         return env_quantizer_->decode(codes);
     }
     
-    return Error{ErrorCode::InvalidState, "No quantizer available"};
+    return std::unexpected(Error{ErrorCode::InvalidState, "No quantizer available"});
 }
 
 void AdaptiveQuantizer::adapt_to_display(const DisplayProfile& display) {

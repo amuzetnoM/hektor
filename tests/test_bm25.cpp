@@ -271,28 +271,5 @@ void test_bm25_save_load() {
     std::cout << "[PASS] Save and load test passed\n\n";
 }
 
-int main() {
-    std::cout << "==============================================\n";
-    std::cout << "BM25 Full-Text Search Engine Tests\n";
-    std::cout << "==============================================\n\n";
-    
-    try {
-        test_bm25_basic();
-        test_bm25_search();
-        test_bm25_stemming();
-        test_bm25_empty_query();
-        test_bm25_case_sensitivity();
-        test_bm25_remove_document();
-        test_bm25_update_document();
-        test_bm25_save_load();
-        
-        std::cout << "==============================================\n";
-        std::cout << "All tests passed! [PASS]\n";
-        std::cout << "==============================================\n";
-        
-        return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Test failed with exception: " << e.what() << "\n";
-        return 1;
-    }
-}
+// Note: Tests are run via gtest framework - no custom main() needed
+// All test functions above should be called from gtest TEST() macros

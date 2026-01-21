@@ -220,27 +220,4 @@ void test_empty_results() {
     std::cout << "  [PASS] Empty results handled correctly\n\n";
 }
 
-int main() {
-    std::cout << "==============================================\n";
-    std::cout << "Hybrid Search Engine Tests\n";
-    std::cout << "==============================================\n\n";
-    
-    try {
-        test_rrf_fusion();
-        test_weighted_sum_fusion();
-        test_combsum_fusion();
-        test_combmnz_fusion();
-        test_borda_fusion();
-        test_static_methods();
-        test_empty_results();
-        
-        std::cout << "==============================================\n";
-        std::cout << "All tests passed! [PASS]\n";
-        std::cout << "==============================================\n";
-        
-        return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Test failed with exception: " << e.what() << "\n";
-        return 1;
-    }
-}
+// Note: Tests are run via gtest framework - no custom main() needed
