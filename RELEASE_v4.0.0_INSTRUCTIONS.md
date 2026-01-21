@@ -1,6 +1,6 @@
-# Instructions for Pushing v3.0.1 Tag
+# Instructions for Pushing v4.0.0 Tag
 
-The v3.0.1 tag has been created locally and is ready to be pushed to origin.
+The v4.0.0 tag has been created locally and is ready to be pushed to origin.
 
 ## Option 1: Push Tag Directly (Recommended)
 
@@ -9,17 +9,17 @@ Once this PR is merged to main, run:
 ```bash
 git checkout main
 git pull origin main
-git push origin v3.0.1
+git push origin v4.0.0
 ```
 
 ## Option 2: Create GitHub Release from UI
 
 1. Merge this PR to main
 2. Go to: https://github.com/amuzetnoM/hektor/releases/new
-3. Choose tag: `v3.0.1` (or create new tag if not available)
+3. Choose tag: `v4.0.0` (or create new tag if not available)
 4. Target: `main` branch
-5. Release title: `v3.0.1 - Security Patch Release`
-6. Description: Copy from `docs/changelog/v3.0.1.md`
+5. Release title: `v4.0.0 - Security Patch Release`
+6. Description: Copy from `docs/changelog/v4.0.0.md`
 7. Click "Publish release"
 
 ## Verify Tag Locally
@@ -27,15 +27,15 @@ git push origin v3.0.1
 To verify the tag was created correctly:
 
 ```bash
-git tag -l v3.0.1
-git show v3.0.1
+git tag -l v4.0.0
+git show v4.0.0
 ```
 
 ## Release Notes
 
 The complete release notes are available in:
-- `docs/changelog/v3.0.1.md`
-- Tag annotation (accessible via `git show v3.0.1`)
+- `docs/changelog/v4.0.0.md`
+- Tag annotation (accessible via `git show v4.0.0`)
 
 ## What Changed Since v3.0.0
 

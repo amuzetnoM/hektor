@@ -342,7 +342,7 @@ docker-compose -f docker-compose-observability.yml logs -f tempo
 
 ```bash
 export OTEL_SERVICE_NAME="vector-studio"
-export OTEL_SERVICE_VERSION="3.0.1"
+export OTEL_SERVICE_VERSION="4.0.0"
 export OTEL_DEPLOYMENT_ENVIRONMENT="development"
 export OTEL_RESOURCE_ATTRIBUTES="service.namespace=vectordb,host.name=$(hostname)"
 
@@ -369,7 +369,7 @@ Create `telemetry-config.json`:
   "telemetry": {
     "enabled": true,
     "service_name": "vector-studio",
-    "service_version": "3.0.1",
+    "service_version": "4.0.0",
     "deployment_environment": "development",
     "sampling": {
       "ratio": 1.0,
@@ -613,5 +613,5 @@ For issues or questions:
 
 ---
 
-**Version**: 3.0.1  
+**Version**: 4.0.0  
 **Last Updated**: 2026-01-08

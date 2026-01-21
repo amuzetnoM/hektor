@@ -208,7 +208,7 @@ Response:
 ```json
 {
   "status": "healthy",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "database": "healthy",
   "uptime_seconds": 3600.5
 }

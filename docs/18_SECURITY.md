@@ -1,13 +1,13 @@
 ---
 title: "Security Policy"
 description: "Security policies and vulnerability reporting"
-version: "3.0.1"
+version: "4.0.0"
 last_updated: "2026-01-08"
 sidebar_position: 18
 category: "Operations"
 ---
 
-![Version](https://img.shields.io/badge/version-3.0.1-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--08-green?style=flat-square)
 ![Type](https://img.shields.io/badge/type-security-red?style=flat-square)
 

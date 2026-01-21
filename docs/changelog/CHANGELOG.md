@@ -9,13 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [3.0.1] - 2026-01-21
+## [4.0.0] - 2026-01-21
+
+### Added - Major Features and Enhancements
+
+#### Perceptual Quantization Research
+- **Advanced Quantization Techniques**: Implementation of perceptual quantization for HDR/image embeddings
+- **Research Papers**: Three comprehensive research papers
+  - Neural Latent Quantization
+  - Temporal Redundancy Beyond Motion Vectors
+  - Quantum Quantization
+- **Perceptual Manifolds**: Detailed documentation on quantization evolution
+
+#### Competitor Analysis & Research
+- **Comprehensive Vector Database Analysis**: Deep dive into competitor landscape
+- **Interactive Visualization Dashboard**: HTML-based charts and comparisons
+- **Billion-Scale Metrics**: Performance benchmarks at scale
+
+#### Build & Installation Improvements
+- **Automated Build Script**: Comprehensive build automation
+- **Improved pip Installation**: Enhanced Python package installation
+- **Architecture Detection**: Automatic AVX flags detection
+- **CI/CD Optimizations**: New optimized CI workflows
 
 ### Security
 - Updated `tar` package from 7.5.2 to 7.5.3 to fix vulnerability related to absolute linkpath sanitization
 
 ### Changed
-- Updated UI dependencies (package-lock.json) with security patches
+- Major version bump from 3.0.0 to 4.0.0 for significant new features
+- Enhanced documentation with research findings and competitive analysis
+- Optimized build system with better architecture detection
+
+### Performance
+- Quantization optimizations (up to 4x speedups)
+- Improved CI/CD pipeline efficiency
 
 ## [3.0.0] - 2026-01-08
 

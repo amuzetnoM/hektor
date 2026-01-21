@@ -1,12 +1,12 @@
 ---
 title: "OpenTelemetry Distributed Tracing"
 description: "Comprehensive distributed tracing and observability with OpenTelemetry"
-version: "3.0.1"
+version: "4.0.0"
 last_updated: "2026-01-08"
 sidebar_position: 15.5
 category: "Observability"
 ---
-![Version](https://img.shields.io/badge/version-3.0.1-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--08-green?style=flat-square)
 ![Status](https://img.shields.io/badge/status-production--ready-success?style=flat-square)
 
@@ -199,7 +199,7 @@ int main() {
     // Configure telemetry
     TelemetryConfig config;
     config.service_name = "vector-studio";
-    config.service_version = "3.0.1";
+    config.service_version = "4.0.0";
     config.deployment_environment = "production";
     
     // Sampling configuration
@@ -238,7 +238,7 @@ int main() {
 ```bash
 # Service configuration
 export OTEL_SERVICE_NAME="vector-studio"
-export OTEL_SERVICE_VERSION="3.0.1"
+export OTEL_SERVICE_VERSION="4.0.0"
 export OTEL_RESOURCE_ATTRIBUTES="deployment.environment=production,service.namespace=vectordb"
 
 # OTLP exporter
@@ -838,7 +838,7 @@ services:
 
 ---
 
-**Version**: 3.0.1  
+**Version**: 4.0.0  
 **Last Updated**: 2026-01-08  
 **Status**: Production-Ready
 

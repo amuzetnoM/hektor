@@ -1,7 +1,7 @@
 ---
 title: "CLI Design Specification"
 description: "Comprehensive CLI design for Hektor Vector Database"
-version: "3.0.1"
+version: "4.0.0"
 last_updated: "2026-01-07"
 status: "Design"
 ---

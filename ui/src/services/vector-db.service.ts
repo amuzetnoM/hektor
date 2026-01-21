@@ -695,7 +695,7 @@ export class VectorDbService {
       diskUsageBytes: totalDocs * 2048,
       createdAt: new Date(Date.now() - 86400000).toISOString(),
       modifiedAt: new Date().toISOString(),
-      version: '3.0.1'
+      version: '4.0.0'
     };
   }
 

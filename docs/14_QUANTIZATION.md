@@ -1,12 +1,12 @@
 ---
 title: "Quantization"
 description: "Vector compression and quantization techniques"
-version: "3.0.1"
+version: "4.0.0"
 last_updated: "2026-01-20"
 sidebar_position: 14
 category: "Optimization"
 ---
-![Version](https://img.shields.io/badge/version-3.0.1-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--20-green?style=flat-square)
 ![Type](https://img.shields.io/badge/type-advanced-red?style=flat-square)
 
@@ -647,7 +647,7 @@ Retrain quantizers when:
 
 ## Perceptual Quantization (NEW) {#perceptual-quantization}
 
-**New in v3.0.1**: Perceptual quantization optimizes encoding for human perception, especially for image and video content.
+**New in v4.0.0**: Perceptual quantization optimizes encoding for human perception, especially for image and video content.
 
 ### Overview
 
@@ -797,5 +797,5 @@ For comprehensive research, implementation details, and examples:
 ---
 
 **Last Updated**: 2026-01-20  
-**Version**: 3.0.1  
+**Version**: 4.0.0  
 **Status**: Production Ready ✅

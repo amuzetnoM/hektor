@@ -1,7 +1,7 @@
 ---
 title: "Perceptual Quantization Research"
 description: "Research on implementing PQ/SQ level perceptual quantization and advanced techniques"
-version: "3.0.1"
+version: "4.0.0"
 last_updated: "2026-01-20"
 sidebar_position: 24
 category: "Research"

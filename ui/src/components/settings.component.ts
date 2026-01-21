@@ -166,7 +166,7 @@ import { AppSettings, LogLevel, EMBEDDING_MODELS } from '../models/core';
             <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
               <div>
                 <div class="text-xs text-zinc-500 uppercase tracking-wider mb-1">UI Version</div>
-                <div class="text-sm font-mono text-indigo-400">3.0.1</div>
+                <div class="text-sm font-mono text-indigo-400">4.0.0</div>
               </div>
               <div>
                 <div class="text-xs text-zinc-500 uppercase tracking-wider mb-1">Backend Version</div>

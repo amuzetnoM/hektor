@@ -1,14 +1,14 @@
 ---
 title: "User Guide"
 description: "Complete user guide covering all features and operations"
-version: "3.0.1"
+version: "4.0.0"
 last_updated: "2026-01-06"
 sidebar_position: 4
 category: "Guide"
 ---
 
 
-![Version](https://img.shields.io/badge/version-3.0.1-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--06-green?style=flat-square)
 ![Difficulty](https://img.shields.io/badge/difficulty-all__levels-blue?style=flat-square)
 

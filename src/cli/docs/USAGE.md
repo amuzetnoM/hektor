@@ -1,6 +1,6 @@
 # Hektor CLI - Complete Usage Guide
 
-**Version**: 3.0.1  
+**Version**: 4.0.0  
 **Last Updated**: 2026-01-08
 
 ## Table of Contents
@@ -142,7 +142,7 @@ hektor interactive
 ```
 ╔══════════════════════════════════════════════════════╗
 ║    Hektor Vector Database - Interactive Shell    ║
-║                  Version 3.0.1                   ║
+║                  Version 4.0.0                   ║
 ╚══════════════════════════════════════════════════════╝
 
 Type help for available commands, exit to quit
