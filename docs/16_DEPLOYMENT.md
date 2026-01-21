@@ -173,7 +173,7 @@ curl http://localhost:8080/health
 ```bash
 # Update image
 kubectl set image deployment/vector-studio-api \
-  api=ghcr.io/amuzetnom/vector_studio:v3.0.0 \
+  api=ghcr.io/amuzetnom/vector_studio:v4.0.0 \
   -n vector-studio
 
 # Rollback if needed

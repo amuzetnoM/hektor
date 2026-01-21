@@ -645,9 +645,9 @@ Retrain quantizers when:
 
 ---
 
-## Perceptual Quantization (NEW) {#perceptual-quantization}
+## Perceptual Quantization (System Snapshot) {#perceptual-quantization}
 
-**New in v3.0.0**: Perceptual quantization optimizes encoding for human perception, especially for image and video content.
+**System Snapshot (v4.0.0)**: Perceptual quantization is detailed in `docs/research/HEKTOR_ANALYSIS.md` and is part of the v4.0.0 system snapshot, focusing on image/video perceptual preservation.
 
 ### Overview
 

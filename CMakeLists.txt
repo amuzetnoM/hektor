@@ -2,7 +2,7 @@
 # VectorDB - High-Performance Vector Database for Gold Standard
 # ============================================================================
 cmake_minimum_required(VERSION 3.20)
-project(VectorDB VERSION 3.0.0 LANGUAGES CXX)
+project(VectorDB VERSION 4.0.0 LANGUAGES CXX)
 
 # ============================================================================
 # Build Configuration

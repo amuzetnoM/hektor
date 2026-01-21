@@ -138,7 +138,7 @@ Hektor is designed for **warp-speed performance** with the ability to scale to b
 
 ---
 
-### Perceptual Quantization (NEW in v3.0.0)
+### Perceptual Quantization (See System Snapshot v4.0.0)
 
 | Method | Recall@10 | SSIM | CIEDE2000 | Use Case |
 |--------|-----------|------|-----------|----------|

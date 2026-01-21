@@ -114,27 +114,16 @@
 
 ---
 
-## What's New in v3.0.0
+## System Snapshot (v4.0.0)
 
-### 🎯 Major Features
-- ✅ **Distributed System** - Replication, sharding, gRPC
-- ✅ **Hybrid Search** - BM25 + Vector fusion
-- ✅ **ML Framework Integration** - TensorFlow, PyTorch C++ API
-- ✅ **Perceptual Quantization** - HDR-aware quantization for images
-- ✅ **Billion-Scale Support** - Tested up to 1B vectors
-- ✅ **Enhanced Observability** - Prometheus, OpenTelemetry, eBPF
+See the comprehensive system snapshot and exhaustive analysis in `docs/research/HEKTOR_ANALYSIS.md` (v4.0.0) for architecture details, billion-scale benchmarks, perceptual quantization research, and deployment guidance.
 
-### 📈 Performance Improvements
-- **Query Latency**: 5ms → 2.9ms (42% faster)
-- **Recall**: 95.2% → 98.1% (with perceptual quantization)
-- **Billion-Scale**: 96.8% recall @ 8.5ms latency
-- **Throughput**: 10,000+ QPS in distributed mode
+---
 
-### 📚 Documentation Updates
-- **25+ documents** professionally organized
-- **Comprehensive benchmarks** with competitor comparison
-- **Billion-scale performance** analysis
-- **Perceptual quantization** research document
+## Document Status
+
+| Status | Count | Description |
+|--------|-------|-------------|
 
 ---
 
@@ -143,8 +132,8 @@
 | Status | Count | Description |
 |--------|-------|-------------|
 | ✅ Complete | 20 | Fully documented with examples |
-| 🔄 Updated | 5 | Recently updated for v3.0.0 |
-| 🆕 New | 5 | New in v3.0.0 |
+| 🔄 Updated | 5 | Recently updated for v4.0.0 |
+| 🆕 New | 5 | New in v4.0.0 |
 
 ---
 

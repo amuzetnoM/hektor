@@ -1102,7 +1102,7 @@ config.use_tail_based_sampling = true;  // Always sample errors
 **Software**:
 - Compiler: GCC 11.3.0 with -O3
 - OpenTelemetry C++ SDK v1.12
-- Vector Studio v3.0.0
+- Vector Studio v4.0.0
 
 #### 8.1.2 Test Workload
 

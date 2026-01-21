@@ -36,9 +36,9 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 
 ---
 
-## v3.0.0
+## v4.0.0
 
-**Major Release: Distributed System, ML Framework Integration, and Production Hardening**
+**Major Release: Billion-scale performance, Perceptual Quantization at 1B scale, Observability & System Snapshot**
 
 ### Highlights
 
@@ -55,7 +55,7 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 - **GPU Acceleration**: Multi-GPU distribution, dynamic batching, memory management
 - **Training Export**: TFRecord, PyTorch Dataset, contrastive learning pipelines
 
-#### Hybrid Search (v3.0.0)
+#### Hybrid Search
 - **BM25 Full-Text Search**: Porter stemming, stop-word filtering, inverted index
 - **5 Fusion Methods**: RRF, Weighted Sum, CombSUM, CombMNZ, Borda Count
 - **RAG Engine**: 5 chunking strategies (fixed, sentence, paragraph, semantic, recursive)
@@ -88,7 +88,7 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 | Replication Lag (async) | N/A | <100ms | New feature |
 | Perceptual Quantization | N/A | +1-3% quality | New feature |
 
-See [RELEASE_NOTES_v3.0.0.md](../RELEASE_NOTES_v3.0.0.md) and [docs/11_DISTRIBUTED_SYSTEM.md](11_DISTRIBUTED_SYSTEM.md) for details.
+See [v3.0.0 release notes](docs/changelog/v3.0.0.md) and [System Snapshot](docs/research/HEKTOR_ANALYSIS.md) for details.
 
 **See**: [CHANGELOG.md](../CHANGELOG.md) | [Documentation Index](00_INDEX.md) | [Real-World Applications](19_REAL_WORLD_APPLICATIONS.md)
 
@@ -473,7 +473,7 @@ Each vector stores rich metadata extracted from Gold Standard:
 | 200 | 99.4% | 8.5 ms |
 | 500 | 99.9% | 19.3 ms |
 
-### Quantization Performance (NEW in v3.0.0)
+### Quantization Performance (See System Snapshot v4.0.0)
 
 | Method | Memory | Recall@10 | Query Time | Compression |
 |--------|--------|-----------|------------|-------------|

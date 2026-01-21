@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-01-21
+
+### Added
+- Billion-scale verification and production readiness (1B+ vectors); significant perceptual quantization improvements and distributed optimizations.
+- Comprehensive system snapshot and exhaustive analysis: see `docs/research/HEKTOR_ANALYSIS.md` (v4.0.0).
+- Observability improvements: OpenTelemetry distributed tracing, eBPF integration, and monitoring dashboards.
+- Packaging and automation: improved build scripts, Docker images, and release pipelines.
+- Documentation refresh and release draft saved at `docs/release_draft/v4.0.0-draft.md`.
+
+### Stats
+- Commits since v3.0.0: **112** (approx. **13** feature-like, **17** fixes, **65** other improvements).  
+- Merge commits: **17**
+
 ## [3.0.0] - 2026-01-08
 
 ### Added - Comprehensive CLI System
