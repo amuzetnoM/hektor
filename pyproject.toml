@@ -8,7 +8,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "hektor-vdb"
-version = "3.0.0"
+version = "3.0.1"
 description = "High-performance vector database with SIMD-optimized similarity search and local ONNX-based embeddings"
 readme = "README.md"
 license = {text = "MIT"}

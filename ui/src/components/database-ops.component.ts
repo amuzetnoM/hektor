@@ -294,7 +294,7 @@ export class DatabaseOpsComponent implements OnInit {
                     indexType: 'HNSW',
                     memoryUsageBytes: parseInt(this.db.stats().memoryUsage) * 1024 * 1024,
                     diskUsageBytes: parseInt(this.db.stats().memoryUsage) * 1024 * 1024 * 2,
-                    version: '3.0.0',
+                    version: '3.0.1',
                     createdAt: '2026-01-01',
                     modifiedAt: new Date().toISOString().split('T')[0]
                 });

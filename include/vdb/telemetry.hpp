@@ -157,7 +157,7 @@ struct TelemetryConfig {
     // Tracing
     bool enable_tracing = true;
     std::string service_name = "vector-studio";
-    std::string service_version = "3.0.0";
+    std::string service_version = "3.0.1";
     std::string deployment_environment = "production";
     
     // Sampling

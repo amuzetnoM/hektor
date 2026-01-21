@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-01-21
+
+### Security
+- Updated `tar` package from 7.5.2 to 7.5.3 to fix vulnerability related to absolute linkpath sanitization
+
+### Changed
+- Updated UI dependencies (package-lock.json) with security patches
+
 ## [3.0.0] - 2026-01-08
 
 ### Added - Comprehensive CLI System
@@ -134,7 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security**: Secure password handling (no plaintext in command line)
 
 ### Changed
-- Bumped version from 2.2.0 to 3.0.0 (major version for significant new features)
+- Bumped version from 2.2.0 to 3.0.1 (major version for significant new features)
 - Reorganized documentation structure (CLI docs in `src/cli/docs/`)
 - Updated `04_USER_GUIDE.md` to reference new CLI system
 - Enhanced CMakeLists.txt for CLI executable (`hektor`)

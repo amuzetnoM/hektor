@@ -2,7 +2,7 @@
 
 > **Hektor Vector Database** - Comprehensive Documentation
 
-**Version**: 3.0.0  
+**Version**: 3.0.1  
 **Last Updated**: 2026-01-20  
 **Total Documents**: 25+
 
@@ -114,7 +114,7 @@
 
 ---
 
-## What's New in v3.0.0
+## What's New in v3.0.1
 
 ### 🎯 Major Features
 - ✅ **Distributed System** - Replication, sharding, gRPC
@@ -143,8 +143,8 @@
 | Status | Count | Description |
 |--------|-------|-------------|
 | ✅ Complete | 20 | Fully documented with examples |
-| 🔄 Updated | 5 | Recently updated for v3.0.0 |
-| 🆕 New | 5 | New in v3.0.0 |
+| 🔄 Updated | 5 | Recently updated for v3.0.1 |
+| 🆕 New | 5 | New in v3.0.1 |
 
 ---
 

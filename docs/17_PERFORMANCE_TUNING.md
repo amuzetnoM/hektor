@@ -1,13 +1,13 @@
 ---
 title: "Performance Tuning & Benchmarks"
 description: "Comprehensive benchmarks, optimization techniques, competitor analysis, and best practices"
-version: "3.0.0"
+version: "3.0.1"
 last_updated: "2026-01-20"
 sidebar_position: 17
 category: "Optimization"
 ---
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-3.0.1-blue?style=flat-square)
 ![Last Updated](https://img.shields.io/badge/updated-2026--01--20-green?style=flat-square)
 ![Type](https://img.shields.io/badge/type-operations-yellow?style=flat-square)
 
@@ -138,7 +138,7 @@ Hektor is designed for **warp-speed performance** with the ability to scale to b
 
 ---
 
-### Perceptual Quantization (NEW in v3.0.0)
+### Perceptual Quantization (NEW in v3.0.1)
 
 | Method | Recall@10 | SSIM | CIEDE2000 | Use Case |
 |--------|-----------|------|-----------|----------|
@@ -239,5 +239,5 @@ For more details, see:
 ---
 
 **Last Updated**: 2026-01-20  
-**Version**: 3.0.0  
+**Version**: 3.0.1  
 **Status**: Production Ready ✅

@@ -1102,7 +1102,7 @@ config.use_tail_based_sampling = true;  // Always sample errors
 **Software**:
 - Compiler: GCC 11.3.0 with -O3
 - OpenTelemetry C++ SDK v1.12
-- Vector Studio v3.0.0
+- Vector Studio v3.0.1
 
 #### 8.1.2 Test Workload
 
@@ -1305,7 +1305,7 @@ config.use_tail_based_sampling = true;  // Always sample errors
 ```cpp
 // Always include
 span.set_attribute("service.name", "vector-studio");
-span.set_attribute("service.version", "3.0.0");
+span.set_attribute("service.version", "3.0.1");
 
 // Operation-specific
 span.set_attribute("vector.dimension", 512);

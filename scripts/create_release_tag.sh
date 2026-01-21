@@ -1,14 +1,14 @@
 #!/bin/bash
 #
-# Create v3.0.0 Release Tag
+# Create v3.0.1 Release Tag
 #
-# This script creates and pushes the v3.0.0 release tag for Hektor
+# This script creates and pushes the v3.0.1 release tag for Hektor
 #
 
 set -e
 
 echo "======================================================================"
-echo "  Hektor v3.0.0 Release Tag Creation"
+echo "  Hektor v3.0.1 Release Tag Creation"
 echo "======================================================================"
 echo ""
 
@@ -43,18 +43,18 @@ fi
 VERSION=$(grep "project(VectorDB VERSION" CMakeLists.txt | sed 's/.*VERSION \([0-9.]*\).*/\1/')
 echo "📦 Version in CMakeLists.txt: $VERSION"
 
-if [ "$VERSION" != "3.0.0" ]; then
-    echo "❌ Error: Version in CMakeLists.txt is not 3.0.0"
+if [ "$VERSION" != "3.0.1" ]; then
+    echo "❌ Error: Version in CMakeLists.txt is not 3.0.1"
     echo "   Found: $VERSION"
     exit 1
 fi
 
 echo ""
-echo "Creating annotated tag v3.0.0..."
+echo "Creating annotated tag v3.0.1..."
 echo ""
 
 # Create annotated tag with release notes
-git tag -a v3.0.0 -m "Release v3.0.0 - Complete CLI System with Native NLP Engine
+git tag -a v3.0.1 -m "Release v3.0.1 - Complete CLI System with Native NLP Engine
 
 Major Release - Hektor Vector Database CLI System
 
@@ -109,16 +109,16 @@ No breaking changes - fully backward compatible with v2.x
 
 git clone https://github.com/amuzetnoM/hektor.git
 cd hektor
-git checkout v3.0.0
+git checkout v3.0.1
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --config Release
 
-Full release notes: docs/releases/v3.0.0.md
+Full release notes: docs/releases/v3.0.1.md
 "
 
 if [ $? -eq 0 ]; then
-    echo "✅ Tag v3.0.0 created successfully"
+    echo "✅ Tag v3.0.1 created successfully"
 else
     echo "❌ Failed to create tag"
     exit 1
@@ -129,26 +129,26 @@ echo "Pushing tag to origin..."
 echo ""
 
 # Push the tag to remote
-git push origin v3.0.0
+git push origin v3.0.1
 
 if [ $? -eq 0 ]; then
-    echo "✅ Tag v3.0.0 pushed successfully"
+    echo "✅ Tag v3.0.1 pushed successfully"
 else
     echo "❌ Failed to push tag"
-    echo "   You can manually push with: git push origin v3.0.0"
+    echo "   You can manually push with: git push origin v3.0.1"
     exit 1
 fi
 
 echo ""
 echo "======================================================================"
-echo "  ✅ Release v3.0.0 Tagged Successfully!"
+echo "  ✅ Release v3.0.1 Tagged Successfully!"
 echo "======================================================================"
 echo ""
 echo "Next steps:"
-echo "  1. Create GitHub Release from tag v3.0.0"
-echo "  2. Attach release notes from docs/releases/v3.0.0.md"
+echo "  1. Create GitHub Release from tag v3.0.1"
+echo "  2. Attach release notes from docs/releases/v3.0.1.md"
 echo "  3. Announce release to community"
 echo ""
 echo "Tag information:"
-git show v3.0.0 --no-patch
+git show v3.0.1 --no-patch
 echo ""

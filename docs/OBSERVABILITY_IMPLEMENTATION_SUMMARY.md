@@ -159,7 +159,7 @@ cmake .. -DVDB_USE_OPENTELEMETRY=ON \
 ```cpp
 TelemetryConfig config;
 config.service_name = "vector-studio";
-config.service_version = "3.0.0";
+config.service_version = "3.0.1";
 config.deployment_environment = "production";
 config.sampling_ratio = 0.1;  // 10% sampling
 config.trace_exporter = "otlp";
@@ -479,5 +479,5 @@ The system is now equipped with enterprise-grade observability that scales from 
 ---
 
 **Implementation Date**: January 8, 2026  
-**Version**: 3.0.0  
+**Version**: 3.0.1  
 **Status**: Production-Ready
