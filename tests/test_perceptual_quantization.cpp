@@ -284,10 +284,12 @@ TEST_F(DisplayAwareQuantizerTest, CompressionRatio) {
 TEST(IntegrationTest, PQCurveWithQuantization) {
     // Test that PQ curve improves perceptual quality
     
-    // Create test vector representing luminance values
+    // Create test vector representing luminance values within valid PQ range
+    // PQ curve operates on [0, 10000] nits, so we stay well within range
     Vector linear_luminance(512);
     for (size_t i = 0; i < linear_luminance.size(); ++i) {
-        linear_luminance[i] = static_cast<float>(i) * 20.0f;  // 0 to ~10240 nits
+        // Scale to [0, 9000] nits to avoid saturation at 10000
+        linear_luminance[i] = static_cast<float>(i) * (9000.0f / 511.0f);
     }
     
     // Apply PQ curve
@@ -296,10 +298,10 @@ TEST(IntegrationTest, PQCurveWithQuantization) {
     
     // Verify perceptual uniformity
     // Equal steps in perceptual space should correspond to roughly equal
-    // perceived differences
+    // perceived differences. PQ is monotonically increasing.
     for (size_t i = 1; i < perceptual.size(); ++i) {
         float perceptual_step = perceptual[i] - perceptual[i-1];
-        // Steps should be relatively uniform in perceptual space
+        // Steps should be positive (monotonically increasing)
         EXPECT_GT(perceptual_step, 0.0f);
     }
 }
