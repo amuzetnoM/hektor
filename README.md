@@ -138,6 +138,37 @@ See [RELEASE_NOTES_v3.0.0.md](../RELEASE_NOTES_v3.0.0.md) and [docs/11_DISTRIBUT
 
 ## Quick Start
 
+### Automated Build (Recommended)
+
+**The easiest way to get started:**
+
+```bash
+# Clone the repository
+git clone https://github.com/amuzetnoM/hektor.git
+cd hektor
+
+# Run the automated build script (handles everything!)
+./build-hektor.sh
+
+# Or with options:
+./build-hektor.sh --dev --test    # Include dev tools and run tests
+./build-hektor.sh --repair        # Repair broken installation
+./build-hektor.sh --clean         # Clean build from scratch
+```
+
+**What the script does automatically:**
+- ✅ Detects your system (Linux, macOS, Windows)
+- ✅ Installs all dependencies (Python, CMake, compilers)
+- ✅ Sets up virtual environment
+- ✅ Builds the project with optimizations
+- ✅ Verifies installation
+- ✅ Can repair regressions
+
+**Verify installation:**
+```bash
+python verify-installation.py
+```
+
 ### Installation via pip (Easiest)
 
 ```bash
