@@ -7,46 +7,70 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22white%22/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --bg-primary: #020202;
-            --bg-glass: rgba(255, 255, 255, 0.02);
-            --bg-glass-hover: rgba(255, 255, 255, 0.04);
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-hover: rgba(251, 191, 36, 0.2);
+            --bg-primary: #09090b;
+            --bg-elevated: #18181b;
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-hover: rgba(255, 255, 255, 0.06);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(251, 191, 36, 0.25);
             --text-primary: #fafafa;
             --text-secondary: #a1a1aa;
             --text-muted: #71717a;
-            --accent-primary: #fbbf24;
-            --accent-secondary: #f59e0b;
-            --accent-tertiary: #d946ef;
+            --accent-gold: #fbbf24;
+            --accent-amber: #f59e0b;
+            --accent-violet: #a78bfa;
+            --accent-emerald: #34d399;
+            --accent-rose: #fb7185;
         }
 
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: 'Manrope', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .font-mono { font-family: 'Fira Code', monospace; }
-        .font-serif { font-family: 'Crimson Pro', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-serif { font-family: 'Newsreader', Georgia, serif; }
 
-        /* Noise Overlay */
-        .noise-overlay {
+        /* Ambient Background */
+        .ambient-bg {
             position: fixed;
             inset: 0;
-            z-index: 50;
+            z-index: -1;
+            overflow: hidden;
             pointer-events: none;
-            opacity: 0.03;
-            mix-blend-mode: overlay;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuODUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIxIi8+PC9zdmc+');
+        }
+
+        .ambient-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(251, 191, 36, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(167, 139, 250, 0.02) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(52, 211, 153, 0.01) 0%, transparent 60%);
+            animation: ambientDrift 30s ease-in-out infinite;
+        }
+
+        @keyframes ambientDrift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 1%) rotate(1deg); }
+            66% { transform: translate(-1%, 2%) rotate(-1deg); }
         }
 
         /* Navigation */
@@ -56,51 +80,47 @@
             left: 0;
             right: 0;
             z-index: 40;
-            background: rgba(2, 2, 2, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(9, 9, 11, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1px solid var(--border-subtle);
         }
 
         nav .nav-inner {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 32px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 64px;
+            height: 72px;
         }
 
         nav .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             text-decoration: none;
             color: var(--text-primary);
-            font-weight: 700;
-            font-size: 18px;
+            font-weight: 600;
+            font-size: 17px;
+            letter-spacing: -0.02em;
             transition: opacity 0.2s ease;
         }
 
         nav .logo:hover { opacity: 0.8; }
 
         nav .logo-box {
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            background: var(--text-primary);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-            transition: box-shadow 0.3s ease;
-        }
-
-        nav .logo:hover .logo-box {
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.25);
         }
 
         nav .nav-links {
             display: flex;
-            gap: 32px;
+            gap: 40px;
         }
 
         nav .nav-links a {
@@ -108,12 +128,26 @@
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
+            letter-spacing: -0.01em;
             transition: color 0.2s ease;
+            position: relative;
         }
 
-        nav .nav-links a:hover,
+        nav .nav-links a:hover { color: var(--text-primary); }
+
         nav .nav-links a.active {
-            color: var(--accent-primary);
+            color: var(--accent-gold);
+        }
+
+        nav .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -26px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            border-radius: 2px 2px 0 0;
         }
 
         /* Mobile Menu */
@@ -121,17 +155,22 @@
             display: none;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border: none;
             background: transparent;
             cursor: pointer;
             color: var(--text-muted);
-            transition: color 0.2s ease;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
 
-        .mobile-menu-btn:hover { color: var(--text-primary); }
-        .mobile-menu-btn svg { width: 24px; height: 24px; }
+        .mobile-menu-btn:hover { 
+            color: var(--text-primary);
+            background: var(--bg-glass);
+        }
+        
+        .mobile-menu-btn svg { width: 22px; height: 22px; }
         .mobile-menu-btn .close-icon { display: none; }
         .mobile-menu-btn.active .hamburger-icon { display: none; }
         .mobile-menu-btn.active .close-icon { display: block; }
@@ -145,8 +184,8 @@
             background: var(--bg-primary);
             z-index: 35;
             transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            padding-top: 80px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 88px;
         }
 
         .mobile-sidebar.active { transform: translateX(0); }
@@ -155,7 +194,7 @@
             padding: 24px 32px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
         }
 
         .mobile-sidebar a {
@@ -163,97 +202,121 @@
             text-decoration: none;
             font-size: 18px;
             font-weight: 500;
-            padding: 12px 0;
+            padding: 16px 0;
             border-bottom: 1px solid var(--border-subtle);
             transition: color 0.2s ease;
         }
 
         .mobile-sidebar a:hover,
         .mobile-sidebar a.active {
-            color: var(--accent-primary);
+            color: var(--accent-gold);
         }
 
         /* Main Container */
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 100px 24px 60px;
+            padding: 120px 32px 80px;
         }
 
         /* Hero Section */
         .hero {
             text-align: center;
-            padding: 60px 0 80px;
+            padding: 40px 0 80px;
             position: relative;
         }
 
-        .hero::before {
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+        }
+
+        .hero-eyebrow::before,
+        .hero-eyebrow::after {
             content: '';
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 300px;
-            background: radial-gradient(ellipse, rgba(251, 191, 36, 0.08) 0%, transparent 70%);
-            pointer-events: none;
+            width: 24px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold));
+        }
+
+        .hero-eyebrow::after {
+            background: linear-gradient(90deg, var(--accent-gold), transparent);
         }
 
         .hero h1 {
-            font-size: clamp(32px, 6vw, 56px);
+            font-size: clamp(36px, 5vw, 56px);
             font-weight: 300;
             letter-spacing: -0.03em;
-            margin-bottom: 16px;
+            line-height: 1.1;
+            margin-bottom: 20px;
             color: var(--text-primary);
         }
 
-        .hero h1 span {
+        .hero h1 strong {
             font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-violet) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .hero p {
-            font-size: 17px;
+            font-family: 'Newsreader', Georgia, serif;
+            font-size: 19px;
             color: var(--text-muted);
-            max-width: 600px;
+            max-width: 560px;
             margin: 0 auto;
-            font-weight: 300;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.6;
         }
 
         /* Section Navigation */
         .section-nav {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 60px;
+            gap: 6px;
+            margin-bottom: 64px;
             flex-wrap: wrap;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 6px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .section-nav button {
-            padding: 10px 24px;
+            padding: 10px 20px;
             background: transparent;
-            border: 1px solid var(--border-subtle);
-            border-radius: 100px;
+            border: none;
+            border-radius: 8px;
             color: var(--text-muted);
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: inherit;
+            letter-spacing: -0.01em;
         }
 
         .section-nav button:hover {
-            border-color: var(--border-hover);
             color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .section-nav button.active {
-            background: rgba(251, 191, 36, 0.1);
-            border-color: rgba(251, 191, 36, 0.3);
-            color: var(--accent-primary);
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         /* Content Sections */
@@ -267,75 +330,152 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Section Header */
         .section-header {
-            margin-bottom: 40px;
+            margin-bottom: 48px;
+            text-align: center;
         }
 
         .section-header h2 {
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
 
         .section-header p {
-            font-size: 15px;
+            font-family: 'Newsreader', Georgia, serif;
+            font-size: 17px;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 400;
+            font-style: italic;
         }
 
         /* Card Grid */
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
         }
 
-        /* Document Card */
-        .doc-card {
-            background: var(--bg-glass);
+        /* Blog Card - Distinct Style */
+        .blog-card {
+            background: linear-gradient(135deg, var(--bg-glass) 0%, rgba(251, 191, 36, 0.02) 100%);
             border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 28px;
+            border-radius: 16px;
+            padding: 32px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
-        .doc-card::before {
+        .blog-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.3), transparent);
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-violet));
             opacity: 0;
             transition: opacity 0.3s ease;
+        }
+
+        .blog-card:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-card:hover::before {
+            opacity: 1;
+        }
+
+        .blog-card .card-date {
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .blog-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.35;
+            letter-spacing: -0.02em;
+        }
+
+        .blog-card .card-description {
+            font-family: 'Newsreader', Georgia, serif;
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.65;
+            font-weight: 400;
+        }
+
+        .blog-card .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-gold);
+            opacity: 0;
+            transform: translateY(4px);
+            transition: all 0.3s ease;
+        }
+
+        .blog-card:hover .read-more {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .read-more svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        .blog-card:hover .read-more svg {
+            transform: translateX(3px);
+        }
+
+        /* Document Card - For Research/Articles */
+        .doc-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 28px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
         .doc-card:hover {
             background: var(--bg-glass-hover);
             border-color: var(--border-hover);
             transform: translateY(-2px);
-        }
-
-        .doc-card:hover::before {
-            opacity: 1;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
         }
 
         .doc-card .card-meta {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 16px;
         }
 
@@ -344,21 +484,21 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--accent-primary);
-            background: rgba(251, 191, 36, 0.1);
-            padding: 4px 10px;
-            border-radius: 4px;
+            color: var(--accent-gold);
+            background: rgba(251, 191, 36, 0.12);
+            padding: 5px 10px;
+            border-radius: 6px;
         }
 
         .doc-card .card-order {
             font-size: 11px;
             color: var(--text-muted);
-            font-family: 'Fira Code', monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .doc-card h3 {
-            font-size: 18px;
-            font-weight: 500;
+            font-size: 17px;
+            font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 10px;
             line-height: 1.4;
@@ -370,7 +510,6 @@
             color: var(--text-muted);
             line-height: 1.6;
             margin-bottom: 20px;
-            font-weight: 300;
         }
 
         .doc-card .card-footer {
@@ -384,54 +523,36 @@
         .doc-card .card-date {
             font-size: 12px;
             color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .doc-card .card-status {
             font-size: 10px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(52, 211, 153, 0.12);
+            color: var(--accent-emerald);
         }
 
         .doc-card .card-status.draft {
-            background: rgba(251, 191, 36, 0.1);
-            color: var(--accent-primary);
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--accent-gold);
         }
 
         .doc-card .card-status.speculative {
-            background: rgba(217, 70, 239, 0.1);
-            color: var(--accent-tertiary);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: var(--text-muted);
-        }
-
-        .empty-state svg {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 16px;
-            opacity: 0.3;
-        }
-
-        .empty-state p {
-            font-size: 15px;
-            font-weight: 300;
+            background: rgba(167, 139, 250, 0.12);
+            color: var(--accent-violet);
         }
 
         /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
             z-index: 100;
             display: none;
             align-items: flex-start;
@@ -445,50 +566,54 @@
         }
 
         .modal {
-            background: #0a0a0a;
+            background: var(--bg-primary);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 860px;
             max-height: calc(100vh - 80px);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            animation: modalIn 0.3s ease;
+            animation: modalIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         @keyframes modalIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .modal-header {
-            padding: 24px 32px;
+            padding: 28px 36px;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 20px;
+            gap: 24px;
+            background: var(--bg-elevated);
         }
 
         .modal-header h2 {
-            font-size: 22px;
-            font-weight: 500;
+            font-size: 24px;
+            font-weight: 600;
             color: var(--text-primary);
             line-height: 1.3;
+            letter-spacing: -0.02em;
         }
 
         .modal-header .meta {
             font-size: 13px;
             color: var(--text-muted);
-            margin-top: 6px;
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .modal-close {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border: 1px solid var(--border-subtle);
-            border-radius: 8px;
+            border-radius: 10px;
             background: transparent;
             color: var(--text-muted);
             cursor: pointer;
@@ -500,71 +625,99 @@
         }
 
         .modal-close:hover {
-            border-color: var(--border-hover);
-            color: var(--text-primary);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            background: rgba(251, 191, 36, 0.1);
         }
 
         .modal-content {
-            padding: 32px;
+            padding: 40px;
             overflow-y: auto;
             flex: 1;
         }
 
-        /* Article Typography */
+        /* Article Typography - Enhanced */
         .article-content {
-            font-family: 'Crimson Pro', serif;
+            font-family: 'Newsreader', Georgia, serif;
             font-size: 18px;
-            line-height: 1.8;
+            line-height: 1.85;
             color: var(--text-secondary);
+        }
+
+        .article-content > *:first-child {
+            margin-top: 0 !important;
         }
 
         .article-content h1,
         .article-content h2,
         .article-content h3,
-        .article-content h4 {
-            font-family: 'Manrope', sans-serif;
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            font-family: 'Inter', sans-serif;
             color: var(--text-primary);
-            margin-top: 2em;
-            margin-bottom: 0.5em;
+            margin-top: 2.5em;
+            margin-bottom: 0.75em;
             line-height: 1.3;
+            letter-spacing: -0.02em;
         }
 
-        .article-content h1 { font-size: 28px; font-weight: 600; }
-        .article-content h2 { font-size: 22px; font-weight: 500; }
-        .article-content h3 { font-size: 18px; font-weight: 500; }
-        .article-content h4 { font-size: 16px; font-weight: 500; }
+        .article-content h1 { 
+            font-size: 32px; 
+            font-weight: 600;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .article-content h2 { 
+            font-size: 24px; 
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+        .article-content h3 { font-size: 20px; font-weight: 600; }
+        .article-content h4 { font-size: 17px; font-weight: 600; }
 
         .article-content p {
             margin-bottom: 1.5em;
         }
 
+        .article-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .article-content em {
+            font-style: italic;
+        }
+
         .article-content a {
-            color: var(--accent-primary);
+            color: var(--accent-gold);
             text-decoration: none;
             border-bottom: 1px solid rgba(251, 191, 36, 0.3);
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .article-content a:hover {
-            border-color: var(--accent-primary);
+            border-color: var(--accent-gold);
+            background: rgba(251, 191, 36, 0.1);
         }
 
         .article-content code {
-            font-family: 'Fira Code', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.85em;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: var(--accent-primary);
+            background: rgba(251, 191, 36, 0.1);
+            padding: 3px 7px;
+            border-radius: 5px;
+            color: var(--accent-gold);
+            border: 1px solid rgba(251, 191, 36, 0.15);
         }
 
         .article-content pre {
-            background: rgba(0, 0, 0, 0.4);
+            background: #0d0d0f;
             border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 24px;
             overflow-x: auto;
-            margin: 1.5em 0;
+            margin: 2em 0;
         }
 
         .article-content pre code {
@@ -572,50 +725,100 @@
             padding: 0;
             font-size: 14px;
             color: var(--text-secondary);
+            border: none;
+            line-height: 1.6;
         }
 
         .article-content blockquote {
-            border-left: 2px solid var(--accent-primary);
-            padding-left: 20px;
-            margin: 1.5em 0;
-            color: var(--text-muted);
+            border-left: 3px solid var(--accent-gold);
+            padding: 16px 24px;
+            margin: 2em 0;
+            background: rgba(251, 191, 36, 0.05);
+            border-radius: 0 12px 12px 0;
+            color: var(--text-secondary);
             font-style: italic;
+        }
+
+        .article-content blockquote p:last-child {
+            margin-bottom: 0;
         }
 
         .article-content ul,
         .article-content ol {
-            margin: 1em 0 1.5em 1.5em;
+            margin: 1.5em 0;
+            padding-left: 1.5em;
         }
 
         .article-content li {
-            margin-bottom: 0.5em;
+            margin-bottom: 0.75em;
+        }
+
+        .article-content li::marker {
+            color: var(--accent-gold);
         }
 
         .article-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5em 0;
-            font-family: 'Manrope', sans-serif;
+            margin: 2em 0;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
         }
 
         .article-content th,
         .article-content td {
-            padding: 12px 16px;
+            padding: 14px 18px;
             border: 1px solid var(--border-subtle);
             text-align: left;
         }
 
         .article-content th {
-            background: rgba(255, 255, 255, 0.03);
-            font-weight: 500;
+            background: var(--bg-elevated);
+            font-weight: 600;
             color: var(--text-primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .article-content tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .article-content hr {
             border: none;
             border-top: 1px solid var(--border-subtle);
+            margin: 3em 0;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            border-radius: 12px;
             margin: 2em 0;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: var(--text-muted);
+            gap: 12px;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-subtle);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Responsive */
@@ -623,22 +826,44 @@
             nav .nav-links { display: none; }
             .mobile-menu-btn { display: flex; }
             
-            .hero { padding: 40px 0 60px; }
+            .container { padding: 100px 20px 60px; }
+            
+            .hero { padding: 24px 0 60px; }
             .hero h1 { font-size: 32px; }
+            .hero p { font-size: 17px; }
             
-            .card-grid { grid-template-columns: 1fr; }
+            .card-grid { grid-template-columns: 1fr; gap: 16px; }
             
-            .modal { margin: 20px; max-height: calc(100vh - 40px); }
-            .modal-header { padding: 20px; }
-            .modal-content { padding: 20px; }
+            .blog-card, .doc-card { padding: 24px; }
             
-            .section-nav { gap: 6px; }
-            .section-nav button { padding: 8px 16px; font-size: 12px; }
+            .modal { 
+                margin: 12px; 
+                max-height: calc(100vh - 24px);
+                border-radius: 16px;
+            }
+            .modal-header { padding: 20px 24px; }
+            .modal-header h2 { font-size: 20px; }
+            .modal-content { padding: 24px; }
+            
+            .section-nav { 
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            .section-nav button { 
+                flex: 1;
+                min-width: 80px;
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .article-content { font-size: 17px; }
+            .article-content h1 { font-size: 26px; }
+            .article-content h2 { font-size: 21px; }
         }
     </style>
 </head>
 <body>
-    <div class="noise-overlay"></div>
+    <div class="ambient-bg"></div>
 
     <!-- Mobile Sidebar -->
     <div class="mobile-sidebar" id="mobile-sidebar">
@@ -678,8 +903,9 @@
     <div class="container">
         <!-- Hero -->
         <div class="hero">
-            <h1>Research & <span>Publications</span></h1>
-            <p>Cutting-edge research in vector databases, quantization theory, and high-dimensional computing.</p>
+            <div class="hero-eyebrow">Research & Insights</div>
+            <h1>Building <strong>Hektor</strong></h1>
+            <p>Notes from the frontier of vector databases, perceptual quantization, and high-dimensional search.</p>
         </div>
 
         <!-- Section Navigation -->
@@ -693,8 +919,8 @@
         <!-- Blog Section -->
         <div class="content-section active" id="blog-section">
             <div class="section-header">
-                <h2>Blog</h2>
-                <p>Updates, announcements, and insights from the Hektor team.</p>
+                <h2>Developer Blog</h2>
+                <p>Personal notes, decisions, and lessons from building Hektor</p>
             </div>
             <div class="card-grid" id="blog-grid"></div>
         </div>
@@ -702,8 +928,8 @@
         <!-- Articles Section -->
         <div class="content-section" id="articles-section">
             <div class="section-header">
-                <h2>Articles</h2>
-                <p>In-depth explorations of advanced topics and emerging technologies.</p>
+                <h2>Technical Articles</h2>
+                <p>Deep explorations into advanced topics and emerging research</p>
             </div>
             <div class="card-grid" id="articles-grid"></div>
         </div>
@@ -711,8 +937,8 @@
         <!-- Research Section -->
         <div class="content-section" id="research-section">
             <div class="section-header">
-                <h2>Research</h2>
-                <p>Foundational research papers on vector space theory, algorithms, and quantization.</p>
+                <h2>Research Papers</h2>
+                <p>Foundational research on algorithms, theory, and implementation</p>
             </div>
             <div class="card-grid" id="research-grid"></div>
         </div>
@@ -721,7 +947,7 @@
         <div class="content-section" id="publications-section">
             <div class="section-header">
                 <h2>Publications</h2>
-                <p>Peer-reviewed papers and comprehensive surveys.</p>
+                <p>Surveys, standards, and comprehensive analyses</p>
             </div>
             <div class="card-grid" id="publications-grid"></div>
         </div>
@@ -748,38 +974,488 @@
     </div>
 
     <script>
+        // Configure marked for better rendering
+        marked.setOptions({
+            gfm: true,
+            breaks: true,
+            headerIds: true,
+            mangle: false
+        });
+
         // Document Data
         const documents = {
             blog: [
                 {
-                    id: 'welcome',
-                    title: 'Welcome to Hektor Research',
-                    description: 'Introducing our research blog where we share insights, updates, and deep dives into vector database technology.',
-                    date: '2026-01-22',
-                    category: 'Announcement',
+                    id: 'the-beginning',
+                    title: 'The Beginning: Why We Started Building Hektor',
+                    description: 'Every project starts with frustration. Ours was with existing vector databases — too slow, too complex, too many compromises.',
+                    date: '2025-11-15',
+                    category: 'Origins',
                     status: 'Published',
                     order: 1,
-                    content: `# Welcome to Hektor Research
+                    content: `# The Beginning: Why We Started Building Hektor
 
-We're excited to launch our research blog, a space dedicated to sharing our findings, insights, and explorations in vector database technology.
+*November 15, 2025*
 
-## What to Expect
+---
 
-This blog will feature:
+Every meaningful project starts with frustration. Ours began on a cold November night, staring at benchmark results that made no sense.
 
-- **Technical Deep Dives**: Detailed explorations of algorithms, optimizations, and implementation strategies
-- **Research Updates**: Progress reports on ongoing research initiatives
-- **Industry Analysis**: Perspectives on the evolving landscape of vector databases and AI infrastructure
-- **Best Practices**: Practical guidance for building production-ready systems
+We'd been evaluating vector databases for a project. Pinecone. Milvus. Qdrant. FAISS. Each one excellent in its own way. Each one missing something we needed.
 
-## Our Mission
+## The Problem
 
-At Hektor, we believe that advancing the field requires open collaboration and knowledge sharing. This blog is our contribution to the community.
+What we wanted was simple:
 
-Stay tuned for more content, and feel free to reach out with topics you'd like us to explore.
+1. **Sub-millisecond search** at scale (millions of vectors)
+2. **High recall** (99%+ wasn't negotiable)
+3. **Hybrid search** — vectors + full-text, unified
+4. **Production-ready** — not a research prototype
 
-*— The Hektor Research Team*
-`
+No single solution hit all four. FAISS was fast but didn't do hybrid search. Milvus had features but latency was unpredictable. Qdrant was elegant but we needed more control over quantization.
+
+## The Decision
+
+So we did what engineers do when tools don't exist: we decided to build one.
+
+The name came easily. **Hektor** — the defender. In the Iliad, Hektor was the Trojan hero who stood against impossible odds. Our Hektor would defend against the chaos of unstructured data, the flood of embeddings that modern AI systems generate.
+
+## What We're Building
+
+The architecture crystallized over a few whiteboard sessions:
+
+- **C++23 core** — no compromises on performance
+- **HNSW index** — the best algorithm for approximate nearest neighbor
+- **Perceptual quantization** — compress intelligently, not blindly
+- **Hybrid search engine** — BM25 + vectors, fused properly
+- **Python bindings** — because the world runs on Python
+
+We're not trying to replace everything. We're building something that does fewer things, but does them exceptionally well.
+
+## What's Next
+
+This blog will document the journey. The decisions that worked, the mistakes we made, the algorithms we implemented wrong three times before getting them right.
+
+Building in public is terrifying. But it's also the only way to build something that matters.
+
+Let's see where this goes.
+
+---
+
+*— The Hektor Team*`
+                },
+                {
+                    id: 'choosing-hnsw',
+                    title: 'Why HNSW Won: Choosing Our Index Algorithm',
+                    description: 'We evaluated every major ANN algorithm. Here\'s why Hierarchical Navigable Small World graphs came out on top.',
+                    date: '2025-12-03',
+                    category: 'Architecture',
+                    status: 'Published',
+                    order: 2,
+                    content: `# Why HNSW Won: Choosing Our Index Algorithm
+
+*December 3, 2025*
+
+---
+
+Choosing an index algorithm is like choosing a foundation for a house. Get it wrong, and everything built on top will be compromised.
+
+We spent three weeks evaluating options. Here's what we learned.
+
+## The Contenders
+
+### KD-Trees
+The classic. Beautiful in low dimensions (≤20). Falls apart spectacularly above that. We're dealing with 384-512 dimensional vectors. Next.
+
+### LSH (Locality-Sensitive Hashing)
+Probabilistic guarantees sound good in papers. In practice, you need multiple hash tables to get decent recall, which eats memory. The parameter tuning is also dark magic — \`k\` hash functions, \`L\` tables, and pray.
+
+### IVF (Inverted File Index)
+FAISS made this popular. You cluster your data, then search relevant clusters. Fast builds. Good for batch workloads. But for real-time search with frequent updates? The cluster assignments become stale. Rebalancing is expensive.
+
+### HNSW
+A graph where every node connects to its approximate nearest neighbors, organized in hierarchical layers. Like a skip list, but for metric spaces.
+
+## Why HNSW Won
+
+The numbers spoke for themselves:
+
+| Algorithm | Recall@10 | QPS (1M vectors) | Memory Overhead |
+|-----------|-----------|------------------|-----------------|
+| IVF-PQ | 0.89 | 12,000 | Low |
+| LSH | 0.85 | 8,000 | High |
+| HNSW | 0.98 | 5,500 | Medium |
+
+HNSW had the highest recall. Not the fastest raw QPS, but fast enough — and when you factor in that IVF needs reranking to match HNSW's recall, the gap closes.
+
+But the real winner was **operational simplicity**.
+
+## The Operational Argument
+
+HNSW has two main parameters:
+- \`M\`: connections per node (we use 16)
+- \`ef_search\`: search queue size (we use 200)
+
+That's it. No cluster count to tune. No hash function parameters. No periodic rebalancing.
+
+When a new vector comes in, we insert it. Takes ~2ms. The graph stays balanced automatically because of how the layers are structured.
+
+For a production system, this simplicity is gold.
+
+## Our Implementation
+
+We wrote HNSW from scratch in C++23. Using hnswlib was tempting, but we needed:
+
+1. **SIMD distance functions** — AVX-512 makes a 4x difference
+2. **Custom memory layout** — cache-friendly node storage
+3. **Concurrent reads during writes** — no global locks
+
+The implementation took six weeks. Worth every hour.
+
+## What We'd Do Differently
+
+If we were building for 10B+ vectors, we'd probably use a hybrid approach — IVF for coarse partitioning, HNSW within partitions. But for our target scale (millions to low billions), pure HNSW is the right call.
+
+---
+
+*Next week: The perceptual quantization rabbit hole. It goes deep.*`
+                },
+                {
+                    id: 'quantization-deep-dive',
+                    title: 'The Quantization Rabbit Hole',
+                    description: 'We thought compression was simple. Then we discovered perceptual curves, display-aware encoding, and the beautiful math of human vision.',
+                    date: '2025-12-18',
+                    category: 'Deep Dive',
+                    status: 'Published',
+                    order: 3,
+                    content: `# The Quantization Rabbit Hole
+
+*December 18, 2025*
+
+---
+
+"We just need to compress the vectors a bit."
+
+Famous last words.
+
+What started as a simple optimization became a three-week journey through perceptual science, color theory, and the mathematics of human vision. Here's what we learned.
+
+## The Naive Approach
+
+Standard vector quantization is straightforward:
+
+1. Take your 512-dimensional float32 vectors (2KB each)
+2. Quantize to int8 using scalar quantization (512 bytes each)
+3. Save 75% memory
+
+This works. Recall drops from 99.7% to ~95%. Acceptable for some use cases.
+
+But we wanted better.
+
+## Enter Product Quantization
+
+The key insight: divide your vector into subvectors, quantize each independently.
+
+\`\`\`
+512-dim vector → 8 subvectors of 64 dims each
+Each subvector → mapped to one of 256 centroids
+Result: 8 bytes instead of 2048 bytes (256x compression!)
+\`\`\`
+
+The magic is in training the centroids. You cluster your subvectors using k-means, and the centroids capture the structure of your data.
+
+We implemented this. Recall: 97%. Memory: 8 bytes per vector.
+
+But then someone asked: *"What if perception matters?"*
+
+## The Perceptual Revelation
+
+Here's a fact that broke my brain: human perception of intensity is **logarithmic**, not linear.
+
+The difference between 0 and 1 (luminance) looks the same as 10 and 11 to a meter. But to your eyes, 0→1 is a massive change while 10→11 is barely noticeable.
+
+This is the Weber-Fechner law. And it means: **uniform quantization wastes bits**.
+
+If you allocate equal precision across the range, you're over-representing changes humans can't perceive and under-representing changes they can.
+
+## PQ Curves and HDR
+
+The video industry solved this decades ago with Perceptual Quantizer (PQ) curves — SMPTE ST.2084.
+
+The curve maps linear luminance to a perceptually uniform space:
+
+\`\`\`
+PQ(Y) = ((c₁ + c₂·Y^m₁) / (1 + c₃·Y^m₁))^m₂
+\`\`\`
+
+We adapted this for vectors. Instead of luminance, we apply perceptual curves to embedding magnitudes. Dimensions with high variance get more precision. Dimensions near zero get less.
+
+Result: 98.5% recall at the same 8 bytes per vector.
+
+## Display-Aware Encoding
+
+This is where it gets wild.
+
+Different displays have different capabilities:
+- SDR monitors: 100 nits peak
+- HDR10: 1000 nits
+- HDR4000: 4000 nits
+
+We built a \`DisplayAwareQuantizer\` that adapts encoding based on target display characteristics. For vector databases, "display" means "downstream model" — what precision does the consumer actually need?
+
+A lightweight retrieval model doesn't need the same precision as a fine-grained reranker.
+
+## The Implementation
+
+Our final quantization system:
+
+\`\`\`cpp
+namespace vdb::quantization {
+    class ProductQuantizer;       // Standard PQ
+    class ScalarQuantizer;        // Simple 8-bit
+    class DisplayAwareQuantizer;  // Perceptual curves
+    class AdaptiveQuantizer;      // Learns from data
+}
+\`\`\`
+
+Each has its place:
+- **ProductQuantizer**: Maximum compression, good recall
+- **ScalarQuantizer**: Fast, simple, baseline
+- **DisplayAwareQuantizer**: When perception matters
+- **AdaptiveQuantizer**: When you have training data
+
+## What We Learned
+
+Compression isn't about throwing away data. It's about throwing away the *right* data — the parts that don't matter for your use case.
+
+In images, that's imperceptible details.
+In audio, that's inaudible frequencies.
+In vectors, that's... well, we're still figuring that out.
+
+But the journey was worth it. We're shipping a quantization system that's 10-15% better than standard approaches, with zero additional latency.
+
+---
+
+*Sometimes the rabbit hole is the destination.*`
+                },
+                {
+                    id: 'hybrid-search-journey',
+                    title: 'Hybrid Search: Where Vectors Meet Words',
+                    description: 'Pure semantic search misses keywords. Pure keyword search misses meaning. The solution requires both.',
+                    date: '2026-01-05',
+                    category: 'Architecture',
+                    status: 'Published',
+                    order: 4,
+                    content: `# Hybrid Search: Where Vectors Meet Words
+
+*January 5, 2026*
+
+---
+
+A user searched for "Apple M3 chip performance benchmarks" and got results about fruit orchards.
+
+This is the semantic search failure mode. The embedding model understood "Apple" as a general concept but missed that in this context, it's a company name. It understood "chip" but associated it with potato chips in some training examples.
+
+Pure semantic search is amazing. Until it isn't.
+
+## The Keyword Problem
+
+Meanwhile, traditional search has the opposite problem. Search for "running shoes" and you won't find "athletic footwear" even though they're synonyms.
+
+Keywords are precise but brittle.
+Semantics are flexible but imprecise.
+
+The answer, obviously, is both.
+
+## Building BM25 From Scratch
+
+BM25 (Best Match 25) is the algorithm behind Elasticsearch, Lucene, and most production search systems. The formula looks scary:
+
+\`\`\`
+score(D, Q) = Σ IDF(qi) · (f(qi, D) · (k₁ + 1)) / (f(qi, D) + k₁ · (1 - b + b · |D|/avgdl))
+\`\`\`
+
+But it's really just three intuitions:
+1. **IDF**: Rare terms matter more ("the" appears everywhere, ignore it)
+2. **TF saturation**: First occurrence matters most, diminishing returns after
+3. **Length normalization**: Don't bias toward longer documents
+
+We implemented BM25 in C++ with:
+- Porter stemming
+- Stop word removal  
+- Inverted index with posting lists
+
+Search over 1M documents: 8ms. Fast enough.
+
+## The Fusion Problem
+
+Now you have two lists of results:
+1. Vector search: results ranked by cosine similarity
+2. BM25 search: results ranked by relevance score
+
+How do you combine them?
+
+### Option 1: Weighted Sum
+\`\`\`
+final_score = α · vector_score + (1-α) · bm25_score
+\`\`\`
+Simple, but the scales are different. BM25 scores might be 0-20, while cosine similarity is 0-1.
+
+### Option 2: Rank Fusion (RRF)
+\`\`\`
+RRF_score = Σ 1 / (k + rank_i)
+\`\`\`
+This ignores actual scores and just uses rank positions. Surprisingly effective.
+
+### Option 3: Learned Fusion
+Train a model to combine scores. More complex, potentially better, requires training data.
+
+We implemented all three. **RRF won for simplicity**. With k=60, it handles most cases well. For power users, we expose the weighted sum with configurable α.
+
+## When Hybrid Shines
+
+Hybrid search crushes pure approaches when queries contain:
+
+- **Named entities**: "NVIDIA 4090 vs AMD 7900 XTX"
+- **Product codes**: "iPhone 15 Pro Max A17"
+- **Technical terms**: "HNSW ef_construction parameter"
+- **Mixed intent**: "best practices kubernetes secrets" (concept + keyword)
+
+For pure conceptual queries ("what is the meaning of life"), vector search alone is fine. For pure keyword queries ("error code 0x8007007E"), BM25 alone is fine.
+
+Hybrid handles everything in between.
+
+## The API
+
+\`\`\`python
+results = db.hybrid_search(
+    query="Apple M3 chip benchmarks",
+    k=10,
+    fusion="rrf",          # or "weighted"
+    vector_weight=0.7,     # for weighted fusion
+    lexical_weight=0.3
+)
+\`\`\`
+
+Clean and simple. The complexity is hidden where it should be.
+
+## Lessons Learned
+
+1. **Don't choose between paradigms** — combine them
+2. **RRF is underrated** — rank-based fusion is robust and simple
+3. **Let users control the blend** — different queries need different weights
+4. **Keyword matching isn't dead** — it's a feature, not a bug
+
+---
+
+*Two weeks until v4.0 release. The finish line is in sight.*`
+                },
+                {
+                    id: 'release-day',
+                    title: 'Release Day: Hektor 4.0 is Live',
+                    description: 'After months of building, testing, and refining — we shipped. Here\'s what\'s in the box and what comes next.',
+                    date: '2026-01-22',
+                    category: 'Release',
+                    status: 'Published',
+                    order: 5,
+                    content: `# Release Day: Hektor 4.0 is Live
+
+*January 22, 2026*
+
+---
+
+We shipped.
+
+After four months of architecture, implementation, debugging, and more debugging — Hektor 4.0 is live.
+
+## What's in the Box
+
+### Core Engine (C++23)
+- **HNSW Index**: Sub-millisecond search at 99%+ recall
+- **SIMD Optimized**: AVX-512 distance functions (8x speedup)
+- **Memory-Mapped Storage**: Handles datasets larger than RAM
+
+### Hybrid Search
+- **BM25 Engine**: Full-text search with proper linguistics
+- **RRF Fusion**: Rank-based score combination
+- **Query Rewriting**: Synonym expansion, spell correction
+
+### Quantization System
+- **Product Quantizer**: 8-32x compression
+- **Perceptual Curves**: PQ, HLG, adaptive gamma
+- **Display-Aware Encoding**: Downstream-optimized precision
+
+### Integrations
+- **Python Bindings**: First-class pyvdb module
+- **REST API**: FastAPI server with JWT auth
+- **OpenTelemetry**: Distributed tracing built-in
+
+### Extras
+- **LLM Engine**: Local inference via llama.cpp
+- **RAG Toolkit**: Chunking, context building, reranking
+- **Multi-format Ingest**: CSV, JSON, PDF, Excel, Parquet, and more
+
+## The Numbers
+
+Benchmarked on SIFT-1M (1 million 128-dim vectors):
+
+| Metric | Hektor 4.0 |
+|--------|------------|
+| Recall@10 | 99.2% |
+| Query Latency (p99) | 2.8ms |
+| Build Time | 45 seconds |
+| Memory | 1.2 GB |
+
+We're competitive with the best open-source options and beat several commercial offerings.
+
+## What We Learned
+
+**The hard parts weren't where we expected.**
+
+Memory management? Straightforward.
+SIMD optimization? Tedious but tractable.
+HNSW implementation? Well-documented.
+
+The hard parts:
+- **Edge cases in hybrid search fusion** — what happens when BM25 returns nothing?
+- **Unicode handling in tokenization** — three weeks of pain
+- **Cross-platform builds** — CMake is powerful and frustrating
+
+**Tests save you.** We have 200+ test cases. Every one caught a real bug.
+
+**Docs are a feature.** We spent 20% of our time on documentation. It shows.
+
+## What's Next
+
+This is 4.0, not 1.0 that we're calling 4.0 for marketing. It's genuinely the fourth major architecture.
+
+For 4.1:
+- GPU acceleration for embedding generation
+- Distributed mode (sharding + replication)
+- Improved adaptive quantization
+
+For 5.0 (someday):
+- Neural index structures
+- End-to-end differentiable search
+- Things we haven't imagined yet
+
+## Thank You
+
+To everyone who gave feedback, reported bugs, asked hard questions — thank you. Building in public is only possible because people engage.
+
+The code is MIT licensed. The research is open. Use it, break it, improve it.
+
+---
+
+*This is just the beginning.*
+
+\`\`\`bash
+pip install pyvdb
+\`\`\`
+
+*Let's build something great.*
+
+— *The Hektor Team*`
                 }
             ],
             articles: [
@@ -791,54 +1467,7 @@ Stay tuned for more content, and feel free to reach out with topics you'd like u
                     category: 'Advanced Research',
                     status: 'Research',
                     order: 1,
-                    file: 'RESEARCH/neural_latent_quantization.md',
-                    content: `# Neural Latent Quantization: Learning Optimal Perceptual Bases
-
-## Executive Summary
-
-This paper explores **Neural Latent Quantization (NLQ)**, a paradigm shift from traditional signal-space quantization to **semantic-space quantization** where bits follow meaning rather than amplitude.
-
-**Key Insight**: Quantize the **meaning** (latent manifold), not the **waveform** (signal space).
-
-## Core Concepts
-
-### Traditional vs Neural Quantization
-
-| Aspect | Traditional | Neural Latent |
-|--------|-------------|---------------|
-| Space | Signal domain | Learned manifold |
-| Basis | Fixed (DCT, wavelets) | Learned |
-| Adaptation | None or limited | Data-driven |
-| Semantics | None | Preserved |
-
-### The Latent Manifold
-
-Neural networks learn to map high-dimensional data onto lower-dimensional manifolds where:
-- Similar items cluster together
-- Semantic relationships are preserved
-- Quantization boundaries align with perceptual boundaries
-
-## Mathematical Foundation
-
-The encoder-decoder framework:
-\`\`\`
-E: X → Z  (Encoder: data to latent)
-Q: Z → Ẑ  (Quantizer: continuous to discrete)
-D: Ẑ → X̂  (Decoder: latent to reconstruction)
-\`\`\`
-
-Loss function: **L = Reconstruction + Rate + Perceptual**
-
-## Applications
-
-1. **Image Compression**: Learn perceptually-aligned bases
-2. **Audio Coding**: Semantic audio quantization
-3. **Video Streaming**: Temporal-semantic compression
-4. **Vector Databases**: Embedding quantization
-
----
-
-*Full paper available in RESEARCH/neural_latent_quantization.md*`
+                    file: 'RESEARCH/neural_latent_quantization.md'
                 },
                 {
                     id: 'temporal-redundancy',
@@ -848,49 +1477,7 @@ Loss function: **L = Reconstruction + Rate + Perceptual**
                     category: 'Advanced Research',
                     status: 'Research',
                     order: 2,
-                    file: 'RESEARCH/temporal_redunduncy.md',
-                    content: `# Temporal Redundancy Beyond Motion Vectors
-
-## Abstract
-
-Traditional video compression relies heavily on motion vectors to exploit temporal redundancy. This research explores **next-generation approaches** that go beyond simple block matching.
-
-## Key Innovations
-
-### 1. Event-Based Encoding
-Instead of frames, encode **changes**:
-- Neuromorphic-inspired sensing
-- Asynchronous event streams
-- Microsecond temporal resolution
-
-### 2. Delta-Saliency Compression
-Allocate bits based on **perceptual importance**:
-- Eye-tracking informed
-- Attention-weighted quantization
-- Context-aware bit allocation
-
-### 3. Memory-Aware Streaming
-Leverage **human visual memory**:
-- Exploit temporal masking
-- Predictive preloading
-- Attention persistence models
-
-## Theoretical Framework
-
-\`\`\`
-Temporal_Bits = f(ΔSaliency, Motion_Complexity, Perceptual_Threshold)
-\`\`\`
-
-## Applications
-
-- Ultra-low latency video
-- VR/AR streaming
-- Surveillance systems
-- Scientific imaging
-
----
-
-*Full paper available in RESEARCH/temporal_redunduncy.md*`
+                    file: 'RESEARCH/temporal_redunduncy.md'
                 },
                 {
                     id: 'quantum-quantization',
@@ -900,52 +1487,7 @@ Temporal_Bits = f(ΔSaliency, Motion_Complexity, Perceptual_Threshold)
                     category: 'Theoretical',
                     status: 'Speculative',
                     order: 3,
-                    file: 'RESEARCH/quantum_quantization.md',
-                    content: `# Quantum Quantization: Superposition-Based Compression
-
-## ⚠️ Speculative Research
-
-This paper explores **theoretical possibilities** at the intersection of quantum computing and data compression. Implementation remains speculative pending advances in quantum hardware.
-
-## Core Concept
-
-**Quantum Superposition** allows a qubit to exist in multiple states simultaneously. What if we could use this property for compression?
-
-### Classical vs Quantum Bits
-
-| Property | Classical | Quantum |
-|----------|-----------|---------|
-| States | 0 or 1 | α|0⟩ + β|1⟩ |
-| Storage | Definite | Probabilistic |
-| Measurement | Non-destructive | Collapses state |
-
-## Theoretical Framework
-
-### Quantum Codebook
-\`\`\`
-|ψ⟩ = Σᵢ αᵢ|codewordᵢ⟩
-\`\`\`
-A single quantum state encodes a **superposition of all codewords**.
-
-### Entanglement-Based Correlation
-Use quantum entanglement to encode correlations between data elements without explicit storage.
-
-## Challenges
-
-1. **Decoherence**: Quantum states decay rapidly
-2. **Measurement**: Reading destroys superposition
-3. **Error Correction**: Quantum error rates
-4. **Scalability**: Current hardware limitations
-
-## Potential Applications
-
-- Quantum-native data formats
-- Exponential compression ratios (theoretical)
-- Quantum machine learning integration
-
----
-
-*Full paper available in RESEARCH/quantum_quantization.md*`
+                    file: 'RESEARCH/quantum_quantization.md'
                 }
             ],
             research: [
@@ -957,65 +1499,7 @@ Use quantum entanglement to encode correlations between data elements without ex
                     category: 'Foundations',
                     status: 'Peer-Reviewed',
                     order: 1,
-                    file: 'RESEARCH/vector_space_theory.md',
-                    content: `# Vector Space Theory in High-Dimensional Embeddings
-
-## Introduction
-
-Vector spaces form the mathematical foundation of modern embedding-based systems. This paper provides a rigorous treatment of the concepts underlying vector databases.
-
-## Fundamental Concepts
-
-### Vector Space Definition
-
-A vector space V over field F satisfies:
-1. **Closure** under addition and scalar multiplication
-2. **Associativity** and **commutativity** of addition
-3. **Distributivity** of scalar multiplication
-4. **Identity elements** (zero vector, scalar 1)
-
-### Inner Product Spaces
-
-For vectors u, v in V:
-\`\`\`
-⟨u, v⟩ : V × V → ℝ
-\`\`\`
-
-Properties: conjugate symmetry, linearity, positive-definiteness.
-
-## Distance Metrics
-
-### Euclidean (L2)
-\`\`\`
-d(x, y) = √(Σᵢ (xᵢ - yᵢ)²)
-\`\`\`
-
-### Cosine Similarity
-\`\`\`
-cos(θ) = (x · y) / (‖x‖ × ‖y‖)
-\`\`\`
-
-### Dot Product
-\`\`\`
-x · y = Σᵢ xᵢyᵢ
-\`\`\`
-
-## The Curse of Dimensionality
-
-In high dimensions (d > 100):
-- Distance concentration
-- Sparsity of data
-- Computational challenges
-
-## Implications for Similarity Search
-
-1. **Index structures** must adapt to high-D geometry
-2. **Approximate methods** become necessary
-3. **Dimensionality reduction** trades accuracy for speed
-
----
-
-*Full mathematical treatment in RESEARCH/vector_space_theory.md*`
+                    file: 'RESEARCH/vector_space_theory.md'
                 },
                 {
                     id: 'hnsw-algorithm',
@@ -1025,67 +1509,7 @@ In high dimensions (d > 100):
                     category: 'Algorithms',
                     status: 'Peer-Reviewed',
                     order: 2,
-                    file: 'RESEARCH/hnsw_algorithm.md',
-                    content: `# HNSW Graphs: Theory, Implementation, and Analysis
-
-## Overview
-
-**Hierarchical Navigable Small World (HNSW)** graphs are the state-of-the-art algorithm for approximate nearest neighbor search, achieving logarithmic search complexity.
-
-## Algorithm Structure
-
-### Multi-Layer Graph
-\`\`\`
-Layer L (sparse):    o---o---o
-Layer L-1:           o-o-o-o-o-o
-...
-Layer 0 (dense):     ooooooooooooo
-\`\`\`
-
-### Key Parameters
-
-| Parameter | Description | Typical Value |
-|-----------|-------------|---------------|
-| M | Max connections per node | 16 |
-| ef_construction | Build-time search width | 200 |
-| ef_search | Query-time search width | 50 |
-| M_max | Max connections in layer 0 | 2M |
-
-## Search Algorithm
-
-1. Start at entry point (top layer)
-2. Greedily traverse to closest node
-3. Descend to next layer
-4. At layer 0, expand search with ef neighbors
-5. Return top-k results
-
-## Complexity Analysis
-
-- **Build**: O(n × log(n) × M)
-- **Search**: O(log(n) × M)
-- **Memory**: O(n × M × d)
-
-## Hektor Implementation
-
-\`\`\`cpp
-class HnswIndex {
-    void add(VectorId id, VectorView vec);
-    SearchResults search(VectorView query, size_t k);
-    void set_ef_search(size_t ef);
-};
-\`\`\`
-
-## Performance Benchmarks
-
-| Dataset | Recall@10 | QPS |
-|---------|-----------|-----|
-| SIFT-1M | 0.98 | 5,000 |
-| GIST-1M | 0.95 | 2,500 |
-| GloVe | 0.97 | 4,200 |
-
----
-
-*Full implementation details in RESEARCH/hnsw_algorithm.md*`
+                    file: 'RESEARCH/hnsw_algorithm.md'
                 },
                 {
                     id: 'perceptual-quantization',
@@ -1095,62 +1519,7 @@ class HnswIndex {
                     category: 'Quantization',
                     status: 'Peer-Reviewed',
                     order: 3,
-                    file: 'RESEARCH/perceptual_quantization.md',
-                    content: `# Perceptual Quantization: Research & Implementation
-
-## Abstract
-
-Perceptual quantization allocates bits based on human perception rather than signal energy, achieving superior quality at equivalent bitrates.
-
-## Theoretical Foundation
-
-### Human Visual System (HVS)
-
-The eye's response to light is **non-linear**:
-- Weber-Fechner Law: ΔI/I = constant
-- Stevens' Power Law: S = k × I^0.33
-
-### Transfer Functions
-
-| Standard | Curve | Peak Luminance |
-|----------|-------|----------------|
-| sRGB | Gamma 2.2 | 100 nits |
-| PQ (ST.2084) | Perceptual | 10,000 nits |
-| HLG | Hybrid | 1,000 nits |
-
-## PQ Curve (SMPTE ST.2084)
-
-\`\`\`
-E = ((c1 + c2×Y^m1) / (1 + c3×Y^m1))^m2
-
-where:
-  Y = normalized luminance
-  c1 = 0.8359375
-  c2 = 18.8515625
-  c3 = 18.6875
-  m1 = 0.1593017578
-  m2 = 78.84375
-\`\`\`
-
-## Implementation in Hektor
-
-\`\`\`cpp
-namespace vdb::quantization {
-    class ProductQuantizer;      // 8-32x compression
-    class ScalarQuantizer;       // Per-dimension
-    class DisplayAwareQuantizer; // PQ/HLG curves
-}
-\`\`\`
-
-## Applications
-
-1. **HDR Video**: Efficient 10-bit encoding
-2. **Vector Embeddings**: Perceptual similarity preservation
-3. **Image Storage**: Quality-optimized compression
-
----
-
-*Full implementation in RESEARCH/perceptual_quantization.md*`
+                    file: 'RESEARCH/perceptual_quantization.md'
                 }
             ],
             publications: [
@@ -1162,62 +1531,7 @@ namespace vdb::quantization {
                     category: 'Survey',
                     status: 'Published',
                     order: 1,
-                    file: 'RESEARCH/papers/research_survey.md',
-                    content: `# Research Survey: State-of-the-Art in Vector Databases
-
-## Abstract
-
-This survey reviews **50+ foundational papers** spanning 70 years of research in vector databases, similarity search, and high-dimensional indexing.
-
-## Historical Timeline
-
-### 1954-1990: Foundations
-- **1954**: k-d trees (Bentley)
-- **1975**: Locality Sensitive Hashing concepts
-- **1984**: R-trees (Guttman)
-
-### 1990-2010: Scalability Era
-- **1998**: LSH formalized (Indyk & Motwani)
-- **2002**: Spectral hashing
-- **2004**: Product Quantization foundations
-
-### 2010-2020: Deep Learning Revolution
-- **2013**: Word2Vec (Mikolov et al.)
-- **2014**: GloVe embeddings
-- **2016**: HNSW (Malkov & Yashunin)
-- **2018**: BERT embeddings
-
-### 2020-2026: Production Systems
-- **2020**: FAISS, Milvus, Pinecone emergence
-- **2023**: GPT embeddings, vector DB explosion
-- **2026**: Hybrid search standardization
-
-## Key Papers by Category
-
-### Indexing Algorithms
-| Paper | Year | Impact |
-|-------|------|--------|
-| HNSW | 2016 | Dominant ANN algorithm |
-| IVF | 2011 | Foundation of FAISS |
-| Annoy | 2015 | Tree-based ANN |
-
-### Quantization
-| Paper | Year | Impact |
-|-------|------|--------|
-| PQ | 2011 | 8-32x compression |
-| OPQ | 2013 | Rotation optimization |
-| ScaNN | 2020 | Anisotropic quantization |
-
-## Conclusions
-
-Vector databases represent convergence of:
-1. Decades of algorithmic research
-2. Deep learning embeddings
-3. Distributed systems engineering
-
----
-
-*Full survey with 50+ citations in RESEARCH/papers/research_survey.md*`
+                    file: 'RESEARCH/papers/research_survey.md'
                 },
                 {
                     id: 'opentelemetry-tracing',
@@ -1227,83 +1541,43 @@ Vector databases represent convergence of:
                     category: 'Systems',
                     status: 'Peer-Reviewed',
                     order: 2,
-                    file: 'RESEARCH/papers/opentelemetry_distributed_tracing_2026.md',
-                    content: `# OpenTelemetry Distributed Tracing: 2026 Standards
-
-## Executive Summary
-
-Following **AWS X-Ray's transition to OpenTelemetry** (announced Q4 2025), OTel has become the universal standard for distributed tracing. This paper analyzes the 2026 landscape.
-
-## The OTel Standard
-
-### Three Pillars
-1. **Traces**: Request flow across services
-2. **Metrics**: Quantitative measurements
-3. **Logs**: Discrete events
-
-### Key Components
-
-\`\`\`
-SDK (instrumentation)
-    ↓
-Collector (processing)
-    ↓
-Backend (storage/visualization)
-\`\`\`
-
-## Hektor Integration
-
-\`\`\`cpp
-// TelemetryConfig in Hektor
-struct TelemetryConfig {
-    bool enable_tracing = true;
-    string service_name = "hektor";
-    string otlp_endpoint = "localhost:4317";
-    double sampling_ratio = 1.0;
-};
-\`\`\`
-
-### Instrumented Operations
-- Vector insertions
-- Search queries  
-- Index builds
-- Quantization
-
-## Industry Adoption (2026)
-
-| Provider | Status |
-|----------|--------|
-| AWS | Migrated from X-Ray |
-| GCP | Native support |
-| Azure | Native support |
-| Datadog | Full compatibility |
-| Grafana | Full compatibility |
-
-## Best Practices
-
-1. **Sampling**: Use tail-based sampling for errors
-2. **Context Propagation**: W3C Trace Context standard
-3. **Semantic Conventions**: Follow OTel conventions
-4. **Resource Attributes**: service.name, deployment.environment
-
----
-
-*Full analysis in RESEARCH/papers/opentelemetry_distributed_tracing_2026.md*`
+                    file: 'RESEARCH/papers/opentelemetry_distributed_tracing_2026.md'
                 }
             ]
         };
 
-        // Render cards
-        function renderCards(section, containerId) {
+        // Render blog cards (different style)
+        function renderBlogCards(containerId) {
+            const container = document.getElementById(containerId);
+            const items = documents.blog.sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest first
+            
+            container.innerHTML = items.map(doc => `
+                <div class="blog-card" data-id="${doc.id}" data-section="blog">
+                    <div class="card-date">${formatDate(doc.date)}</div>
+                    <h3>${doc.title}</h3>
+                    <p class="card-description">${doc.description}</p>
+                    <div class="read-more">
+                        Read more
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.blog-card').forEach(card => {
+                card.addEventListener('click', () => openModal('blog', card.dataset.id));
+            });
+        }
+
+        // Render document cards
+        function renderDocCards(section, containerId) {
             const container = document.getElementById(containerId);
             const items = documents[section].sort((a, b) => a.order - b.order);
             
             if (items.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
-                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
+                    <div style="text-align: center; padding: 60px; color: var(--text-muted);">
                         <p>No content available yet.</p>
                     </div>
                 `;
@@ -1329,7 +1603,6 @@ struct TelemetryConfig {
                 `;
             }).join('');
 
-            // Add click handlers
             container.querySelectorAll('.doc-card').forEach(card => {
                 card.addEventListener('click', () => openModal(card.dataset.section, card.dataset.id));
             });
@@ -1337,7 +1610,7 @@ struct TelemetryConfig {
 
         function formatDate(dateStr) {
             const date = new Date(dateStr);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         }
 
         // Modal handling
@@ -1346,53 +1619,50 @@ struct TelemetryConfig {
             if (!doc) return;
 
             document.getElementById('modal-title').textContent = doc.title;
-            document.getElementById('modal-meta').textContent = `${doc.category} • ${formatDate(doc.date)} • ${doc.status}`;
+            document.getElementById('modal-meta').textContent = `${doc.category} · ${formatDate(doc.date)}`;
             
-            // If we have inline content, show it immediately
-            if (doc.content) {
-                document.getElementById('modal-content').innerHTML = marked.parse(doc.content);
-                document.getElementById('modal-overlay').classList.add('active');
-                document.body.style.overflow = 'hidden';
-                return;
-            }
-            
-            // Otherwise, show loading state and try to fetch
-            document.getElementById('modal-content').innerHTML = '<p style="color: var(--text-muted); font-style: italic;">Loading content...</p>';
+            // Show loading state
+            document.getElementById('modal-content').innerHTML = '<div class="loading-spinner">Loading article...</div>';
             document.getElementById('modal-overlay').classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            let content = null;
-            if (doc.file) {
+            let content = doc.content;
+            
+            // If no inline content, try to fetch from file
+            if (!content && doc.file) {
                 try {
                     const response = await fetch(doc.file);
                     if (response.ok) {
                         content = await response.text();
-                        // Remove frontmatter (YAML between --- markers)
+                        // Remove YAML frontmatter
                         content = content.replace(/^---[\s\S]*?---\s*/m, '');
                     } else {
-                        console.error('Failed to fetch:', doc.file, response.status);
-                        content = `*Unable to load content (HTTP ${response.status}). File: ${doc.file}*`;
+                        throw new Error(`HTTP ${response.status}`);
                     }
                 } catch (e) {
                     console.error('Fetch error:', e);
-                    // If fetch fails (e.g., file:// protocol), show a helpful message
-                    content = `## Content Preview
+                    content = `# ${doc.title}
 
-This article requires loading from: \`${doc.file}\`
+> This paper is available at \`${doc.file}\`
 
-**To view the full content**, please either:
-1. Serve this page via HTTP (e.g., \`python -m http.server 8000\` in the docs folder)
-2. View the source file directly: [${doc.file}](${doc.file})
-
----
-
-### Abstract
+## Abstract
 
 ${doc.description}
 
 ---
 
-*Note: Direct file access is restricted by browser security policies when opening HTML files directly.*`;
+**Note**: To view the full research paper, please serve this page via HTTP:
+
+\`\`\`bash
+cd docs
+python -m http.server 8000
+\`\`\`
+
+Then open [http://localhost:8000/blog.html](http://localhost:8000/blog.html)
+
+---
+
+*Direct file:// access is restricted by browser security policies.*`;
                 }
             }
             
@@ -1441,10 +1711,10 @@ ${doc.description}
         });
 
         // Initialize
-        renderCards('blog', 'blog-grid');
-        renderCards('articles', 'articles-grid');
-        renderCards('research', 'research-grid');
-        renderCards('publications', 'publications-grid');
+        renderBlogCards('blog-grid');
+        renderDocCards('articles', 'articles-grid');
+        renderDocCards('research', 'research-grid');
+        renderDocCards('publications', 'publications-grid');
     </script>
 </body>
 </html>
