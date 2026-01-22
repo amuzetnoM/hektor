@@ -2429,7 +2429,150 @@ RUN_COMMAND: ctest --output-on-failure --verbose
 
 ---
 
-# §15 VERSION_HISTORY
+# §15 SECTOR_ARCHITECTURE_DIAGRAM
+
+```
+┌───────────────────────────────────────────────────────────────────────────┐
+│                          HEKTOR SYSTEM ARCHITECTURE                         │
+│                        Frontend/Backend Sectorization                       │
+└───────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              FRONTEND SECTOR                                  │
+│                         (Angular 21 + TypeScript)                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐          │
+│  │  UI Components   │  │    Services      │  │  Guards/Models   │          │
+│  ├──────────────────┤  ├──────────────────┤  ├──────────────────┤          │
+│  │ • Login          │  │ • Auth Service   │  │ • Auth Guards    │          │
+│  │ • Playground     │  │ • API Service    │  │ • HTTP Intercept │          │
+│  │ • Database Ops   │  │ • Vector DB Svc  │  │ • DTO Models     │          │
+│  │ • Index Manager  │  │ • Agent Service  │  │ • Interfaces     │          │
+│  │ • Health Monitor │  │                  │  │                  │          │
+│  │ • Cluster View   │  │                  │  │                  │          │
+│  │ • Hybrid Search  │  │                  │  │                  │          │
+│  │ • Projections    │  │                  │  │                  │          │
+│  │ • Export Manager │  │                  │  │                  │          │
+│  │ • Ingestion Wiz  │  │                  │  │                  │          │
+│  │ • Schema Builder │  │                  │  │                  │          │
+│  │ • Settings       │  │                  │  │                  │          │
+│  │ • Chat Sidebar   │  │                  │  │                  │          │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘          │
+│                                                                               │
+│  Build: Angular CLI + Vite │ Deploy: Vercel │ Package: npm                  │
+└───────────────────────────────┬───────────────────────────────────────────────┘
+                                │
+                        HTTP/REST (JSON)
+                        JWT Authentication
+                                │
+┌───────────────────────────────▼───────────────────────────────────────────────┐
+│                            INTEGRATION LAYER                                   │
+│                          (REST API + Python Bridge)                            │
+├────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                │
+│  ┌──────────────────────────────────────────────────────────────────────┐    │
+│  │                    FastAPI REST Server (Python)                       │    │
+│  │  Location: /api/main.py                                               │    │
+│  ├──────────────────────────────────────────────────────────────────────┤    │
+│  │  Endpoints:                                                           │    │
+│  │  • GET  /health, /metrics, /stats                                    │    │
+│  │  • POST /auth/login                                                  │    │
+│  │  • POST /collections, GET /collections, DELETE /collections/{name}   │    │
+│  │  • POST /collections/{name}/documents, .../documents/batch           │    │
+│  │  • POST /collections/{name}/search                                   │    │
+│  └──────────────────────────────┬───────────────────────────────────────┘    │
+│                                  │                                            │
+│                          pybind11 Bridge                                      │
+│                       (Near-Native Performance)                               │
+│                                  │                                            │
+│  ┌──────────────────────────────▼───────────────────────────────────────┐    │
+│  │                   Python Bindings (pyvdb module)                      │    │
+│  │  • VectorDatabase, QueryOptions, QueryResult                          │    │
+│  │  • Metadata, IndexStats, LLMEngine                                    │    │
+│  │  • GoldStandardIngest                                                │    │
+│  └───────────────────────────────────────────────────────────────────────┘    │
+└────────────────────────────────┬───────────────────────────────────────────────┘
+                                 │
+                         Shared Memory Access
+                                 │
+┌────────────────────────────────▼────────────────────────────────────────────────┐
+│                              BACKEND SECTOR                                      │
+│                    (C++23 High-Performance Engine)                               │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐  │
+│  │                         L5: API LAYER                                     │  │
+│  │  • CLI Interface        • Python Bindings       • REST API               │  │
+│  └──────────────────────────────┬────────────────────────────────────────────┘  │
+│                                 │                                               │
+│  ┌──────────────────────────────▼────────────────────────────────────────────┐  │
+│  │                         L4: SEARCH LAYER                                   │  │
+│  │  • vector_search.cpp    • bm25_engine.cpp    • hybrid_search.cpp          │  │
+│  │  • rag_pipeline.cpp     • Fusion algorithms (RRF, CombSUM, etc.)          │  │
+│  └──────────────────────────────┬────────────────────────────────────────────┘  │
+│                                 │                                               │
+│  ┌──────────────────────────────▼────────────────────────────────────────────┐  │
+│  │                       L3: EMBEDDINGS LAYER                                 │  │
+│  │  • text_encoder.cpp (ONNX MiniLM)    • image_encoder.cpp (ONNX CLIP)      │  │
+│  │  • onnx_runtime_wrapper.cpp          • Local embeddings (no API calls)    │  │
+│  └──────────────────────────────┬────────────────────────────────────────────┘  │
+│                                 │                                               │
+│  ┌──────────────────────────────▼────────────────────────────────────────────┐  │
+│  │                         L2: INDEX LAYER                                    │  │
+│  │  • hnsw_index.cpp (M=16, O(log n))  • flat_index.cpp (brute-force)        │  │
+│  │  • metadata_index.cpp                                                      │  │
+│  └──────────────────────────────┬────────────────────────────────────────────┘  │
+│                                 │                                               │
+│  ┌──────────────────────────────▼────────────────────────────────────────────┐  │
+│  │                        L1: STORAGE LAYER                                   │  │
+│  │  • mmap_store.cpp (memory-mapped, zero-copy)                               │  │
+│  │  • sqlite_store.cpp (metadata)  • pgvector_store.cpp (PostgreSQL)         │  │
+│  │  • metadata_store.cpp                                                      │  │
+│  └──────────────────────────────┬────────────────────────────────────────────┘  │
+│                                 │                                               │
+│  ┌──────────────────────────────▼────────────────────────────────────────────┐  │
+│  │                         L0: CORE LAYER                                     │  │
+│  │  • types.hpp (VectorId, Dim, Distance, Scalar)                             │  │
+│  │  • distance.cpp (Cosine, L2, Dot Product) - SIMD optimized (AVX2/AVX-512) │  │
+│  │  • vector_ops.cpp (batch operations, thread-safe)                          │  │
+│  └────────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                  │
+│  ┌──────────────────────────────────────────────────────────────────────────┐  │
+│  │                      ADVANCED FEATURES (Cross-Layer)                       │  │
+│  │  • quantization.cpp (Perceptual PQ, Scalar, Display-aware)                 │  │
+│  │  • distributed.cpp (Replication: async/sync/semi-sync, Sharding)           │  │
+│  │  • llm_engine.cpp (llama.cpp integration)                                  │  │
+│  │  • telemetry.cpp (OpenTelemetry), ebpf_tracer.cpp (eBPF observability)    │  │
+│  │  • http_adapter.cpp, http_client.cpp (HTTP integration)                    │  │
+│  │  • data_ingestion.cpp (XML, JSON, CSV, Excel, PDF, Parquet, SQLite)       │  │
+│  └────────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                  │
+│  Build: CMake + Ninja │ Compiler: GCC 11+/Clang 14+ │ Standards: C++23          │
+│  SIMD: AVX2/AVX-512  │ Optimizations: -O3 -march=native                         │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          DISTRIBUTED ARCHITECTURE                              │
+│                         (Backend Sector - Horizontal Scale)                    │
+├────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                │
+│     ┌─────────────┐      ┌─────────────┐      ┌─────────────┐               │
+│     │   Node 1    │◄─────┤   Node 2    │◄─────┤   Node 3    │               │
+│     │  (Primary)  │      │  (Replica)  │      │  (Replica)  │               │
+│     └─────────────┘      └─────────────┘      └─────────────┘               │
+│           │                     │                     │                       │
+│           └─────────────────────┴─────────────────────┘                       │
+│                  gRPC/Protobuf Communication                                  │
+│                  Replication: async/sync/semi-sync                            │
+│                  Sharding: hash/range/consistent                              │
+│                                                                                │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+# §16 VERSION_HISTORY
 
 ```
 VERSION: 4.0.0
@@ -2448,7 +2591,243 @@ VERSION: 4.0.0
 
 ---
 
-# §16 DEPENDENCY_GRAPH
+# §16 SYSTEM_SECTORIZATION
+
+## §16.1 FRONTEND_SECTOR
+
+```yaml
+FRONTEND:
+  TYPE: Angular_Single_Page_Application
+  LANGUAGE: TypeScript
+  FRAMEWORK: Angular_21.0.5
+  LOCATION: /ui/
+  
+  COMPONENTS:
+    User_Interface:
+      - login.component.ts: Authentication_UI
+      - playground.component.ts: Interactive_query_testing
+      - database-ops.component.ts: Database_management_UI
+      - index-manager.component.ts: Index_configuration_UI
+      - health-monitor.component.ts: System_health_visualization
+      - cluster-view.component.ts: Distributed_system_monitoring
+      - hybrid-search.component.ts: Hybrid_search_interface
+      - projection-view.component.ts: Vector_space_visualization
+      - export-manager.component.ts: Data_export_interface
+      - ingestion-wizard.component.ts: Data_ingestion_wizard
+      - schema-builder.component.ts: Schema_design_tool
+      - settings.component.ts: Application_settings
+      - chat-sidebar.component.ts: LLM_chat_interface
+    
+    Services:
+      - auth.service.ts: Frontend_authentication_logic
+      - hektor-api.service.ts: REST_API_client
+      - vector-db.service.ts: Vector_database_operations
+      - agent.service.ts: AI_agent_interactions
+    
+    Guards:
+      - Authentication_guards
+      - Route_protection
+    
+    Interceptors:
+      - HTTP_interceptors
+      - Token_management
+    
+    Models:
+      - TypeScript_interfaces
+      - Data_transfer_objects
+  
+  BUILD_SYSTEM:
+    Tool: Angular_CLI + Vite
+    Config: angular.json
+    Output: dist/
+    Package_Manager: npm
+    Dependencies: package.json
+  
+  DEPLOYMENT:
+    Platform: Vercel
+    Config: vercel.json
+    Build_Command: ng build --configuration production
+    Static_Files: true
+  
+  FEATURES:
+    - Responsive_design
+    - Real-time_updates
+    - Vector_visualization_(2D/3D_projections)
+    - Interactive_query_interface
+    - Authentication_flow
+    - Cluster_monitoring
+    - Health_dashboards
+    - Data_ingestion_wizards
+    - Export_management
+```
+
+## §16.2 BACKEND_SECTOR
+
+```yaml
+BACKEND:
+  TYPE: High_Performance_C++_Engine + Python_REST_API
+  LANGUAGES: [C++23, Python]
+  LOCATION: /src/, /api/
+  
+  CORE_ENGINE:
+    Language: C++23
+    Location: /src/
+    Components:
+      Core_Operations:
+        - vector_ops.cpp: SIMD-optimized_vector_operations
+        - distance.cpp: Distance_metric_implementations
+        - types.hpp: Core_type_definitions
+      
+      Storage_Layer:
+        - mmap_store.cpp: Memory-mapped_storage
+        - sqlite_store.cpp: SQLite_metadata_storage
+        - pgvector_store.cpp: PostgreSQL_integration
+        - metadata_store.cpp: Metadata_management
+      
+      Index_Layer:
+        - hnsw_index.cpp: HNSW_algorithm_implementation
+        - flat_index.cpp: Brute-force_index
+        - metadata_index.cpp: Metadata_indexing
+      
+      Embeddings_Layer:
+        - text_encoder.cpp: ONNX_text_embeddings
+        - image_encoder.cpp: ONNX_image_embeddings
+        - onnx_runtime_wrapper.cpp: ONNX_integration
+      
+      Search_Layer:
+        - vector_search.cpp: Vector_similarity_search
+        - bm25_engine.cpp: BM25_full-text_search
+        - hybrid_search.cpp: Fusion_algorithms
+      
+      Adapters:
+        - http_adapter.cpp: HTTP_request_handling
+        - http_client.cpp: HTTP_client_operations
+        - data_ingestion.cpp: Multi-format_data_ingestion
+      
+      Advanced_Features:
+        - quantization.cpp: Vector_quantization_(PQ/SQ/Display-aware)
+        - distributed.cpp: Replication_and_sharding
+        - llm_engine.cpp: Local_LLM_integration
+        - rag_pipeline.cpp: RAG_implementation
+        - telemetry.cpp: OpenTelemetry_integration
+        - ebpf_tracer.cpp: eBPF_observability
+    
+    Build_System:
+      Tool: CMake + Ninja
+      Config: CMakeLists.txt
+      Compiler: GCC_11+/Clang_14+
+      Standards: C++23
+      Optimizations: -O3 -march=native
+      SIMD: AVX2/AVX-512
+  
+  REST_API_SERVER:
+    Language: Python
+    Location: /api/
+    Framework: FastAPI
+    Main_File: main.py
+    
+    Endpoints:
+      System:
+        - GET /health: Health_check
+        - GET /metrics: Prometheus_metrics
+        - GET /stats: Database_statistics
+      
+      Authentication:
+        - POST /auth/login: User_authentication
+      
+      Collections:
+        - POST /collections: Create_collection
+        - GET /collections: List_collections
+        - DELETE /collections/{name}: Delete_collection
+      
+      Documents:
+        - POST /collections/{name}/documents: Add_document
+        - POST /collections/{name}/documents/batch: Batch_insert
+      
+      Search:
+        - POST /collections/{name}/search: Vector_search
+    
+    Integration:
+      - Python_bindings_(pybind11): pyvdb_module
+      - C++_core_wrapper: Direct_integration
+      - Authentication: JWT_tokens
+      - CORS: Cross-origin_support
+      - Rate_limiting: Built-in
+    
+    Dependencies:
+      - FastAPI: REST_framework
+      - pydantic: Data_validation
+      - python-jose: JWT_handling
+      - python-multipart: File_upload
+      - uvicorn: ASGI_server
+  
+  PYTHON_BINDINGS:
+    Module: pyvdb
+    Technology: pybind11
+    Location: /bindings/python/
+    
+    Exports:
+      - VectorDatabase: Main_database_class
+      - Metadata: Metadata_handling
+      - QueryOptions: Query_configuration
+      - QueryResult: Search_results
+      - IndexStats: Statistics
+      - LLMEngine: LLM_integration
+      - GoldStandardIngest: Domain-specific_ingestion
+  
+  COMMUNICATION:
+    Frontend_to_Backend:
+      Protocol: HTTP/HTTPS
+      Format: JSON
+      Authentication: JWT_Bearer_tokens
+      API_Version: 2.0.0
+    
+    Internal_Communication:
+      C++_to_Python: pybind11_bindings
+      Distributed_Nodes: gRPC/Protobuf
+      Service_Discovery: Built-in
+      Health_Checks: Heartbeat_system
+```
+
+## §16.3 INTEGRATION_LAYER
+
+```yaml
+INTEGRATION:
+  Frontend_to_REST_API:
+    Client: hektor-api.service.ts
+    Protocol: HTTP/REST
+    Format: JSON
+    Authentication: JWT
+    Base_URL: Configurable_environment
+  
+  REST_API_to_Core:
+    Bridge: Python_bindings_(pyvdb)
+    Technology: pybind11
+    Memory: Shared_memory_access
+    Performance: Near-native_speed
+  
+  Data_Flow:
+    User_Request:
+      1. Angular_UI_(TypeScript)
+      2. HTTP_Request_(JSON)
+      3. FastAPI_REST_Server_(Python)
+      4. pybind11_Bridge
+      5. C++_Core_Engine
+      6. Response_Path_Reversed
+    
+    Vector_Search:
+      1. UI_sends_query_text
+      2. REST_API_receives_request
+      3. Python_calls_pyvdb.VectorDatabase.query_text()
+      4. C++_performs_ONNX_embedding
+      5. C++_executes_HNSW_search
+      6. Results_returned_through_chain
+      7. UI_displays_results
+```
+
+---
+
+# §17 DEPENDENCY_GRAPH
 
 ```
 HEKTOR_CORE
@@ -2480,4 +2859,6 @@ HASH: [SHA256_OF_CONTENT]
 COMPLETENESS: EXHAUSTIVE
 MACHINE_READABLE: TRUE
 HUMAN_READABLE_SECTION: §13
+SECTORIZATION_ADDED: §15_ARCHITECTURE_DIAGRAM, §16_SYSTEM_SECTORIZATION
+SECTORS: [FRONTEND_Angular_TypeScript, BACKEND_C++_Python, INTEGRATION_REST_API]
 ```
