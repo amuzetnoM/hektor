@@ -46,7 +46,7 @@ Benchmarked on SIFT-1M (1 million 128-dim vectors):
 | Build Time | 45 seconds |
 | Memory | 1.2 GB |
 
-I'm competitive with the best open-source options and beat several commercial offerings.
+Hektor is competitive with the best open-source options and beats several commercial offerings.
 
 ## What I Learned
 

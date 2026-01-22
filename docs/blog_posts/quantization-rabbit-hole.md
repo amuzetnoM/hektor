@@ -20,7 +20,7 @@ Standard vector quantization is straightforward:
 
 This works. Recall drops from 99.7% to ~95%. Acceptable for some use cases.
 
-But I wanted better.
+But I think we can do better.
 
 ## Enter Product Quantization
 
@@ -42,7 +42,8 @@ But then someone asked: *"What if perception matters?"*
 
 Here's a fact that broke my brain: 
 
-> human perception of intensity is **logarithmic**, not linear.
+> Human perception of _intensity_ is **logarithmic**, not linear. <br>
+> Duhh.
 
 The difference between 0 and 1 (luminance) looks the same as 10 and 11 to a meter. But to your eyes, 0→1 is a massive change while 10→11 is barely noticeable.
 
@@ -58,22 +59,26 @@ The curve maps linear luminance to a perceptually uniform space.
 
 ```
 PQ(Y) = ((c₁ + c₂·Y^m₁) / (1 + c₃·Y^m₁))^m₂
-I adapted this for vectors. Instead of luminance, I apply perceptual curves to embedding magnitudes. Dimensions with high variance get more precision. Dimensions near zero get less.
+```
 
-We adapted this for vectors. Instead of luminance, we apply perceptual curves to embedding magnitudes. Dimensions with high variance get more precision. Dimensions near zero get less.
+Where:
+
+
+Instead of luminance, we apply perceptual curves to embedding magnitudes. Dimensions with high variance get more precision. Dimensions near zero get less.
+
 
 Result: 98.5% recall at the same 8 bytes per vector.
 
 ## Display-Aware Encoding
 
-This is where it gets wild.
+This is getting wild.
 
 Different displays have different capabilities:
 - SDR monitors: 100 nits peak
 - HDR10: 1000 nits
-I built a `DisplayAwareQuantizer` that adapts encoding based on target display characteristics. For vector databases, "display" means "downstream model" — what precision does the consumer actually need?
+-HDR4000: 4000 nits
 
-We built a `DisplayAwareQuantizer` that adapts encoding based on target display characteristics. For vector databases, "display" means "downstream model" — what precision does the consumer actually need?
+We built a `DisplayAwareQuantizer` that adapts encoding based on target display characteristics. For vector databases, "display" means "downstream model" — what precision do we really need?
 
 A lightweight retrieval model doesn't need the same precision as a fine-grained reranker.
 
