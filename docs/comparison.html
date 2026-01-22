@@ -228,6 +228,11 @@
             color: #fafafa;
             font-weight: 700;
             font-size: 18px;
+            transition: opacity 0.2s ease;
+        }
+
+        nav .logo:hover {
+            opacity: 0.8;
         }
 
         nav .logo-box {
@@ -235,6 +240,12 @@
             height: 24px;
             border-radius: 4px;
             background: #fafafa;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        nav .logo:hover .logo-box {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
         }
 
         nav .nav-links {
@@ -255,7 +266,92 @@
             color: #fbbf24;
         }
 
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #71717a;
+            transition: color 0.2s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            color: #fafafa;
+        }
+
+        .mobile-menu-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .mobile-menu-btn .close-icon {
+            display: none;
+        }
+
+        .mobile-menu-btn.active .hamburger-icon {
+            display: none;
+        }
+
+        .mobile-menu-btn.active .close-icon {
+            display: block;
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020202;
+            z-index: 35;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            padding-top: 80px;
+        }
+
+        .mobile-sidebar.active {
+            transform: translateX(0);
+        }
+
+        .mobile-sidebar-inner {
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mobile-sidebar a {
+            color: #a1a1aa;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: color 0.2s ease;
+        }
+
+        .mobile-sidebar a:hover,
+        .mobile-sidebar a.active {
+            color: #fbbf24;
+        }
+
         .container { padding-top: 84px; }
+
+        @media (max-width: 768px) {
+            nav .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
 
         /* Animations */
         @keyframes fadeInUp {
@@ -333,13 +429,22 @@
             .chart-wrapper.tall { height: 300px; }
             .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
             .section-header .section-desc { margin-left: 0; }
-            nav .nav-links { gap: 20px; }
-            nav .nav-links a { font-size: 13px; }
         }
     </style>
 </head>
 <body>
     <div class="noise-overlay"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobile-sidebar">
+        <div class="mobile-sidebar-inner">
+            <a href="index.html">Home</a>
+            <a href="hektor.html">Overview</a>
+            <a href="comparison.html" class="active">Comparison</a>
+            <a href="https://artifact-virtual.gitbook.io/hektor/">Docs</a>
+            <a href="https://github.com/amuzetnoM/hektor.git">GitHub</a>
+        </div>
+    </div>
     
     <!-- Navigation -->
     <nav>
@@ -353,6 +458,14 @@
                 <a href="https://artifact-virtual.gitbook.io/hektor/">Docs</a>
                 <a href="https://github.com/amuzetnoM/hektor.git">GitHub</a>
             </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <svg class="hamburger-icon" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <svg class="close-icon" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
     </nav>
     
@@ -1084,6 +1197,23 @@
             renderBenchmarks();
             renderAnalysis();
         }
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            mobileSidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking a link
+        mobileSidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                mobileSidebar.classList.remove('active');
+            });
+        });
 
         init();
     </script>
