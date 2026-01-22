@@ -8,7 +8,8 @@ A user searched for "Apple M3 chip performance benchmarks" and got results about
 
 This is the semantic search failure mode. The embedding model understood "Apple" as a general concept but missed that in this context, it's a company name. It understood "chip" but associated it with potato chips in some training examples.
 
-Pure semantic search is amazing. Until it isn't.
+Pure semantic search is amazing...
+>  Until it isn't.
 
 ## The Keyword Problem
 
@@ -62,7 +63,7 @@ This ignores actual scores and just uses rank positions. Surprisingly effective.
 ### Option 3: Learned Fusion
 Train a model to combine scores. More complex, potentially better, requires training data.
 
-We implemented all three. **RRF won for simplicity**. With k=60, it handles most cases well. For power users, we expose the weighted sum with configurable α.
+Well, I implemented all three. **RRF won for simplicity**. With k=60, it handles most cases well. For power users, we expose the weighted sum with configurable α.
 
 ## When Hybrid Shines
 
