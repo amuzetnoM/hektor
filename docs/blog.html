@@ -1029,9 +1029,17 @@ pip install pyvdb
         // Helper to read preloaded markdown script tags
         function preloadMarkdown(file) {
             if (!file) return null;
-            const id = 'md-' + file.replace(/[\/.]/g, '-');
-            const el = document.getElementById(id);
-            return el ? el.textContent : null;
+            // try multiple id formats to match embedded script ids
+            const base = file.replace(/[\/.]/g, '-');
+            const candidates = [
+                'md-' + base,                 // md-blog_posts-the-beginning-md
+                'md-' + base.replace(/-md$/, '') // md-blog_posts-the-beginning
+            ];
+            for (const id of candidates) {
+                const el = document.getElementById(id);
+                if (el) return el.textContent;
+            }
+            return null;
         }
 
         // Document Data
