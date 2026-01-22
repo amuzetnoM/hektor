@@ -1,4 +1,5 @@
 # Vector Space Theory in High-Dimensional Embeddings: A Comprehensive Study
+> **Non-Euclidean Geometries, Distance Metrics, and Practical Implications for Similarity Search**
 
 **Authors**: Artifact Virtual Research
 **Last Updated**: January 4, 2026  

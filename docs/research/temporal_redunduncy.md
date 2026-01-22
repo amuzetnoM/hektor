@@ -4,7 +4,7 @@ description: "Research on event-based encoding, delta-saliency, and memory-aware
 version: "1.0.0"
 date: "2026-01-20"
 category: "Advanced Research"
-status: "Research Only - Not Implemented"
+status: "Research" 
 ---
 
 # Temporal Redundancy Beyond Motion Vectors
