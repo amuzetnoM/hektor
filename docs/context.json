@@ -1,5 +1,4 @@
-{
-	{
+{\r\n
 		"schema_version": "1.0",
 		"generated_at": "2026-01-23T12:30:00Z",
 		"project": "vector_database",
@@ -94,11 +93,7 @@
 			{"name":"shell","category":"Interactive","aliases":["repl","interactive"],"syntax":"hektor shell [db]","description":"Start the interactive REPL shell for exploratory operations.","source":"src/cli/interactive_shell.cpp"},
 			{"name":"help","category":"General","aliases":["-h","--help"],"syntax":"hektor help","description":"Show CLI help and available commands.","source":"src/cli/cli.cpp"},
 			{"name":"version","category":"General","aliases":["-V","--version"],"syntax":"hektor version","description":"Show version and build information.","source":"src/cli/cli.cpp"}
-		],
-		"assistant_learning": {
-			"learned_at":"2026-01-23T12:00:00Z",
-			"summary":"Mapping between docs and code modules has been recorded into this file for future doc-related automation and context-aware help.",
-			"mappings_count": 28
-		}
+		]
 	}
+
 
