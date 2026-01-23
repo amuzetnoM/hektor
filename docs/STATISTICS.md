@@ -1,4 +1,4 @@
-# HEKTOR Repository Statistics
+# Repository Statistics
 
 **Generated**: 2026-01-22  
 **Repository**: amuzetnoM/hektor v4.0.0  
