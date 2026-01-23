@@ -6,10 +6,10 @@
     <title>Vector Database Competitive Analysis</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22white%22/></svg>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="assets/css/theme.css">
+    
 
     </head>
-<body>
+<body class="selection:bg-cyan-500/30">
     <div class="noise-overlay"></div>
     
     <!-- Mobile Sidebar -->
@@ -25,16 +25,49 @@
     </div>
     
     <!-- Navigation -->
-    <nav>
-        <div class="nav-inner">
-            <a href="index.html" class="logo">
-                <div class="logo-box"></div>
-                <span>HEKTOR</span>
-            </a>
-            <div class="nav-links">
-                <a href="hektor.html">Overview</a>
-                <a href="https://artifact-virtual.gitbook.io/hektor/">Docs</a>
-                <a href="blog.html">Blog</a>
+    <head>
+        <meta charset="UTF-8">
+        <title>Vector Database Competitive Analysis</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22white%22/></svg>">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-[200] px-10 py-8 flex justify-between items-center mix-blend-difference">
+        <div class="flex items-center gap-6">
+            <div class="flex flex-col">
+                <span class="text-2xl font-black tracking-tighter">HEKTOR</span>
+                <span class="mono text-[8px] tracking-[0.5em] text-zinc-500 uppercase">Kinetic Engine v4.0</span>
+            </div>
+        </div>
+        <div class="hidden lg:flex gap-16 items-center">
+            <div class="flex items-center gap-3">
+                <div class="ion-indicator"></div>
+                <span class="mono text-[10px] tracking-widest uppercase opacity-60">System: Stable</span>
+            </div>
+            <a href="#" class="mono text-[10px] tracking-[0.3em] uppercase hover:text-cyan-400 transition-colors">Documentation</a>
+            <a href="#" class="mono text-[10px] tracking-[0.3em] uppercase hover:text-cyan-400 transition-colors">Vault</a>
+            <button class="px-5 py-2 border border-white/20 mono text-[10px] uppercase hover:bg-white hover:text-black transition-all">Node: 01-A</button>
+        </div>
+    </nav>
+            .text-ion { background: linear-gradient(135deg, #fff 0%, var(--ion-glow) 50%, var(--ion-cyan) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; position: relative; }
+            .text-ion::after { content: attr(data-text); position: absolute; left: 0; top: 0; z-index: -1; filter: blur(15px); opacity: 0.6; background: inherit; -webkit-background-clip: text; background-clip: text; }
+            .kinetic-shell { position: relative; background: rgba(255, 255, 255, 0.02); border-left: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 0 100%); }
+            .kinetic-shell:hover { background: rgba(255, 255, 255, 0.05); border-left: 1px solid var(--ion-cyan); transform: translateX(10px); }
+            .kinetic-shell::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--ion-cyan), transparent); transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease; }
+            .kinetic-shell:hover::before { transform: scaleX(1); }
+            .ion-btn { position: relative; padding: 1.25rem 3rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: white; transition: 0.4s; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+            .ion-btn:hover { background: white; color: black; box-shadow: 0 0 50px rgba(34, 211, 238, 0.4); }
+            .ion-btn .beam { position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transition: 0.6s; }
+            .ion-btn:hover .beam { left: 100%; }
+            .data-stream { mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); }
+            @keyframes pulse-ion { 0%,100%{ opacity:0.5; filter: blur(2px);} 50%{opacity:1; filter: blur(0px);} }
+            .ion-indicator { width:8px; height:8px; background:var(--ion-cyan); border-radius:50%; box-shadow:0 0 15px var(--ion-cyan); animation:pulse-ion 2s infinite; }
+            .reveal { opacity:0; transform:translateY(40px) skewY(2deg); transition: all 1.2s cubic-bezier(0.16,1,0.3,1); }
+            .reveal.active { opacity:1; transform:translateY(0) skewY(0deg); }
+        </style>
+        </head>
                 <a href="https://github.com/amuzetnoM/hektor.git">GitHub</a>
             </div>
             <button class="mobile-menu-btn" id="mobile-menu-btn">
