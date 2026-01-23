@@ -11,7 +11,7 @@ A performance C++ vector database with SIMD-optimized similarity search and loca
 <p align="center">
 
 <!-- Version -->
-[![Version](https://img.shields.io/badge/version-3.0.0-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
+[![Version](https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
 
 <!-- Build Status -->
 [![Build](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=cmake&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
