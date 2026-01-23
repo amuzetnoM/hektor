@@ -1,0 +1,19 @@
+{
+  "id": "sunset-amber-light",
+  "name": "Sunset Amber (Light)",
+  "type": "light",
+  "colors": {
+    "bgPrimary": "#fffbeb",
+    "bgSecondary": "#fef3c7",
+    "bgTertiary": "#fde68a",
+    "textPrimary": "#451a03",
+    "textSecondary": "#78350f",
+    "textTertiary": "#92400e",
+    "accentColor": "#f59e0b",
+    "accentSecondary": "#ef4444",
+    "borderColor": "#fcd34d",
+    "successColor": "#10b981",
+    "warningColor": "#f97316",
+    "errorColor": "#dc2626"
+  }
+}
