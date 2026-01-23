@@ -21,7 +21,7 @@ order: 14
 
 This roadmap provides an extremely detailed, opinionated path forward to transform HEKTOR from a perceptual vector database with strong foundations into the **definitive spectral/perceptual vector database** with no competitors. The plan addresses all identified gaps, integrates optimizations across latency/scale/security, and establishes HEKTOR as the industry leader.
 
-###Strategic Imperative
+### Strategic Imperative
 
 **Current State**: HEKTOR has industry-leading perceptual quantization but lacks spectral features.  
 **Target State**: Complete spectral/perceptual database with sub-millisecond latency, billion-scale, and quantum-resistant security.  
