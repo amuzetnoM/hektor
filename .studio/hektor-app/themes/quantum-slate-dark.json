@@ -1,0 +1,19 @@
+{
+  "id": "quantum-slate-dark",
+  "name": "Quantum Slate (Dark)",
+  "type": "dark",
+  "colors": {
+    "bgPrimary": "#0f172a",
+    "bgSecondary": "#1e293b",
+    "bgTertiary": "#334155",
+    "textPrimary": "#f1f5f9",
+    "textSecondary": "#cbd5e1",
+    "textTertiary": "#94a3b8",
+    "accentColor": "#06b6d4",
+    "accentSecondary": "#8b5cf6",
+    "borderColor": "#475569",
+    "successColor": "#10b981",
+    "warningColor": "#f59e0b",
+    "errorColor": "#f43f5e"
+  }
+}

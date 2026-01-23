@@ -1,0 +1,19 @@
+{
+  "id": "forest-green-dark",
+  "name": "Forest Green (Dark)",
+  "type": "dark",
+  "colors": {
+    "bgPrimary": "#0a1f12",
+    "bgSecondary": "#14291e",
+    "bgTertiary": "#1e3a2a",
+    "textPrimary": "#dcfce7",
+    "textSecondary": "#bbf7d0",
+    "textTertiary": "#86efac",
+    "accentColor": "#10b981",
+    "accentSecondary": "#3b82f6",
+    "borderColor": "#2d5a3f",
+    "successColor": "#22c55e",
+    "warningColor": "#fbbf24",
+    "errorColor": "#f87171"
+  }
+}
