@@ -1,0 +1,70 @@
+{
+	{
+		"schema_version": "1.0",
+		"generated_at": "2026-01-23T12:00:00Z",
+		"project": "vector_database",
+		"description": "Machine-readable source-of-truth index for the docs/ folder. Use this to map docs to audiences, priorities, and related code modules.",
+		"sections": [
+			{"id":"index","path":"00_INDEX.md","title":"Index / Table of Contents","audience":["all"],"priority":"high","status":"ok","related_code":["docs/","README.md"]},
+			{"id":"intro","path":"01_INTRODUCTION.md","title":"Introduction","audience":["new-users"],"priority":"high","status":"needs_review","related_code":["README.md","api/","src/"]},
+			{"id":"installation","path":"02_INSTALLATION.md","title":"Installation","audience":["new-users","operators"],"priority":"high","status":"needs_review","related_code":["CMakeLists.txt","requirements.txt","build/","scripts/","vcpkg/"]},
+			{"id":"quickstart","path":"03_QUICKSTART.md","title":"Quickstart","audience":["new-users"],"priority":"high","status":"high_priority_review","related_code":["api/","examples/","scripts/download_models.py","build/"]},
+			{"id":"user_guide","path":"04_USER_GUIDE.md","title":"User Guide","audience":["users","developers"],"priority":"high","status":"needs_review","related_code":["docs/","examples/","api/"]},
+			{"id":"architecture","path":"05_ARCHITECTURE.md","title":"Architecture","audience":["architects","developers"],"priority":"medium","status":"ok","related_code":["src/","docs/","CMakeLists.txt"]},
+			{"id":"data_formats","path":"06_DATA_FORMATS.md","title":"Data Formats","audience":["integrators"],"priority":"medium","status":"needs_review","related_code":["src/adapters","src/ingest","src/cli/commands/data_commands.cpp"]},
+			{"id":"data_ingestion","path":"07_DATA_INGESTION.md","title":"Data Ingestion","audience":["integrators","users"],"priority":"high","status":"needs_review","related_code":["src/ingest","src/adapters","src/cli/commands/ingest_commands.cpp","ui/src/components/ingestion-wizard.component.ts"]},
+			{"id":"embeddings","path":"08_EMBEDDINGS_MODELS.md","title":"Embeddings Models","audience":["ml-engineers"],"priority":"medium","status":"needs_review","related_code":["src/embeddings","src/framework","models/","ui/src/services/vector-db.service.ts"]},
+			{"id":"vector_ops","path":"09_VECTOR_OPERATIONS.md","title":"Vector Operations","audience":["developers"],"priority":"medium","status":"needs_review","related_code":["src/index","src/storage","src/quantization"]},
+			{"id":"hybrid_search","path":"10_HYBRID_SEARCH.md","title":"Hybrid Search","audience":["developers"],"priority":"medium","status":"needs_review","related_code":["src/hybrid","src/index","src/hybrid/hybrid_search_engine.cpp","src/hybrid/bm25_engine.cpp"]},
+			{"id":"ai_training","path":"10_AI_TRAINING.md","title":"AI Training","audience":["ml-engineers"],"priority":"low","status":"needs_review","related_code":["src/framework","models/","src/llm"]},
+			{"id":"ml_framework","path":"12_ML_FRAMEWORK.md","title":"ML Framework","audience":["ml-engineers"],"priority":"low","status":"needs_review","related_code":["src/framework","src/embeddings","src/llm"]},
+			{"id":"llm_engine","path":"13_LLM_ENGINE.md","title":"LLM Engine","audience":["ml-engineers","researchers"],"priority":"low","status":"needs_review","related_code":["src/llm","src/framework","src/llm/llama_engine.cpp"]},
+			{"id":"quantization","path":"14_QUANTIZATION.md","title":"Quantization","audience":["researchers","engineers"],"priority":"low","status":"ok","related_code":["src/quantization","src/quantization/product_quantizer.cpp","src/quantization/scalar_quantizer.cpp","src/quantization/adaptive_quantizer.cpp"]},
+			{"id":"observability","path":"15_LOGGING_MONITORING.md","title":"Logging & Monitoring","audience":["operators"],"priority":"high","status":"needs_review","related_code":["ui/src/services/vector-db.service.ts","src/cli","scripts/","k8s/"]},
+			{"id":"opentelemetry_install","path":"15_OPENTELEMETRY_INSTALLATION.md","title":"OpenTelemetry Installation","audience":["operators"],"priority":"medium","status":"needs_review","related_code":["docs/15_OPENTELEMETRY_INSTALLATION.md"]},
+			{"id":"opentelemetry_tracing","path":"15_OPENTELEMETRY_TRACING.md","title":"OpenTelemetry Tracing","audience":["operators"],"priority":"medium","status":"needs_review","related_code":["docs/15_OPENTELEMETRY_TRACING.md"]},
+			{"id":"ebpf_observability","path":"15_EBPF_OBSERVABILITY.md","title":"eBPF Observability","audience":["operators","researchers"],"priority":"low","status":"ok","related_code":["docs/15_EBPF_OBSERVABILITY.md"]},
+			{"id":"deployment","path":"16_DEPLOYMENT.md","title":"Deployment","audience":["operators"],"priority":"high","status":"needs_review","related_code":["k8s/","Dockerfile","docker-compose.yml","scripts/","build/"]},
+			{"id":"http_adapter","path":"17_HTTP_ADAPTER.md","title":"HTTP Adapter","audience":["integrators"],"priority":"medium","status":"needs_review","related_code":["src/adapters/http_adapter.cpp","src/adapters/http_client.cpp","api/","ui/src/services/hektor-api.service.ts"]},
+			{"id":"performance","path":"17_PERFORMANCE_TUNING.md","title":"Performance Tuning","audience":["operators","developers"],"priority":"medium","status":"needs_review","related_code":["src/index","src/storage","src/quantization","src/adapters"]},
+			{"id":"advanced","path":"18_ADVANCED_FEATURES.md","title":"Advanced Features","audience":["power-users"],"priority":"low","status":"ok","related_code":["src/","docs/"]},
+			{"id":"security","path":"18_SECURITY.md","title":"Security","audience":["operators"],"priority":"high","status":"needs_review","related_code":["ui/src/guards","src/adapters","api/","k8s/"]},
+			{"id":"api_reference","path":"20_API_REFERENCE.md","title":"API Reference","audience":["integrators","developers"],"priority":"high","status":"needs_review","related_code":["api/","bindings/python","src/cli","ui/","bindings/"]},
+			{"id":"usage_examples","path":"21_USAGE_EXAMPLES.md","title":"Usage Examples","audience":["users","developers"],"priority":"high","status":"high_priority_review","related_code":["examples/","api/","scripts/","docs/blog_posts"]},
+			{"id":"python_bindings","path":"22_PYTHON_BINDINGS.md","title":"Python Bindings","audience":["developers"],"priority":"medium","status":"needs_review","related_code":["bindings/python","build/","src/"]},
+			{"id":"custom_dev","path":"23_CUSTOM_DEVELOPMENT.md","title":"Custom Development","audience":["contributors"],"priority":"medium","status":"ok","related_code":["src/","bindings/","ui/","api/"]},
+			{"id":"contributing","path":"24_CONTRIBUTING.md","title":"Contributing","audience":["contributors"],"priority":"high","status":"ok","related_code":["docs/24_CONTRIBUTING.md",".github/"]}
+		],
+		"research": {
+			"path":"RESEARCH",
+			"highlights":["manifolds.md","hnsw_algorithm.md","perceptual_quantization.md"],
+			"audience":["researchers"],
+			"status":"ok",
+			"related_code":["src/index","src/quantization","src/embeddings","src/llm"]
+		},
+		"changelog": {
+			"path":"CHANGELOG",
+			"entries":["v4.0.0.md","v3.0.0.md","v2.2.0.md","v2.1.0.md","v2.0.0.md"],
+			"status":"ok",
+			"related_code":["CMakeLists.txt","docs/"]
+		},
+		"blog": {"path":"blog_posts","status":"ok","related_code":["docs/blog_posts","examples/"]},
+		"assets": {"path":"assets","css":["assets/css/theme.css"],"related_code":["docs/assets","ui/assets"]},
+		"notes": {
+			"summary":"This file is intended as a machine-readable index for tooling: TOC generators, link-checkers, docs sync tasks, and CI validation. Fields: id, path, title, audience, priority, status, related_code.",
+			"generated_by":"assistant",
+			"contact":"maintainers@vector_database.local"
+		},
+		"recommended_actions": [
+			{"action":"map_docs_to_code","description":"Create mapping from key docs to source modules (API, ingestion, embeddings).","priority":"high"},
+			{"action":"validate_quickstart_examples","description":"Run and CI-verify Quickstart and Usage Examples to prevent bit-rot.","priority":"high"},
+			{"action":"link_check","description":"Run automated internal/external link checker and update `status` fields accordingly.","priority":"medium"},
+			{"action":"add_freshness_field","description":"Populate `last_reviewed` and `last_synced_with_release` per-section in future updates.","priority":"low"}
+		],
+		"assistant_learning": {
+			"learned_at":"2026-01-23T12:00:00Z",
+			"summary":"Mapping between docs and code modules has been recorded into this file for future doc-related automation and context-aware help.",
+			"mappings_count": 28
+		}
+	}
+
