@@ -3,7 +3,7 @@ import { useTheme } from './lib/theme-system';
 import VectorSpace3D from './components/3d/VectorSpace3D';
 
 function App() {
-  const { theme, setTheme, availableThemes } = useTheme();
+  const { currentTheme, setTheme, availableThemes } = useTheme();
   const [showDemo, setShowDemo] = useState(false);
   const [nativeStatus, setNativeStatus] = useState('checking...');
   const [demoVectors, setDemoVectors] = useState<any[]>([]);
@@ -38,18 +38,18 @@ function App() {
   }, []);
 
   return (
-    <div className="app-container" data-theme={theme.id}>
+    <div className="app-container" data-theme={currentTheme.name}>
       <header className="app-header">
         <h1 className="app-title">HEKTOR Quantization Studio</h1>
         <div className="theme-selector">
           <select 
-            value={theme.id} 
+            value={currentTheme.name} 
             onChange={(e) => setTheme(e.target.value)}
             className="theme-dropdown"
           >
             {availableThemes.map(t => (
-              <option key={t.id} value={t.id}>
-                {t.name}
+              <option key={t.name} value={t.name}>
+                {t.displayName}
               </option>
             ))}
           </select>
@@ -103,7 +103,7 @@ function App() {
       </main>
       
       <footer className="app-footer">
-        <p>HEKTOR v4.0.0 | {theme.name} Active | {nativeStatus}</p>
+        <p>HEKTOR v4.0.0 | {currentTheme.displayName} Active | {nativeStatus}</p>
       </footer>
     </div>
   );
