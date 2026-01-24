@@ -327,7 +327,7 @@ export const PQCurvesVisualization: React.FC<PQCurvesProps> = ({
               fontSize="10"
               textAnchor="middle"
             >
-              {curve === 'pq_st2084' ? `${(val * 10000).toFixed(0)}` : (val * 100).toFixed(0) + '%'}
+              {selectedCurve === 'pq_st2084' ? `${(val * 10000).toFixed(0)}` : (val * 100).toFixed(0) + '%'}
             </text>
           </React.Fragment>
         ))}

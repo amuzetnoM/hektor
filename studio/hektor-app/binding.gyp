@@ -45,7 +45,7 @@
           "msvs_settings": {
             "VCCLCompilerTool": {
               "ExceptionHandling": 1,
-              "AdditionalOptions": ["/std:c++23", "/bigobj", "/EHsc"]
+              "AdditionalOptions": ["/std:c++latest", "/bigobj", "/EHsc", "/Zc:__cplusplus"]
             }
           },
           "include_dirs": [
