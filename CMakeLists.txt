@@ -43,17 +43,42 @@ option(VDB_USE_OPENTELEMETRY "Enable OpenTelemetry distributed tracing" OFF)
 # Compiler Flags
 # ============================================================================
 
-# Detect if we're targeting ARM (Apple Silicon) - check both CMAKE_OSX_ARCHITECTURES and compile flags
+# Detect if we're targeting ARM (Apple Silicon) - check multiple sources
 set(VDB_TARGET_ARM64 FALSE)
 if(APPLE)
+    # Debug: Print detection variables
+    message(STATUS "VDB Detection: CMAKE_OSX_ARCHITECTURES='${CMAKE_OSX_ARCHITECTURES}'")
+    message(STATUS "VDB Detection: CMAKE_SYSTEM_PROCESSOR='${CMAKE_SYSTEM_PROCESSOR}'")
+    message(STATUS "VDB Detection: ARCHFLAGS='$ENV{ARCHFLAGS}'")
+    message(STATUS "VDB Detection: VDB_TARGET_ARCH='$ENV{VDB_TARGET_ARCH}'")
+    
     # Check CMAKE_OSX_ARCHITECTURES (set by cibuildwheel/scikit-build for cross-compilation)
-    if(CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
+    # Use STREQUAL for exact match and also check if it contains arm64
+    if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64" OR CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
         set(VDB_TARGET_ARM64 TRUE)
+        message(STATUS "VDB Detection: ARM64 detected via CMAKE_OSX_ARCHITECTURES")
     endif()
     # Also check if -arch arm64 is in the compile flags
     if(CMAKE_CXX_FLAGS MATCHES "-arch arm64" OR CMAKE_C_FLAGS MATCHES "-arch arm64")
         set(VDB_TARGET_ARM64 TRUE)
+        message(STATUS "VDB Detection: ARM64 detected via compile flags")
     endif()
+    # Check ARCHFLAGS environment variable (set by cibuildwheel on macOS)
+    if(DEFINED ENV{ARCHFLAGS})
+        if("$ENV{ARCHFLAGS}" MATCHES "arm64")
+            set(VDB_TARGET_ARM64 TRUE)
+            message(STATUS "VDB Detection: ARM64 detected via ARCHFLAGS")
+        endif()
+    endif()
+    # Check VDB_TARGET_ARCH environment variable (explicitly set in CI)
+    if(DEFINED ENV{VDB_TARGET_ARCH})
+        if("$ENV{VDB_TARGET_ARCH}" STREQUAL "arm64")
+            set(VDB_TARGET_ARM64 TRUE)
+            message(STATUS "VDB Detection: ARM64 detected via VDB_TARGET_ARCH")
+        endif()
+    endif()
+    
+    message(STATUS "VDB Detection: Final VDB_TARGET_ARM64=${VDB_TARGET_ARM64}")
 endif()
 
 # Determine if we're on an x86 target (and NOT cross-compiling to ARM)
