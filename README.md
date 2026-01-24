@@ -3,7 +3,7 @@
 > **Vector Database Engine** <br>
 > *High-Fidelity Semantic Search & AI Platform* <br>
 
-A production-grade C++23 vector database with SIMD-optimized similarity search, Dolby-compatible perceptual quantization, and comprehensive hybrid search capabilities. Designed for sub-3ms queries at billion-scale.
+A High-Performance C++23 vector database with SIMD-optimized similarity search, Dolby-compatible perceptual quantization, and comprehensive hybrid search capabilities. Designed for sub-3ms queries at billion-scale.
 
 ---
 
