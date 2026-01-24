@@ -7,8 +7,9 @@
 #include <memory>
 #include <functional>
 
-// Include the actual HEKTOR core types instead of forward declarations
-#include <vdb/core.hpp>
+// Include HEKTOR core types directly instead of forward declarations
+// This ensures enum underlying types match
+#include "vdb/core.hpp"
 
 namespace hektor_native {
 
@@ -88,34 +89,6 @@ inline bool GetBool(const Napi::Value& val, bool defaultValue = false) {
 inline bool IsNullOrUndefined(const Napi::Value& val) {
     return val.IsNull() || val.IsUndefined();
 }
-
-// Macro for defining enum conversion functions
-#define DEFINE_ENUM_CONVERTER(EnumType) \
-    Napi::Value EnumType##ToNapi(vdb::EnumType value, Napi::Env env); \
-    vdb::EnumType NapiTo##EnumType(const Napi::Value& val);
-
-// Enum converters - only for types defined in vdb/core.hpp
-DEFINE_ENUM_CONVERTER(DistanceMetric)
-DEFINE_ENUM_CONVERTER(DocumentType)
-DEFINE_ENUM_CONVERTER(SimdLevel)
-DEFINE_ENUM_CONVERTER(ErrorCode)
-
-// These types are defined in other headers - uncomment when those headers are included:
-// DEFINE_ENUM_CONVERTER(Device)         // from vdb/database.hpp
-// DEFINE_ENUM_CONVERTER(LogLevel)       // from vdb/logging.hpp
-// DEFINE_ENUM_CONVERTER(AnomalyType)    // from vdb/telemetry.hpp
-// DEFINE_ENUM_CONVERTER(ChunkStrategy)  // from vdb/ingest.hpp
-// DEFINE_ENUM_CONVERTER(FusionMethod)   // from vdb/hybrid_search.hpp
-// DEFINE_ENUM_CONVERTER(ReplicationMode) // from vdb/replication.hpp
-// DEFINE_ENUM_CONVERTER(ShardingStrategy) // from vdb/replication.hpp
-// DEFINE_ENUM_CONVERTER(DataFormat)      // from vdb/adapters/data_adapter.hpp
-// DEFINE_ENUM_CONVERTER(PerceptualCurve) // from vdb/quantization/perceptual_curves.hpp
-// DEFINE_ENUM_CONVERTER(DisplayType)     // from vdb/quantization/perceptual_curves.hpp
-// DEFINE_ENUM_CONVERTER(ColorGamut)      // from vdb/quantization/perceptual_curves.hpp
-// DEFINE_ENUM_CONVERTER(HttpMethod)      // from vdb/adapters/http_adapter.hpp
-// DEFINE_ENUM_CONVERTER(Role)            // from vdb/framework_integration.hpp
-
-#undef DEFINE_ENUM_CONVERTER
 
 // Async worker base class for long-running operations
 class AsyncWorker : public Napi::AsyncWorker {
