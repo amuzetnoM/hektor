@@ -33,7 +33,7 @@ jobs:
     - name: Install Linters
       run: |
         pip install ruff mypy black isort
-        sudo apt-get update && sudo apt-get install -y clang-format-15
+        sudo apt-get update && sudo apt-get install -y clang-format-18
         
     - name: Run Ruff (Python Linting)
       run: ruff check scripts/ bindings/python/ --fix
@@ -46,7 +46,7 @@ jobs:
     - name: Check C++ Formatting
       run: |
         find src include -name '*.cpp' -o -name '*.hpp' | \
-          xargs clang-format-15 --dry-run --Werror
+          xargs clang-format-18 --dry-run --Werror
       continue-on-error: true
       
     - name: Run MyPy (Type Checking)
@@ -54,6 +54,10 @@ jobs:
       continue-on-error: true
 
   # Build and test matrix
+  # NOTE: This project requires C++23 std::expected which needs:
+  #   - GCC 13+ (GCC 12 has incomplete std::expected)
+  #   - Clang 16+ (Clang 15 doesn't have std::expected)
+  #   - MSVC 19.33+ (VS 2022 17.3+)
   build-test:
     name: Build & Test (${{ matrix.os }}, ${{ matrix.compiler || 'default' }})
     needs: lint-and-format
@@ -63,17 +67,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-latest, macos-13]
+        os: [ubuntu-24.04, windows-latest, macos-14]
         include:
-          - os: ubuntu-22.04
-            compiler: gcc-12
-            cache-key: linux-gcc12
-          - os: ubuntu-22.04
-            compiler: clang-15
-            cache-key: linux-clang15
+          - os: ubuntu-24.04
+            compiler: gcc-14
+            cache-key: linux-gcc14
+          - os: ubuntu-24.04
+            compiler: clang-18
+            cache-key: linux-clang18
           - os: windows-latest
             cache-key: windows-msvc
-          - os: macos-13
+          - os: macos-14
             cache-key: macos-clang
         
     steps:
@@ -101,15 +105,15 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y ninja-build cmake libcurl4-openssl-dev
-        if [[ "${{ matrix.compiler }}" == "gcc-12" ]]; then
-          sudo apt-get install -y g++-12
-          echo "CC=gcc-12" >> $GITHUB_ENV
-          echo "CXX=g++-12" >> $GITHUB_ENV
-        elif [[ "${{ matrix.compiler }}" == "clang-15" ]]; then
-          sudo apt-get install -y clang-15
-          echo "CC=clang-15" >> $GITHUB_ENV
-          echo "CXX=clang++-15" >> $GITHUB_ENV
+        sudo apt-get install -y ninja-build cmake libcurl4-openssl-dev libsqlite3-dev
+        if [[ "${{ matrix.compiler }}" == "gcc-14" ]]; then
+          sudo apt-get install -y g++-14
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang-18" ]]; then
+          sudo apt-get install -y clang-18
+          echo "CC=clang-18" >> $GITHUB_ENV
+          echo "CXX=clang++-18" >> $GITHUB_ENV
         fi
         
     # Windows setup
