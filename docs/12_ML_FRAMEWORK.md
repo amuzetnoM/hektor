@@ -1,14 +1,14 @@
 ---
 title: "ML Framework Integration"
 description: "TensorFlow and PyTorch integration with GPU acceleration"
-version: "4.0.0"
-last_updated: "2026-01-22"
+version: "4.1.5"
+last_updated: "2026-01-24"
 sidebar_position: 12
 category: "Feature"
 ---
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Type](https://img.shields.io/badge/type-integration-purple?style=flat-square)
 
 # ML Framework Integration

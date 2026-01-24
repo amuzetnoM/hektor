@@ -1,14 +1,14 @@
 ---
 title: "Embeddings & Models"
 description: "Text and image encoders, model specifications"
-version: "4.0.0"
-last_updated: "2026-01-22"
+version: "4.1.5"
+last_updated: "2026-01-24"
 sidebar_position: 8
 category: "Technical"
 ---
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Models](https://img.shields.io/badge/models-ONNX-blueviolet?style=flat-square)
 
 ## Table of Contents

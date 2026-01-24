@@ -1,13 +1,13 @@
 ---
 title: "Custom Development"
 description: "Developing custom adapters and extensions"
-version: "4.0.0"
-last_updated: "2026-01-22"
-sidebar_position: 23
+version: "4.1.5"
+last_updated: "2026-01-24"
+sidebar_position: 24
 category: "Guide"
 ---
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Type](https://img.shields.io/badge/type-operations-yellow?style=flat-square)
 
 ## Overview

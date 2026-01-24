@@ -1,14 +1,14 @@
 ---
 title: "API Reference"
 description: "Complete C++ API documentation"
-version: "4.0.0"
-last_updated: "2026-01-22"
-sidebar_position: 20
+version: "4.1.5"
+last_updated: "2026-01-24"
+sidebar_position: 21
 category: "Reference"
 ---
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Language](https://img.shields.io/badge/language-C%2B%2B23-00599C?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 

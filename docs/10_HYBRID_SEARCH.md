@@ -1,14 +1,14 @@
 ---
 title: "Hybrid Search"
 description: "BM25 full-text search, fusion methods, and RAG toolkit"
-version: "4.0.0"
-last_updated: "2026-01-22"
+version: "4.1.5"
+last_updated: "2026-01-24"
 sidebar_position: 10
 category: "Feature"
 ---
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Type](https://img.shields.io/badge/type-feature-purple?style=flat-square)
 
 # Hybrid Search

@@ -1,13 +1,13 @@
 ---
 title: "Logging & Monitoring"
 description: "Logging system, Prometheus metrics, and observability"
-version: "4.0.0"
-last_updated: "2026-01-22"
+version: "4.1.5"
+last_updated: "2026-01-24"
 sidebar_position: 15
 category: "Operations"
 ---
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Anomaly Types](https://img.shields.io/badge/anomaly__types-15-orange?style=flat-square)
 
 # Logging & Monitoring

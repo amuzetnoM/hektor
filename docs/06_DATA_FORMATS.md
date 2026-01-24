@@ -1,14 +1,14 @@
 ---
 title: "Data Formats"
 description: "Supported data formats and specifications"
-version: "4.0.0"
-last_updated: "2026-01-22"
+version: "4.1.5"
+last_updated: "2026-01-24"
 sidebar_position: 6
 category: "Reference"
 ---
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue?style=flat-square)
-![Last Updated](https://img.shields.io/badge/updated-2026--01--22-green?style=flat-square)
+![Version](https://img.shields.io/badge/version-4.1.5-blue?style=flat-square)
+![Last Updated](https://img.shields.io/badge/updated-2026--01--24-green?style=flat-square)
 ![Formats](https://img.shields.io/badge/formats-11_types-orange?style=flat-square)
 
 ## Table of Contents

@@ -3,6 +3,8 @@ title: "Perceptual Quantization Research (redirect)"
 description: "Redirect / pointer to the main perceptual quantization research paper"
 version: "4.1.1"
 date: "2026-01-24"
+sidebar_position: 19
+category: "Research"
 ---
 
 # Perceptual Quantization (Research)
