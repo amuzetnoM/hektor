@@ -103,8 +103,10 @@ COPY --from=builder /build/models /app/models
 COPY --from=builder /build/api /app/api
 COPY --from=builder /usr/local/lib/python3.12/dist-packages /usr/local/lib/python3.12/dist-packages
 
-# Create app user (non-root)
-RUN useradd -m -u 1000 -s /bin/bash appuser && \
+# Create app user (non-root) - use -o to allow non-unique UID if it exists
+RUN useradd -m -o -u 1000 -s /bin/bash appuser 2>/dev/null || \
+    (getent passwd 1000 && usermod -l appuser $(id -nu 1000) && usermod -d /home/appuser -m appuser) || \
+    useradd -m -s /bin/bash appuser && \
     mkdir -p /data /app && \
     chown -R appuser:appuser /data /app
 
