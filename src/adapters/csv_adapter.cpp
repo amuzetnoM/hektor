@@ -5,6 +5,7 @@
 #include "vdb/adapters/csv_adapter.hpp"
 #include <fstream>
 #include <sstream>
+#include <algorithm>  // for std::count
 
 namespace vdb::adapters {
 

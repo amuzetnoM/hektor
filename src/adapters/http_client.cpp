@@ -8,6 +8,7 @@
 #endif
 
 #include <fmt/format.h>
+#include <algorithm>  // for std::count, std::transform
 #include <deque>
 #include <fstream>
 #include <mutex>
