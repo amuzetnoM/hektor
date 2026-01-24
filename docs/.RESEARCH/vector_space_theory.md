@@ -5,14 +5,14 @@ date: "2026-01-04"
 category: "Foundations"
 status: "Peer-Reviewed"
 version: "1.0"
-authors: "Artifact Virtual Research"
+authors: "AV Research"
 order: 1
 ---
 
 # Vector Space Theory in High-Dimensional Embeddings: A Comprehensive Study
 > **Non-Euclidean Geometries, Distance Metrics, and Practical Implications for Similarity Search**
 
-**Authors**: Artifact Virtual Research
+**Authors**: AV Research
 **Last Updated**: January 4, 2026  
 **Version**: 1.0  
 **Status**: Peer-Reviewed Academic Research

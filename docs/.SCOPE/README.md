@@ -9,7 +9,7 @@ tags: ["scope", "business", "research", "audit", "stakeholder"]
 
 # Hektor Scope Documentation
 
-> **Version 4.0.0** | **Status: Production Ready** | **Last Updated: 2026-01-22**
+> **Version 4.1.1** | **Status: Production Ready** | **Last Updated: 2026-01-24**
 
 This directory contains comprehensive business, technical, and strategic documentation for the Hektor Vector Database project.
 

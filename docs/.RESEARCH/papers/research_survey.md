@@ -5,14 +5,14 @@ date: "2026-01-04"
 category: "Survey"
 status: "Published"
 version: "1.0"
-authors: "Artifact Virtual Research"
+authors: "AV Research"
 order: 1
 ---
 
 # Research Survey: State-of-the-Art in Vector Databases and Similarity Search
 
 **Last Updated**: January 4, 2026  
-**Authors**: Artifact Virtual Research  
+**Authors**: AV Research  
 **Version**: 1.0
 
 ---
