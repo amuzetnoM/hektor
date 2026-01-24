@@ -4,16 +4,10 @@
 #include "common.h"
 #include <memory>
 
-// Forward declarations
-namespace vdb {
-    namespace embeddings {
-        class TextEncoder;
-        class ImageEncoder;
-        class OnnxSession;
-        class Tokenizer;
-        class ImagePreprocessor;
-    }
-}
+// Include actual headers for complete types
+#include <vdb/embeddings/text.hpp>
+#include <vdb/embeddings/image.hpp>
+#include <vdb/embeddings/onnx_runtime.hpp>
 
 namespace hektor_native {
 

@@ -7,35 +7,15 @@
 #include <memory>
 #include <functional>
 
-// Forward declarations for C++ HEKTOR types
-namespace vdb {
-    template<typename T> class Result;
-    class Error;
-    enum class ErrorCode;
-    enum class DistanceMetric;
-    enum class DocumentType;
-    enum class Device;
-    enum class LogLevel;
-    enum class AnomalyType;
-    enum class ChunkStrategy;
-    enum class FusionMethod;
-    enum class ReplicationMode;
-    enum class ShardingStrategy;
-    enum class DataFormat;
-    enum class PerceptualCurve;
-    enum class DisplayType;
-    enum class ColorGamut;
-    enum class HttpMethod;
-    enum class Role;
-    enum class SimdLevel;
-}
+// Include the actual HEKTOR core types instead of forward declarations
+#include <vdb/core.hpp>
 
 namespace hektor_native {
 
 // Helper to convert C++ Result<T> to N-API value or throw
 template<typename T>
 inline T UnwrapResult(const vdb::Result<T>& result, Napi::Env env) {
-    if (!result) {
+    if (!result.has_value()) {
         Napi::Error::New(env, result.error().message).ThrowAsJavaScriptException();
         return T{}; // Never reached due to exception
     }
@@ -45,7 +25,7 @@ inline T UnwrapResult(const vdb::Result<T>& result, Napi::Env env) {
 // Specialization for Result<void>
 template<>
 inline void UnwrapResult<void>(const vdb::Result<void>& result, Napi::Env env) {
-    if (!result) {
+    if (!result.has_value()) {
         Napi::Error::New(env, result.error().message).ThrowAsJavaScriptException();
     }
 }
@@ -114,24 +94,26 @@ inline bool IsNullOrUndefined(const Napi::Value& val) {
     Napi::Value EnumType##ToNapi(vdb::EnumType value, Napi::Env env); \
     vdb::EnumType NapiTo##EnumType(const Napi::Value& val);
 
-// Enum converters
+// Enum converters - only for types defined in vdb/core.hpp
 DEFINE_ENUM_CONVERTER(DistanceMetric)
 DEFINE_ENUM_CONVERTER(DocumentType)
-DEFINE_ENUM_CONVERTER(Device)
-DEFINE_ENUM_CONVERTER(LogLevel)
-DEFINE_ENUM_CONVERTER(AnomalyType)
-DEFINE_ENUM_CONVERTER(ChunkStrategy)
-DEFINE_ENUM_CONVERTER(FusionMethod)
-DEFINE_ENUM_CONVERTER(ReplicationMode)
-DEFINE_ENUM_CONVERTER(ShardingStrategy)
-DEFINE_ENUM_CONVERTER(DataFormat)
-DEFINE_ENUM_CONVERTER(PerceptualCurve)
-DEFINE_ENUM_CONVERTER(DisplayType)
-DEFINE_ENUM_CONVERTER(ColorGamut)
-DEFINE_ENUM_CONVERTER(HttpMethod)
-DEFINE_ENUM_CONVERTER(Role)
 DEFINE_ENUM_CONVERTER(SimdLevel)
 DEFINE_ENUM_CONVERTER(ErrorCode)
+
+// These types are defined in other headers - uncomment when those headers are included:
+// DEFINE_ENUM_CONVERTER(Device)         // from vdb/database.hpp
+// DEFINE_ENUM_CONVERTER(LogLevel)       // from vdb/logging.hpp
+// DEFINE_ENUM_CONVERTER(AnomalyType)    // from vdb/telemetry.hpp
+// DEFINE_ENUM_CONVERTER(ChunkStrategy)  // from vdb/ingest.hpp
+// DEFINE_ENUM_CONVERTER(FusionMethod)   // from vdb/hybrid_search.hpp
+// DEFINE_ENUM_CONVERTER(ReplicationMode) // from vdb/replication.hpp
+// DEFINE_ENUM_CONVERTER(ShardingStrategy) // from vdb/replication.hpp
+// DEFINE_ENUM_CONVERTER(DataFormat)      // from vdb/adapters/data_adapter.hpp
+// DEFINE_ENUM_CONVERTER(PerceptualCurve) // from vdb/quantization/perceptual_curves.hpp
+// DEFINE_ENUM_CONVERTER(DisplayType)     // from vdb/quantization/perceptual_curves.hpp
+// DEFINE_ENUM_CONVERTER(ColorGamut)      // from vdb/quantization/perceptual_curves.hpp
+// DEFINE_ENUM_CONVERTER(HttpMethod)      // from vdb/adapters/http_adapter.hpp
+// DEFINE_ENUM_CONVERTER(Role)            // from vdb/framework_integration.hpp
 
 #undef DEFINE_ENUM_CONVERTER
 
