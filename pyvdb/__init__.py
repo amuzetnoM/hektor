@@ -6,7 +6,7 @@ Organization: ARTIFACT VIRTUAL
 License: MIT
 """
 
-__version__ = "4.1.2"
+__version__ = "4.1.3"
 __author__ = "Ali A. Shakil"
 __email__ = "ali.shakil@artifactvirtual.com"
 
