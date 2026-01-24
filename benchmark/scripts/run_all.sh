@@ -108,7 +108,7 @@ if [ "$RUN_DATABASE" = true ]; then
     
     if [ -x "$BENCHMARK_DIR/scripts/run_database.sh" ]; then
         log "Executing database benchmark script..."
-        bash "$BENCHMARK_DIR/scripts/run_database.sh" --report-dir "$REPORT_DIR/database" 2>&1 | tee -a "$LOG_FILE"
+        bash "$BENCHMARK_DIR/scripts/run_database.sh" "$REPORT_DIR/database" 2>&1 | tee -a "$LOG_FILE"
         
         if [ ${PIPESTATUS[0]} -eq 0 ]; then
             log_success "Database benchmarks completed successfully"
@@ -129,7 +129,7 @@ if [ "$RUN_STUDIO" = true ]; then
     
     if [ -x "$BENCHMARK_DIR/scripts/run_studio.sh" ]; then
         log "Executing studio benchmark script..."
-        bash "$BENCHMARK_DIR/scripts/run_studio.sh" --report-dir "$REPORT_DIR/studio" 2>&1 | tee -a "$LOG_FILE"
+        bash "$BENCHMARK_DIR/scripts/run_studio.sh" "$REPORT_DIR/studio" 2>&1 | tee -a "$LOG_FILE"
         
         if [ ${PIPESTATUS[0]} -eq 0 ]; then
             log_success "Studio benchmarks completed successfully"

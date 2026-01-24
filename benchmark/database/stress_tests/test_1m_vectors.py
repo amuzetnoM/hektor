@@ -198,7 +198,8 @@ def generate_random_vector(dimension: int) -> np.ndarray:
 
 def worker_function(config: TestConfig, duration: float, thread_id: int) -> Dict[str, Any]:
     """Worker function for stress testing"""
-    np.random.seed(42 + thread_id)
+    # Use different seed for each thread to avoid correlation
+    np.random.seed(42 + thread_id * 10000)
     
     db = VectorDatabase(config)
     latencies = []
@@ -231,7 +232,8 @@ def worker_function(config: TestConfig, duration: float, thread_id: int) -> Dict
             
         except Exception as e:
             operations_failed += 1
-            print(f"Thread {thread_id} error: {e}")
+            import sys
+            print(f"Thread {thread_id} error: {e}", file=sys.stderr)
     
     db.close()
     

@@ -41,6 +41,7 @@ class MemoryBenchmarkConfig:
     check_interval_seconds: int = 10
     enable_heap_profiling: bool = True
     enable_leak_detection: bool = True
+    leak_threshold_mb: int = 100  # Configurable leak detection threshold
     db_path: str = "./test_db_memory"
     output_file: str = "memory_profiling_results.json"
     
@@ -93,11 +94,15 @@ class MemoryProfiler:
         final_mem = final_snapshot['memory']['rss_mb']
         leak_mb = final_mem - initial_mem
         
+        # Configurable threshold from config
+        leak_threshold_mb = getattr(self.config, 'leak_threshold_mb', 100)
+        
         return {
             'initial_rss_mb': initial_mem,
             'final_rss_mb': final_mem,
             'leak_mb': leak_mb,
-            'leak_detected': leak_mb > 100,  # >100MB considered a leak
+            'leak_threshold_mb': leak_threshold_mb,
+            'leak_detected': leak_mb > leak_threshold_mb,
             'leak_rate_mb_per_hour': leak_mb / ((final_snapshot['timestamp'] - initial_snapshot['timestamp']) / 3600)
         }
 
