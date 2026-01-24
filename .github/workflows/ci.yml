@@ -152,11 +152,18 @@ jobs:
     # Configure and build
     - name: Configure CMake
       run: |
+        # Disable llama.cpp on Windows due to OpenMP/ggml linking issues in CI
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
+          LLAMA_OPT="-DVDB_USE_LLAMA_CPP=OFF"
+        else
+          LLAMA_OPT="-DVDB_USE_LLAMA_CPP=ON"
+        fi
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
           -DVDB_BUILD_TESTS=ON \
           -DVDB_BUILD_PYTHON=OFF \
-          -DVDB_USE_ONNX_RUNTIME=OFF
+          -DVDB_USE_ONNX_RUNTIME=OFF \
+          $LLAMA_OPT
       shell: bash
           
     - name: Build
