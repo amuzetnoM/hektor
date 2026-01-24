@@ -10,7 +10,7 @@ A production-grade C++23 vector database with SIMD-optimized similarity search, 
 <p align="center">
 
 <!-- Version -->
-[![Version](https://img.shields.io/badge/version-4.1.0-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
+[![Version](https://img.shields.io/badge/version-4.1.1-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
 [![PyPI](https://img.shields.io/badge/PyPI-hektor--vdb-3775A9?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/hektor-vdb/)
 
 <!-- Build Status -->
@@ -26,6 +26,8 @@ A production-grade C++23 vector database with SIMD-optimized similarity search, 
 
 <!-- Performance -->
 [![SIMD](https://img.shields.io/badge/SIMD-AVX2%2FAVX--512-FF6600?style=for-the-badge&logo=intel&logoColor=white)](#performance)
+[![GPU](https://img.shields.io/badge/GPU-NVIDIA%20CUDA%20-%2076B900?style=for-the-badge&logo=nvidia&logoColor=white)](#performance)
+[![HNSW](https://img.shields.io/badge/HNSW-Graph-008080?style=for-the-badge)](#performance)
 [![Latency](https://img.shields.io/badge/latency-%3C3ms-blueviolet?style=for-the-badge)](#performance)
 
 <!-- Meta -->
@@ -36,91 +38,91 @@ A production-grade C++23 vector database with SIMD-optimized similarity search, 
 
 ---
 
-## Complete Feature Grid
+## FEATURE GRID
 
 ### Core Database
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **HNSW Index** | ✅ Production | O(log n) approximate nearest neighbor |
-| **Memory-Mapped Storage** | ✅ Production | Zero-copy vector access |
-| **Cosine Similarity** | ✅ AVX-512 | SIMD-optimized distance |
-| **Euclidean Distance** | ✅ AVX-512 | L2 distance metric |
-| **Inner Product** | ✅ AVX-512 | Dot product similarity |
-| **Filtered Search** | ✅ Production | Metadata predicates |
-| **Batch Operations** | ✅ Production | Multi-query processing |
+| Feature | Description |
+|---------|-------------|
+| **HNSW Index** | Production-grade HNSW for O(log n) approximate nearest neighbor with tunable M/ef parameters |
+| **Memory-Mapped Storage** | Zero-copy vector access via mmap for efficient I/O and fast cold starts |
+| **Cosine Similarity** | AVX-512 SIMD-optimized cosine similarity for high-throughput scoring |
+| **Euclidean Distance** | AVX-512 L2 distance metric for direct spatial comparisons |
+| **Inner Product** | AVX-512 dot-product similarity for maximum inner product search (MIPS) |
+| **Filtered Search** | Rich metadata predicate support: boolean, range, and tag filters |
+| **Batch Operations** | Multi-query and bulk ingest processing with parallel execution |
 
 ### Hybrid Search
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **BM25 Full-Text** | ✅ Production | Porter stemming, stopwords |
-| **RRF Fusion** | ✅ Production | Reciprocal Rank Fusion |
-| **Weighted Sum** | ✅ Production | Configurable α parameter |
-| **CombSUM** | ✅ Production | Additive score fusion |
-| **CombMNZ** | ✅ Production | Precision-focused fusion |
-| **Borda Count** | ✅ Production | Rank voting fusion |
+| Feature | Description |
+|---------|-------------|
+| **BM25 Full-Text** | Production-ready BM25 with Porter stemming, stopword handling, and token normalization |
+| **RRF Fusion** | Reciprocal Rank Fusion for robust ensemble ranking |
+| **Weighted Sum** | Configurable weighted fusion (α parameter) for lexical/vector combination |
+| **CombSUM** | Additive score fusion for combined relevance scoring |
+| **CombMNZ** | CombMNZ fusion emphasizing precision by multiplicative weighting |
+| **Borda Count** | Rank voting fusion for combining ordinal signals |
 
-### Perceptual Quantization (Dolby Compatible)
+### Perceptual Quantization
 
-| Feature | Status | Standards |
-|---------|--------|-----------|
-| **SMPTE ST 2084 (PQ)** | ✅ Production | HDR10, Dolby Vision |
-| **HLG (Rec.2100)** | ✅ Production | BBC/NHK HDR |
-| **Gamma 2.2** | ✅ Production | sRGB standard |
-| **Gamma 2.4** | ✅ Production | BT.1886 studio |
-| **HDR1000 Profile** | ✅ Production | 1000 nit displays |
+| Feature | Standards |
+|---------|-----------|
+| **SMPTE ST 2084 (PQ)** | HDR10, Dolby Vision compatible perceptual quantization curve |
+| **HLG (Rec.2100)** | Hybrid Log-Gamma support for broadcast HDR (BBC/NHK) |
+| **Gamma 2.2** | sRGB gamma curve support for standard displays |
+| **Gamma 2.4** | BT.1886 studio gamma profile for broadcast-grade encoding |
+| **HDR1000 Profile** | HDR profile tuned for 1000 nit displays and high-dynamic-range content |
 
 ### RAG Pipeline
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **Fixed-Size Chunking** | ✅ Production | Uniform chunks |
-| **Sentence Chunking** | ✅ Production | Natural boundaries |
-| **Paragraph Chunking** | ✅ Production | Document structure |
-| **Semantic Chunking** | ✅ Production | Embedding-based |
-| **Recursive Chunking** | ✅ Production | Hierarchical splits |
-| **LangChain Adapter** | ✅ Production | Framework integration |
-| **LlamaIndex Adapter** | ✅ Production | Framework integration |
+| Feature | Description |
+|---------|-------------|
+| **Fixed-Size Chunking** | Uniform chunk sizes for predictable retrieval and batching |
+| **Sentence Chunking** | Natural sentence boundaries to preserve semantic units |
+| **Paragraph Chunking** | Document-structure-aware chunking for contextual coherence |
+| **Semantic Chunking** | Embedding-based segmentation for meaning-preserving splits |
+| **Recursive Chunking** | Hierarchical splitting for multi-scale context windows |
+| **LangChain Adapter** | Native adapter for LangChain integration and pipelines |
+| **LlamaIndex Adapter** | Native adapter for LlamaIndex (GPT Index) integrations |
 
 ### Distributed System
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **Async Replication** | ✅ Production | <100ms lag |
-| **Sync Replication** | ✅ Production | Strong consistency |
-| **Hash Sharding** | ✅ Production | Consistent hashing |
-| **Range Sharding** | ✅ Production | Key partitioning |
-| **gRPC Networking** | ✅ Production | HTTP/2, TLS/mTLS |
-| **Service Discovery** | ✅ Production | DNS/Consul |
+| Feature | Description |
+|---------|-------------|
+| **Async Replication** | Low-latency async replication (sub-100ms typical) for availability |
+| **Sync Replication** | Strong-consistency synchronous replication option |
+| **Hash Sharding** | Consistent-hashing sharding for even data distribution |
+| **Range Sharding** | Range-based partitioning for ordered key spaces |
+| **gRPC Networking** | HTTP/2 gRPC with TLS/mTLS for secure RPC communication |
+| **Service Discovery** | DNS/Consul based discovery and health-check integration |
 
 ### Observability
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **Prometheus Metrics** | ✅ Production | 50+ metrics |
-| **OpenTelemetry** | ✅ Production | Distributed tracing |
-| **eBPF Profiling** | ✅ Production | Zero-overhead |
-| **Structured Logging** | ✅ Production | JSON format |
+| Feature | Description |
+|---------|-------------|
+| **Prometheus Metrics** | 50+ production metrics exposed for monitoring and alerting |
+| **OpenTelemetry** | Distributed tracing and context propagation support |
+| **eBPF Profiling** | Low-overhead kernel-level profiling for performance hotspots |
+| **Structured Logging** | JSON structured logs with log levels and correlation IDs |
 
 ### Studio Native Addon
 
-| Component | Status | Description |
-|-----------|--------|-------------|
-| **BM25Engine** | ✅ Complete | Full-text search |
-| **KeywordExtractor** | ✅ Complete | TF-IDF extraction |
-| **HybridSearchEngine** | ✅ Complete | Vector + lexical |
-| **QueryRewriter** | ✅ Complete | Query expansion |
-| **Quantization** | ✅ Complete | PQ, SQ, HDR |
+| Component | Description |
+|-----------|-------------|
+| **BM25Engine** | Full-text search engine with ranking, tokenization, and scoring |
+| **KeywordExtractor** | TF‑IDF based keyword extraction with configurable stoplists |
+| **HybridSearchEngine** | Tight integration of vector + lexical retrieval and fusion |
+| **QueryRewriter** | Query expansion and normalization for improved recall |
+| **Quantization** | PQ, SQ and HDR-aware perceptual quantization implementations |
 
 ### Platform Support
 
-| Platform | Status | Compiler |
-|----------|--------|----------|
-| **Windows 10/11** | ✅ Production | MSVC 19.33+ |
-| **Ubuntu 22.04+** | ✅ Production | GCC 13+ / Clang 16+ |
-| **macOS 13+** | ✅ Production | Apple Clang 15+ |
-| **Docker** | ✅ Production | Multi-arch (amd64, arm64) |
+| Platform | Compiler / Notes |
+|----------|------------------|
+| **Windows 10/11** | MSVC 19.33+ (MSVC toolchain, Windows SDK) |
+| **Ubuntu 22.04+** | GCC 13+ / Clang 16+ (glibc, libstdc++ compatibility) |
+| **macOS 13+** | Apple Clang 15+ (universal macOS builds) |
+| **Docker** | Multi-arch images (amd64, arm64), runtime-ready containers |
 
 ---
 
