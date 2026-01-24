@@ -652,6 +652,59 @@ Result<size_t> VectorDatabase::remove_by_date(std::string_view date) {
 }
 
 // ============================================================================
+// Bulk Operations
+// ============================================================================
+
+Result<std::vector<VectorId>> VectorDatabase::add_texts(
+    std::span<const std::string> texts,
+    std::span<const Metadata> metadata
+) {
+    if (texts.size() != metadata.size()) {
+        return std::unexpected(Error{ErrorCode::InvalidInput, 
+            "Texts and metadata arrays must have the same size"});
+    }
+    
+    std::vector<VectorId> ids;
+    ids.reserve(texts.size());
+    
+    for (size_t i = 0; i < texts.size(); ++i) {
+        auto result = add_text(texts[i], metadata[i]);
+        if (!result) {
+            // Return error with partial results info
+            return std::unexpected(Error{ErrorCode::InvalidData,
+                "Failed at index " + std::to_string(i) + ": " + result.error().message});
+        }
+        ids.push_back(*result);
+    }
+    
+    return ids;
+}
+
+Result<std::vector<VectorId>> VectorDatabase::add_images(
+    std::span<const fs::path> paths,
+    std::span<const Metadata> metadata
+) {
+    if (paths.size() != metadata.size()) {
+        return std::unexpected(Error{ErrorCode::InvalidInput,
+            "Paths and metadata arrays must have the same size"});
+    }
+    
+    std::vector<VectorId> ids;
+    ids.reserve(paths.size());
+    
+    for (size_t i = 0; i < paths.size(); ++i) {
+        auto result = add_image(paths[i], metadata[i]);
+        if (!result) {
+            return std::unexpected(Error{ErrorCode::InvalidData,
+                "Failed at index " + std::to_string(i) + ": " + result.error().message});
+        }
+        ids.push_back(*result);
+    }
+    
+    return ids;
+}
+
+// ============================================================================
 // Statistics & Management
 // ============================================================================
 

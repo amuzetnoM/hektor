@@ -114,6 +114,14 @@ public:
     explicit KeywordExtractor(const KeywordConfig& config = {});
     ~KeywordExtractor();
     
+    // Move semantics
+    KeywordExtractor(KeywordExtractor&&) noexcept = default;
+    KeywordExtractor& operator=(KeywordExtractor&&) noexcept = default;
+    
+    // Delete copy semantics
+    KeywordExtractor(const KeywordExtractor&) = delete;
+    KeywordExtractor& operator=(const KeywordExtractor&) = delete;
+    
     // Extract keywords from text
     Result<std::vector<Keyword>> extract(const std::string& text) const;
     
@@ -200,6 +208,14 @@ class QueryRewriter {
 public:
     explicit QueryRewriter(const RewriteConfig& config = {});
     ~QueryRewriter();
+    
+    // Move semantics
+    QueryRewriter(QueryRewriter&&) noexcept = default;
+    QueryRewriter& operator=(QueryRewriter&&) noexcept = default;
+    
+    // Delete copy semantics
+    QueryRewriter(const QueryRewriter&) = delete;
+    QueryRewriter& operator=(const QueryRewriter&) = delete;
     
     // Rewrite query for better results
     Result<std::string> rewrite(const std::string& query) const;
