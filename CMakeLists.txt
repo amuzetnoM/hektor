@@ -649,7 +649,8 @@ if(VDB_BUILD_PYTHON)
     # Install Python module
     # Note: scikit-build-core handles the installation path automatically
     install(TARGETS pyvdb
-        LIBRARY DESTINATION .
+        LIBRARY DESTINATION pyvdb
+        RUNTIME DESTINATION pyvdb
     )
 endif()
 

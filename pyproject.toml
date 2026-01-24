@@ -90,9 +90,9 @@ Issues = "https://github.com/amuzetnoM/hektor/issues"
 cmake.verbose = true
 cmake.build-type = "Release"
 wheel.packages = ["pyvdb"]
+wheel.install-dir = ""
 minimum-version = "0.8"
-install.components = ["python"]
-sdist.include = ["CMakeLists.txt", "src/**", "include/**", "bindings/**"]
+sdist.include = ["CMakeLists.txt", "src/**", "include/**", "bindings/**", "pyvdb/**"]
 sdist.exclude = [".git*", "build*", "venv*", ".vscode", ".idea"]
 
 [tool.scikit-build.cmake.define]
