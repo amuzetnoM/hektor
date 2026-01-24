@@ -49,8 +49,9 @@ COPY . .
 RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt && \
     pip3 install --no-cache-dir --break-system-packages -r api/requirements.txt
 
-# Download ONNX models
-RUN python3 scripts/download_models.py --all || echo "Model download failed, continuing..."
+# Download ONNX models (create directory even if download fails)
+RUN mkdir -p models && \
+    (python3 scripts/download_models.py --all || echo "Model download failed, continuing...")
 
 # Configure and build C++ backend with explicit AVX2 support
 RUN export CFLAGS="-mavx2 -mfma -mf16c" && \
