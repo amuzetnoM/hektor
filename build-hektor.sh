@@ -126,7 +126,7 @@ ${BOLD}EXAMPLES:${NC}
 ${BOLD}REQUIREMENTS:${NC}
     - Python 3.10+ (auto-installs if missing)
     - CMake 3.20+ (auto-installs if missing)
-    - C++ compiler: GCC 11+, Clang 14+, or MSVC 2022+
+    - C++ compiler: GCC 13+, Clang 16+, or MSVC 2022 17.3+ (C++23 required)
     - Internet connection for downloading dependencies
 
 ${BOLD}PLATFORMS SUPPORTED:${NC}
@@ -266,7 +266,7 @@ install_system_dependencies() {
             log "  - CMake 3.20+"
             log "  - Ninja build"
             log "  - Python 3.10+"
-            log "  - C++ compiler (GCC 11+, Clang 14+, or MSVC 2022+)"
+            log "  - C++ compiler (GCC 13+, Clang 16+, or MSVC 2022 17.3+)"
             log "  - SQLite3 development libraries"
             ;;
     esac

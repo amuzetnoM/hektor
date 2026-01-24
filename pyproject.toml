@@ -13,7 +13,11 @@ description = "High-performance vector database with SIMD-optimized similarity s
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "Hektor VDB Contributors"}
+    {name = "Ali A. Shakil", email = "ali@artifactvirtual.com"},
+    {name = "ARTIFACT VIRTUAL"}
+]
+maintainers = [
+    {name = "Ali A. Shakil", email = "ali@artifactvirtual.com"}
 ]
 requires-python = ">=3.10"
 keywords = ["vector-database", "similarity-search", "embeddings", "simd", "onnx", "machine-learning"]
