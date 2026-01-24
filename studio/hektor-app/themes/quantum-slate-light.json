@@ -1,0 +1,19 @@
+{
+  "id": "quantum-slate-light",
+  "name": "Quantum Slate (Light)",
+  "type": "light",
+  "colors": {
+    "bgPrimary": "#f8fafc",
+    "bgSecondary": "#f1f5f9",
+    "bgTertiary": "#e2e8f0",
+    "textPrimary": "#0f172a",
+    "textSecondary": "#475569",
+    "textTertiary": "#64748b",
+    "accentColor": "#0891b2",
+    "accentSecondary": "#7c3aed",
+    "borderColor": "#cbd5e1",
+    "successColor": "#059669",
+    "warningColor": "#d97706",
+    "errorColor": "#dc2626"
+  }
+}

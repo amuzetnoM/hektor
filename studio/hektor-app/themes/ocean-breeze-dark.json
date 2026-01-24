@@ -1,0 +1,19 @@
+{
+  "id": "ocean-breeze-dark",
+  "name": "Ocean Breeze (Dark)",
+  "type": "dark",
+  "colors": {
+    "bgPrimary": "#0a1628",
+    "bgSecondary": "#122942",
+    "bgTertiary": "#1e3a5f",
+    "textPrimary": "#e0f2fe",
+    "textSecondary": "#bae6fd",
+    "textTertiary": "#7dd3fc",
+    "accentColor": "#0ea5e9",
+    "accentSecondary": "#06b6d4",
+    "borderColor": "#334b6b",
+    "successColor": "#14b8a6",
+    "warningColor": "#fbbf24",
+    "errorColor": "#ef4444"
+  }
+}
