@@ -4,12 +4,16 @@
 #include "common.h"
 #include <memory>
 
-// Include actual headers for complete types
+// Only include ONNX-dependent headers if ONNX Runtime is available
+#ifdef VDB_USE_ONNX_RUNTIME
 #include <vdb/embeddings/text.hpp>
 #include <vdb/embeddings/image.hpp>
 #include <vdb/embeddings/onnx_runtime.hpp>
+#endif
 
 namespace hektor_native {
+
+#ifdef VDB_USE_ONNX_RUNTIME
 
 // TextEncoder wrapper
 class TextEncoderWrap : public Napi::ObjectWrap<TextEncoderWrap> {
@@ -93,5 +97,17 @@ private:
     
     std::unique_ptr<vdb::embeddings::ImagePreprocessor> preprocessor_;
 };
+
+#else // VDB_USE_ONNX_RUNTIME not defined
+
+// Stub implementations when ONNX Runtime is not available
+namespace embeddings_stub {
+    inline void InitStubs(Napi::Env env, Napi::Object& exports) {
+        // Export a flag indicating embeddings are not available
+        exports.Set("embeddingsAvailable", Napi::Boolean::New(env, false));
+    }
+}
+
+#endif // VDB_USE_ONNX_RUNTIME
 
 } // namespace hektor_native

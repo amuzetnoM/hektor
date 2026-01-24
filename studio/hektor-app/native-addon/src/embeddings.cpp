@@ -2,7 +2,9 @@
 
 namespace hektor_native {
 
-// Stub implementations for TextEncoderWrap
+#ifdef VDB_USE_ONNX_RUNTIME
+
+// Full implementations when ONNX Runtime is available
 Napi::Object TextEncoderWrap::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "TextEncoder", {
         InstanceMethod("init", &TextEncoderWrap::Init),
@@ -26,7 +28,6 @@ Napi::Value TextEncoderWrap::EncodeBatch(const Napi::CallbackInfo& info) { retur
 Napi::Value TextEncoderWrap::Dimension(const Napi::CallbackInfo& info) { return Napi::Number::New(info.Env(), 384); }
 Napi::Value TextEncoderWrap::Device(const Napi::CallbackInfo& info) { return Napi::String::New(info.Env(), "cpu"); }
 
-// Similar stubs for ImageEncoderWrap, OnnxSessionWrap, TokenizerWrap, ImagePreprocessorWrap
 Napi::Object ImageEncoderWrap::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "ImageEncoder", {});
     exports.Set("ImageEncoder", func);
@@ -76,5 +77,7 @@ Napi::Value ImagePreprocessorWrap::ProcessFile(const Napi::CallbackInfo& info) {
 Napi::Value ImagePreprocessorWrap::CenterCropAndProcess(const Napi::CallbackInfo& info) { return Napi::Array::New(info.Env()); }
 Napi::Value ImagePreprocessorWrap::TargetSize(const Napi::CallbackInfo& info) { return Napi::Object::New(info.Env()); }
 Napi::Value ImagePreprocessorWrap::OutputSize(const Napi::CallbackInfo& info) { return Napi::Number::New(info.Env(), 0); }
+
+#endif // VDB_USE_ONNX_RUNTIME
 
 } // namespace hektor_native

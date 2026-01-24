@@ -39,12 +39,17 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   // Quantization
   Quantization::Init(env, exports);
   
-  // Embeddings (NEW - Complete)
+  // Embeddings - only if ONNX Runtime is available
+  #ifdef VDB_USE_ONNX_RUNTIME
   TextEncoderWrap::Init(env, exports);
   ImageEncoderWrap::Init(env, exports);
   OnnxSessionWrap::Init(env, exports);
   TokenizerWrap::Init(env, exports);
   ImagePreprocessorWrap::Init(env, exports);
+  exports.Set("embeddingsAvailable", Napi::Boolean::New(env, true));
+  #else
+  embeddings_stub::InitStubs(env, exports);
+  #endif
   
   // Storage layer (NEW - Complete)
   // MemoryMappedFileWrap::Init(env, exports);
@@ -129,6 +134,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
         "Linux"
       #endif
     ));
+    
+    #ifdef VDB_USE_ONNX_RUNTIME
+    sysinfo.Set("onnxRuntime", Napi::Boolean::New(env, true));
+    #else
+    sysinfo.Set("onnxRuntime", Napi::Boolean::New(env, false));
+    #endif
     
     return sysinfo;
   }));
