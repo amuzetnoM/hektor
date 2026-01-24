@@ -3,16 +3,7 @@
 #include <napi.h>
 #include "common.h"
 #include <memory>
-
-// Forward declarations
-namespace vdb {
-    namespace hybrid {
-        class BM25Engine;
-        class KeywordExtractor;
-        class HybridSearchEngine;
-        class QueryRewriter;
-    }
-}
+#include "vdb/hybrid_search.hpp"
 
 namespace hektor_native {
 
@@ -36,7 +27,7 @@ private:
     std::unique_ptr<vdb::hybrid::BM25Engine> engine_;
 };
 
-// KeywordExtractor wrapper
+// KeywordExtractor wrapper - full implementation
 class KeywordExtractorWrap : public Napi::ObjectWrap<KeywordExtractorWrap> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
@@ -69,7 +60,7 @@ private:
     std::unique_ptr<vdb::hybrid::HybridSearchEngine> engine_;
 };
 
-// QueryRewriter wrapper
+// QueryRewriter wrapper - full implementation
 class QueryRewriterWrap : public Napi::ObjectWrap<QueryRewriterWrap> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);

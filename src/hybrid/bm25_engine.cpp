@@ -429,5 +429,304 @@ Result<BM25Engine> BM25Engine::load(const std::string& path) {
     return engine;
 }
 
+// ============================================================================
+// KeywordExtractor Implementation
+// ============================================================================
+
+struct KeywordExtractor::Impl {
+    KeywordConfig config;
+    std::unordered_map<std::string, uint32_t> document_frequency;
+    std::unordered_map<std::string, uint32_t> term_frequency;
+    size_t total_documents = 0;
+    bool trained = false;
+    
+    Impl(const KeywordConfig& cfg) : config(cfg) {}
+    
+    Result<std::vector<Keyword>> extract(const std::string& text) const {
+        auto tokens = tokenize(text);
+        if (tokens.empty()) {
+            return std::vector<Keyword>();
+        }
+        
+        // Count term frequencies and positions
+        std::unordered_map<std::string, std::pair<uint32_t, std::vector<size_t>>> term_data;
+        for (size_t pos = 0; pos < tokens.size(); ++pos) {
+            std::string term = to_lower(tokens[pos]);
+            if (term.length() < 2 || is_stop_word(term)) {
+                continue;
+            }
+            term_data[term].first++;
+            term_data[term].second.push_back(pos);
+        }
+        
+        // Calculate scores
+        std::vector<Keyword> keywords;
+        keywords.reserve(term_data.size());
+        
+        for (const auto& [term, data] : term_data) {
+            Keyword kw;
+            kw.term = term;
+            kw.frequency = data.first;
+            kw.positions = data.second;
+            
+            // Calculate score
+            float tf = static_cast<float>(data.first);
+            float idf = 1.0f;
+            
+            if (config.use_tfidf && trained && document_frequency.count(term)) {
+                uint32_t df = document_frequency.at(term);
+                idf = std::log(static_cast<float>(total_documents + 1) / (df + 1)) + 1.0f;
+            }
+            
+            kw.score = tf * idf;
+            
+            // Position weighting - terms appearing early get a boost
+            if (config.use_position_weight && !data.second.empty()) {
+                float pos_weight = 1.0f / (1.0f + data.second[0] / 10.0f);
+                kw.score *= (1.0f + pos_weight);
+            }
+            
+            if (kw.score >= config.min_score) {
+                keywords.push_back(kw);
+            }
+        }
+        
+        // Sort by score
+        std::sort(keywords.begin(), keywords.end());
+        
+        // Limit to max keywords
+        if (keywords.size() > config.max_keywords) {
+            keywords.resize(config.max_keywords);
+        }
+        
+        return keywords;
+    }
+    
+    Result<void> train(const std::vector<std::string>& documents) {
+        document_frequency.clear();
+        term_frequency.clear();
+        total_documents = documents.size();
+        
+        for (const auto& doc : documents) {
+            auto tokens = tokenize(doc);
+            std::unordered_set<std::string> seen_in_doc;
+            
+            for (const auto& token : tokens) {
+                std::string term = to_lower(token);
+                if (term.length() < 2 || is_stop_word(term)) {
+                    continue;
+                }
+                
+                term_frequency[term]++;
+                
+                if (!seen_in_doc.count(term)) {
+                    document_frequency[term]++;
+                    seen_in_doc.insert(term);
+                }
+            }
+        }
+        
+        trained = true;
+        return {};
+    }
+};
+
+KeywordExtractor::KeywordExtractor(const KeywordConfig& config)
+    : impl_(std::make_unique<Impl>(config)) {}
+
+KeywordExtractor::~KeywordExtractor() = default;
+
+Result<std::vector<Keyword>> KeywordExtractor::extract(const std::string& text) const {
+    return impl_->extract(text);
+}
+
+Result<void> KeywordExtractor::train(const std::vector<std::string>& documents) {
+    return impl_->train(documents);
+}
+
+Result<void> KeywordExtractor::save(const std::string& path) const {
+    std::ofstream file(path, std::ios::binary);
+    if (!file) {
+        return std::unexpected(Error(ErrorCode::IoError, "Failed to open file for writing: " + path));
+    }
+    
+    file << "KEYWORD_EXTRACTOR_V1\n";
+    file << "max_keywords=" << impl_->config.max_keywords << "\n";
+    file << "min_score=" << impl_->config.min_score << "\n";
+    file << "use_tfidf=" << (impl_->config.use_tfidf ? "1" : "0") << "\n";
+    file << "use_position_weight=" << (impl_->config.use_position_weight ? "1" : "0") << "\n";
+    file << "total_documents=" << impl_->total_documents << "\n";
+    file << "trained=" << (impl_->trained ? "1" : "0") << "\n";
+    
+    file << "DOCUMENT_FREQUENCY_START\n";
+    for (const auto& [term, freq] : impl_->document_frequency) {
+        file << term << "\t" << freq << "\n";
+    }
+    file << "DOCUMENT_FREQUENCY_END\n";
+    
+    file.close();
+    return {};
+}
+
+Result<KeywordExtractor> KeywordExtractor::load(const std::string& path) {
+    std::ifstream file(path);
+    if (!file) {
+        return std::unexpected(Error(ErrorCode::IoError, "Failed to open file for reading: " + path));
+    }
+    
+    std::string line;
+    std::getline(file, line);
+    if (line != "KEYWORD_EXTRACTOR_V1") {
+        return std::unexpected(Error(ErrorCode::InvalidData, "Invalid keyword extractor file format"));
+    }
+    
+    KeywordConfig config;
+    std::unordered_map<std::string, std::string> values;
+    
+    while (std::getline(file, line)) {
+        if (line == "DOCUMENT_FREQUENCY_START") break;
+        size_t eq = line.find('=');
+        if (eq != std::string::npos) {
+            values[line.substr(0, eq)] = line.substr(eq + 1);
+        }
+    }
+    
+    if (values.count("max_keywords")) config.max_keywords = std::stoul(values["max_keywords"]);
+    if (values.count("min_score")) config.min_score = std::stof(values["min_score"]);
+    if (values.count("use_tfidf")) config.use_tfidf = (values["use_tfidf"] == "1");
+    if (values.count("use_position_weight")) config.use_position_weight = (values["use_position_weight"] == "1");
+    
+    KeywordExtractor extractor(config);
+    
+    if (values.count("total_documents")) {
+        extractor.impl_->total_documents = std::stoul(values["total_documents"]);
+    }
+    if (values.count("trained")) {
+        extractor.impl_->trained = (values["trained"] == "1");
+    }
+    
+    // Load document frequencies
+    while (std::getline(file, line)) {
+        if (line == "DOCUMENT_FREQUENCY_END") break;
+        std::istringstream iss(line);
+        std::string term;
+        uint32_t freq;
+        if (iss >> term >> freq) {
+            extractor.impl_->document_frequency[term] = freq;
+        }
+    }
+    
+    file.close();
+    return extractor;
+}
+
+// ============================================================================
+// QueryRewriter Implementation
+// ============================================================================
+
+struct QueryRewriter::Impl {
+    RewriteConfig config;
+    std::unordered_map<std::string, std::vector<std::string>> synonyms;
+    
+    Impl(const RewriteConfig& cfg) : config(cfg) {}
+    
+    Result<std::string> rewrite(const std::string& query) const {
+        auto tokens = tokenize(query);
+        if (tokens.empty()) {
+            return query;
+        }
+        
+        std::vector<std::string> result_tokens;
+        result_tokens.reserve(tokens.size() * 2);
+        
+        for (const auto& token : tokens) {
+            std::string lower_token = to_lower(token);
+            result_tokens.push_back(token);
+            
+            // Add stemmed version
+            if (config.add_stemmed_terms) {
+                std::string stemmed = stem(lower_token);
+                if (stemmed != lower_token && stemmed.length() >= 2) {
+                    result_tokens.push_back(stemmed);
+                }
+            }
+            
+            // Expand synonyms
+            if (config.expand_synonyms) {
+                auto it = synonyms.find(lower_token);
+                if (it != synonyms.end()) {
+                    size_t count = 0;
+                    for (const auto& syn : it->second) {
+                        if (count >= config.max_expansions) break;
+                        result_tokens.push_back(syn);
+                        count++;
+                    }
+                }
+            }
+        }
+        
+        // Join tokens back into a string
+        std::string result;
+        for (size_t i = 0; i < result_tokens.size(); ++i) {
+            if (i > 0) result += " ";
+            result += result_tokens[i];
+        }
+        
+        return result;
+    }
+    
+    Result<void> add_synonym(const std::string& term, const std::vector<std::string>& syns) {
+        std::string lower_term = to_lower(term);
+        synonyms[lower_term] = syns;
+        return {};
+    }
+    
+    Result<void> load_synonyms(const std::string& path) {
+        std::ifstream file(path);
+        if (!file) {
+            return std::unexpected(Error(ErrorCode::IoError, "Failed to open synonym file: " + path));
+        }
+        
+        std::string line;
+        while (std::getline(file, line)) {
+            if (line.empty() || line[0] == '#') continue;
+            
+            std::istringstream iss(line);
+            std::string term;
+            if (!(iss >> term)) continue;
+            
+            std::vector<std::string> syns;
+            std::string syn;
+            while (iss >> syn) {
+                syns.push_back(to_lower(syn));
+            }
+            
+            if (!syns.empty()) {
+                synonyms[to_lower(term)] = syns;
+            }
+        }
+        
+        file.close();
+        return {};
+    }
+};
+
+QueryRewriter::QueryRewriter(const RewriteConfig& config)
+    : impl_(std::make_unique<Impl>(config)) {}
+
+QueryRewriter::~QueryRewriter() = default;
+
+Result<std::string> QueryRewriter::rewrite(const std::string& query) const {
+    return impl_->rewrite(query);
+}
+
+Result<void> QueryRewriter::add_synonym(const std::string& term, const std::vector<std::string>& synonyms) {
+    return impl_->add_synonym(term, synonyms);
+}
+
+Result<void> QueryRewriter::load_synonyms(const std::string& path) {
+    return impl_->load_synonyms(path);
+}
+
 } // namespace hybrid
 } // namespace vdb
