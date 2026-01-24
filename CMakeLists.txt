@@ -647,10 +647,12 @@ if(VDB_BUILD_PYTHON)
     target_link_libraries(pyvdb PRIVATE vdb_core)
     
     # Install Python module
-    # Note: scikit-build-core handles the installation path automatically
+    # scikit-build-core places this at the wheel root, then wheel.packages copies pyvdb/ Python package
+    # The compiled extension will be at pyvdb/pyvdb.cpXXX-*.pyd (or .so) inside the wheel
     install(TARGETS pyvdb
         LIBRARY DESTINATION pyvdb
         RUNTIME DESTINATION pyvdb
+        COMPONENT python
     )
 endif()
 

@@ -130,8 +130,8 @@ jobs:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_ENVIRONMENT: CMAKE_BUILD_PARALLEL_LEVEL=2
         
-        # Test
-        CIBW_TEST_COMMAND: python -c "import pyvdb; print('✓ Import successful')"
+        # Test - verify installation and import
+        CIBW_TEST_COMMAND: python -c "import sys; print('Python:', sys.version); import pyvdb; print('Version:', pyvdb.__version__, 'Native:', pyvdb.is_native_available())"
         CIBW_TEST_REQUIRES: pytest
         
     - name: Upload wheels
