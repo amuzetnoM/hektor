@@ -3,16 +3,7 @@
 #include <napi.h>
 #include "common.h"
 #include <memory>
-
-// Forward declarations
-namespace vdb {
-    namespace hybrid {
-        class BM25Engine;
-        class KeywordExtractor;
-        class HybridSearchEngine;
-        class QueryRewriter;
-    }
-}
+#include "vdb/hybrid_search.hpp"
 
 namespace hektor_native {
 
@@ -36,7 +27,7 @@ private:
     std::unique_ptr<vdb::hybrid::BM25Engine> engine_;
 };
 
-// KeywordExtractor wrapper
+// KeywordExtractor wrapper - stub implementation
 class KeywordExtractorWrap : public Napi::ObjectWrap<KeywordExtractorWrap> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
@@ -47,8 +38,6 @@ private:
     Napi::Value Train(const Napi::CallbackInfo& info);
     Napi::Value Save(const Napi::CallbackInfo& info);
     static Napi::Value Load(const Napi::CallbackInfo& info);
-    
-    std::unique_ptr<vdb::hybrid::KeywordExtractor> extractor_;
 };
 
 // HybridSearchEngine wrapper
@@ -69,7 +58,7 @@ private:
     std::unique_ptr<vdb::hybrid::HybridSearchEngine> engine_;
 };
 
-// QueryRewriter wrapper
+// QueryRewriter wrapper - stub implementation
 class QueryRewriterWrap : public Napi::ObjectWrap<QueryRewriterWrap> {
 public:
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
@@ -79,8 +68,6 @@ private:
     Napi::Value Rewrite(const Napi::CallbackInfo& info);
     Napi::Value AddSynonym(const Napi::CallbackInfo& info);
     Napi::Value LoadSynonyms(const Napi::CallbackInfo& info);
-    
-    std::unique_ptr<vdb::hybrid::QueryRewriter> rewriter_;
 };
 
 } // namespace hektor_native

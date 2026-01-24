@@ -140,7 +140,7 @@ Napi::Value BM25EngineWrap::Search(const Napi::CallbackInfo& info) {
     for (size_t i = 0; i < result.value().size(); i++) {
       const auto& r = result.value()[i];
       Napi::Object item = Napi::Object::New(env);
-      item.Set("id", Napi::Number::New(env, r.id));
+      item.Set("id", Napi::Number::New(env, static_cast<double>(r.id)));
       item.Set("score", Napi::Number::New(env, r.score));
       
       Napi::Array terms = Napi::Array::New(env, r.matched_terms.size());
@@ -161,11 +161,11 @@ Napi::Value BM25EngineWrap::Search(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value BM25EngineWrap::DocumentCount(const Napi::CallbackInfo& info) {
-  return Napi::Number::New(info.Env(), engine_->document_count());
+  return Napi::Number::New(info.Env(), static_cast<double>(engine_->document_count()));
 }
 
 Napi::Value BM25EngineWrap::TermCount(const Napi::CallbackInfo& info) {
-  return Napi::Number::New(info.Env(), engine_->term_count());
+  return Napi::Number::New(info.Env(), static_cast<double>(engine_->term_count()));
 }
 
 Napi::Value BM25EngineWrap::AverageDocumentLength(const Napi::CallbackInfo& info) {
@@ -204,7 +204,6 @@ Napi::Value BM25EngineWrap::Load(const Napi::CallbackInfo& info) {
   auto result = vdb::hybrid::BM25Engine::load(path);
   
   if (result.has_value()) {
-    // Create new instance with loaded engine
     auto* constructor = env.GetInstanceData<Napi::FunctionReference>();
     return constructor->New({});
   }
@@ -214,7 +213,7 @@ Napi::Value BM25EngineWrap::Load(const Napi::CallbackInfo& info) {
 }
 
 // ============================================================================
-// KeywordExtractor Wrapper
+// KeywordExtractor Wrapper - Stub Implementation (not fully implemented in core)
 // ============================================================================
 
 Napi::Object KeywordExtractorWrap::Init(Napi::Env env, Napi::Object exports) {
@@ -231,113 +230,37 @@ Napi::Object KeywordExtractorWrap::Init(Napi::Env env, Napi::Object exports) {
 
 KeywordExtractorWrap::KeywordExtractorWrap(const Napi::CallbackInfo& info) 
     : Napi::ObjectWrap<KeywordExtractorWrap>(info) {
-  vdb::hybrid::KeywordConfig config;
-  
-  if (info.Length() >= 1 && info[0].IsObject()) {
-    Napi::Object opts = info[0].As<Napi::Object>();
-    if (opts.Has("maxKeywords")) config.max_keywords = opts.Get("maxKeywords").As<Napi::Number>().Uint32Value();
-    if (opts.Has("minScore")) config.min_score = opts.Get("minScore").As<Napi::Number>().FloatValue();
-    if (opts.Has("useTfidf")) config.use_tfidf = opts.Get("useTfidf").As<Napi::Boolean>().Value();
-    if (opts.Has("usePositionWeight")) config.use_position_weight = opts.Get("usePositionWeight").As<Napi::Boolean>().Value();
-  }
-  
-  extractor_ = std::make_unique<vdb::hybrid::KeywordExtractor>(config);
+  // Stub - KeywordExtractor not yet implemented in core
 }
 
 Napi::Value KeywordExtractorWrap::Extract(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
-  if (info.Length() < 1 || !info[0].IsString()) {
-    Napi::TypeError::New(env, "Expected text string").ThrowAsJavaScriptException();
-    return env.Null();
-  }
-  
-  std::string text = info[0].As<Napi::String>().Utf8Value();
-  auto result = extractor_->extract(text);
-  
-  if (result.has_value()) {
-    Napi::Array keywords = Napi::Array::New(env, result.value().size());
-    for (size_t i = 0; i < result.value().size(); i++) {
-      const auto& kw = result.value()[i];
-      Napi::Object item = Napi::Object::New(env);
-      item.Set("term", Napi::String::New(env, kw.term));
-      item.Set("score", Napi::Number::New(env, kw.score));
-      item.Set("frequency", Napi::Number::New(env, kw.frequency));
-      
-      Napi::Array positions = Napi::Array::New(env, kw.positions.size());
-      for (size_t j = 0; j < kw.positions.size(); j++) {
-        positions.Set(static_cast<uint32_t>(j), Napi::Number::New(env, kw.positions[j]));
-      }
-      item.Set("positions", positions);
-      
-      keywords.Set(static_cast<uint32_t>(i), item);
-    }
-    return keywords;
-  }
-  
-  Napi::Error::New(env, result.error().message).ThrowAsJavaScriptException();
-  return env.Null();
+  // Stub implementation
+  Napi::Array keywords = Napi::Array::New(env, 0);
+  return keywords;
 }
 
 Napi::Value KeywordExtractorWrap::Train(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
-  if (info.Length() < 1 || !info[0].IsArray()) {
-    Napi::TypeError::New(env, "Expected array of documents").ThrowAsJavaScriptException();
-    return env.Null();
-  }
-  
-  Napi::Array docs = info[0].As<Napi::Array>();
-  std::vector<std::string> documents;
-  documents.reserve(docs.Length());
-  
-  for (uint32_t i = 0; i < docs.Length(); i++) {
-    documents.push_back(docs.Get(i).As<Napi::String>().Utf8Value());
-  }
-  
-  auto result = extractor_->train(documents);
-  
   Napi::Object response = Napi::Object::New(env);
-  response.Set("success", result.has_value());
-  if (!result.has_value()) {
-    response.Set("error", result.error().message);
-  }
-  
+  response.Set("success", false);
+  response.Set("error", "KeywordExtractor not yet implemented");
   return response;
 }
 
 Napi::Value KeywordExtractorWrap::Save(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
-  if (info.Length() < 1 || !info[0].IsString()) {
-    Napi::TypeError::New(env, "Expected file path").ThrowAsJavaScriptException();
-    return env.Null();
-  }
-  
-  std::string path = info[0].As<Napi::String>().Utf8Value();
-  auto result = extractor_->save(path);
-  
   Napi::Object response = Napi::Object::New(env);
-  response.Set("success", result.has_value());
-  if (!result.has_value()) {
-    response.Set("error", result.error().message);
-  }
-  
+  response.Set("success", false);
+  response.Set("error", "KeywordExtractor not yet implemented");
   return response;
 }
 
 Napi::Value KeywordExtractorWrap::Load(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
-  if (info.Length() < 1 || !info[0].IsString()) {
-    Napi::TypeError::New(env, "Expected file path").ThrowAsJavaScriptException();
-    return env.Null();
-  }
-  
-  // Load returns a Result, handle accordingly
   Napi::Object response = Napi::Object::New(env);
-  response.Set("success", true);
-  response.Set("message", "Keyword extractor loaded");
+  response.Set("success", false);
+  response.Set("error", "KeywordExtractor not yet implemented");
   return response;
 }
 
@@ -439,7 +362,7 @@ Napi::Value HybridSearchEngineWrap::Combine(const Napi::CallbackInfo& info) {
     for (size_t i = 0; i < result.value().size(); i++) {
       const auto& hr = result.value()[i];
       Napi::Object item = Napi::Object::New(env);
-      item.Set("id", Napi::Number::New(env, hr.id));
+      item.Set("id", Napi::Number::New(env, static_cast<double>(hr.id)));
       item.Set("combinedScore", Napi::Number::New(env, hr.combined_score));
       item.Set("vectorScore", Napi::Number::New(env, hr.vector_score));
       item.Set("lexicalScore", Napi::Number::New(env, hr.lexical_score));
@@ -525,7 +448,7 @@ Napi::Value HybridSearchEngineWrap::CombMnz(const Napi::CallbackInfo& info) {
 }
 
 // ============================================================================
-// QueryRewriter Wrapper
+// QueryRewriter Wrapper - Stub Implementation (not fully implemented in core)
 // ============================================================================
 
 Napi::Object QueryRewriterWrap::Init(Napi::Env env, Napi::Object exports) {
@@ -541,83 +464,32 @@ Napi::Object QueryRewriterWrap::Init(Napi::Env env, Napi::Object exports) {
 
 QueryRewriterWrap::QueryRewriterWrap(const Napi::CallbackInfo& info) 
     : Napi::ObjectWrap<QueryRewriterWrap>(info) {
-  vdb::hybrid::RewriteConfig config;
-  
-  if (info.Length() >= 1 && info[0].IsObject()) {
-    Napi::Object opts = info[0].As<Napi::Object>();
-    if (opts.Has("expandSynonyms")) config.expand_synonyms = opts.Get("expandSynonyms").As<Napi::Boolean>().Value();
-    if (opts.Has("correctSpelling")) config.correct_spelling = opts.Get("correctSpelling").As<Napi::Boolean>().Value();
-    if (opts.Has("addStemmedTerms")) config.add_stemmed_terms = opts.Get("addStemmedTerms").As<Napi::Boolean>().Value();
-    if (opts.Has("maxExpansions")) config.max_expansions = opts.Get("maxExpansions").As<Napi::Number>().Uint32Value();
-  }
-  
-  rewriter_ = std::make_unique<vdb::hybrid::QueryRewriter>(config);
+  // Stub - QueryRewriter not yet implemented in core
 }
 
 Napi::Value QueryRewriterWrap::Rewrite(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
   if (info.Length() < 1 || !info[0].IsString()) {
     Napi::TypeError::New(env, "Expected query string").ThrowAsJavaScriptException();
     return env.Null();
   }
-  
-  std::string query = info[0].As<Napi::String>().Utf8Value();
-  auto result = rewriter_->rewrite(query);
-  
-  if (result.has_value()) {
-    return Napi::String::New(env, result.value());
-  }
-  
-  Napi::Error::New(env, result.error().message).ThrowAsJavaScriptException();
-  return env.Null();
+  // Stub: return query unchanged
+  return info[0];
 }
 
 Napi::Value QueryRewriterWrap::AddSynonym(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
-  if (info.Length() < 2 || !info[0].IsString() || !info[1].IsArray()) {
-    Napi::TypeError::New(env, "Expected term and synonyms array").ThrowAsJavaScriptException();
-    return env.Null();
-  }
-  
-  std::string term = info[0].As<Napi::String>().Utf8Value();
-  Napi::Array synArr = info[1].As<Napi::Array>();
-  
-  std::vector<std::string> synonyms;
-  synonyms.reserve(synArr.Length());
-  for (uint32_t i = 0; i < synArr.Length(); i++) {
-    synonyms.push_back(synArr.Get(i).As<Napi::String>().Utf8Value());
-  }
-  
-  auto result = rewriter_->add_synonym(term, synonyms);
-  
   Napi::Object response = Napi::Object::New(env);
-  response.Set("success", result.has_value());
-  if (!result.has_value()) {
-    response.Set("error", result.error().message);
-  }
-  
+  response.Set("success", false);
+  response.Set("error", "QueryRewriter not yet implemented");
   return response;
 }
 
 Napi::Value QueryRewriterWrap::LoadSynonyms(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
-  if (info.Length() < 1 || !info[0].IsString()) {
-    Napi::TypeError::New(env, "Expected file path").ThrowAsJavaScriptException();
-    return env.Null();
-  }
-  
-  std::string path = info[0].As<Napi::String>().Utf8Value();
-  auto result = rewriter_->load_synonyms(path);
-  
   Napi::Object response = Napi::Object::New(env);
-  response.Set("success", result.has_value());
-  if (!result.has_value()) {
-    response.Set("error", result.error().message);
-  }
-  
+  response.Set("success", false);
+  response.Set("error", "QueryRewriter not yet implemented");
   return response;
 }
 

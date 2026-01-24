@@ -1,6 +1,6 @@
 #include "utils.h"
 #include "vdb/distance.hpp"
-#include "vdb/vector_ops.hpp"
+#include "vdb/core.hpp"
 #include <chrono>
 
 namespace hektor_native {

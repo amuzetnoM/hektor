@@ -131,8 +131,8 @@ Napi::Value Quantization::ApplySQ(const Napi::CallbackInfo& info) {
   if (config.Has("dimension")) {
     sqConfig.dimension = config.Get("dimension").As<Napi::Number>().Uint32Value();
   }
-  if (config.Has("bits")) {
-    sqConfig.bits = config.Get("bits").As<Napi::Number>().Uint32Value();
+  if (config.Has("perDimension")) {
+    sqConfig.per_dimension = config.Get("perDimension").As<Napi::Boolean>().Value();
   }
   
   // Convert training data
@@ -151,7 +151,8 @@ Napi::Value Quantization::ApplySQ(const Napi::CallbackInfo& info) {
     response.Set("success", true);
     response.Set("message", "Scalar Quantization trained successfully");
     response.Set("compressionRatio", Napi::Number::New(env, sq.compression_ratio()));
-    response.Set("bits", Napi::Number::New(env, sqConfig.bits));
+    response.Set("codeSize", Napi::Number::New(env, static_cast<double>(sq.code_size())));
+    response.Set("perDimension", Napi::Boolean::New(env, sqConfig.per_dimension));
   } else {
     response.Set("success", false);
     response.Set("error", result.error().message);

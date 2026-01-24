@@ -1,5 +1,6 @@
 #include "common.h"
-#include "vdb/types.hpp"
+
+// common.h already includes vdb/core.hpp which has all the types we need
 
 namespace hektor_native {
 
@@ -9,7 +10,6 @@ Napi::Value DistanceMetricToNapi(vdb::DistanceMetric value, Napi::Env env) {
         case vdb::DistanceMetric::Cosine: return Napi::String::New(env, "cosine");
         case vdb::DistanceMetric::L2: return Napi::String::New(env, "l2");
         case vdb::DistanceMetric::DotProduct: return Napi::String::New(env, "dot");
-        case vdb::DistanceMetric::L2Squared: return Napi::String::New(env, "l2squared");
         default: return env.Undefined();
     }
 }
@@ -19,7 +19,6 @@ vdb::DistanceMetric NapiToDistanceMetric(const Napi::Value& val) {
     if (str == "cosine") return vdb::DistanceMetric::Cosine;
     if (str == "l2") return vdb::DistanceMetric::L2;
     if (str == "dot") return vdb::DistanceMetric::DotProduct;
-    if (str == "l2squared") return vdb::DistanceMetric::L2Squared;
     return vdb::DistanceMetric::Cosine; // default
 }
 
@@ -57,138 +56,7 @@ vdb::DocumentType NapiToDocumentType(const Napi::Value& val) {
     return vdb::DocumentType::Unknown;
 }
 
-// Device conversions
-Napi::Value DeviceToNapi(vdb::Device value, Napi::Env env) {
-    switch (value) {
-        case vdb::Device::CPU: return Napi::String::New(env, "cpu");
-        case vdb::Device::CUDA: return Napi::String::New(env, "cuda");
-        case vdb::Device::DirectML: return Napi::String::New(env, "directml");
-        default: return Napi::String::New(env, "cpu");
-    }
-}
-
-vdb::Device NapiToDevice(const Napi::Value& val) {
-    std::string str = val.As<Napi::String>().Utf8Value();
-    if (str == "cuda") return vdb::Device::CUDA;
-    if (str == "directml") return vdb::Device::DirectML;
-    return vdb::Device::CPU;
-}
-
-// LogLevel conversions
-Napi::Value LogLevelToNapi(vdb::LogLevel value, Napi::Env env) {
-    switch (value) {
-        case vdb::LogLevel::DEBUG: return Napi::Number::New(env, 0);
-        case vdb::LogLevel::INFO: return Napi::Number::New(env, 1);
-        case vdb::LogLevel::WARN: return Napi::Number::New(env, 2);
-        case vdb::LogLevel::ERROR: return Napi::Number::New(env, 3);
-        case vdb::LogLevel::CRITICAL: return Napi::Number::New(env, 4);
-        case vdb::LogLevel::ANOMALY: return Napi::Number::New(env, 5);
-        default: return Napi::Number::New(env, 1);
-    }
-}
-
-vdb::LogLevel NapiToLogLevel(const Napi::Value& val) {
-    int level = val.As<Napi::Number>().Int32Value();
-    switch (level) {
-        case 0: return vdb::LogLevel::DEBUG;
-        case 1: return vdb::LogLevel::INFO;
-        case 2: return vdb::LogLevel::WARN;
-        case 3: return vdb::LogLevel::ERROR;
-        case 4: return vdb::LogLevel::CRITICAL;
-        case 5: return vdb::LogLevel::ANOMALY;
-        default: return vdb::LogLevel::INFO;
-    }
-}
-
-// Add stub implementations for remaining enums
-Napi::Value AnomalyTypeToNapi(vdb::AnomalyType value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::AnomalyType NapiToAnomalyType(const Napi::Value& val) {
-    return static_cast<vdb::AnomalyType>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value ChunkStrategyToNapi(vdb::ChunkStrategy value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::ChunkStrategy NapiToChunkStrategy(const Napi::Value& val) {
-    return static_cast<vdb::ChunkStrategy>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value FusionMethodToNapi(vdb::FusionMethod value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::FusionMethod NapiToFusionMethod(const Napi::Value& val) {
-    return static_cast<vdb::FusionMethod>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value ReplicationModeToNapi(vdb::ReplicationMode value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::ReplicationMode NapiToReplicationMode(const Napi::Value& val) {
-    return static_cast<vdb::ReplicationMode>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value ShardingStrategyToNapi(vdb::ShardingStrategy value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::ShardingStrategy NapiToShardingStrategy(const Napi::Value& val) {
-    return static_cast<vdb::ShardingStrategy>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value DataFormatToNapi(vdb::DataFormat value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::DataFormat NapiToDataFormat(const Napi::Value& val) {
-    return static_cast<vdb::DataFormat>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value PerceptualCurveToNapi(vdb::PerceptualCurve value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::PerceptualCurve NapiToPerceptualCurve(const Napi::Value& val) {
-    return static_cast<vdb::PerceptualCurve>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value DisplayTypeToNapi(vdb::DisplayType value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::DisplayType NapiToDisplayType(const Napi::Value& val) {
-    return static_cast<vdb::DisplayType>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value ColorGamutToNapi(vdb::ColorGamut value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::ColorGamut NapiToColorGamut(const Napi::Value& val) {
-    return static_cast<vdb::ColorGamut>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value HttpMethodToNapi(vdb::HttpMethod value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::HttpMethod NapiToHttpMethod(const Napi::Value& val) {
-    return static_cast<vdb::HttpMethod>(val.As<Napi::Number>().Int32Value());
-}
-
-Napi::Value RoleToNapi(vdb::Role value, Napi::Env env) {
-    return Napi::Number::New(env, static_cast<int>(value));
-}
-
-vdb::Role NapiToRole(const Napi::Value& val) {
-    return static_cast<vdb::Role>(val.As<Napi::Number>().Int32Value());
-}
-
+// SimdLevel conversions
 Napi::Value SimdLevelToNapi(vdb::SimdLevel value, Napi::Env env) {
     return Napi::Number::New(env, static_cast<int>(value));
 }
@@ -197,6 +65,7 @@ vdb::SimdLevel NapiToSimdLevel(const Napi::Value& val) {
     return static_cast<vdb::SimdLevel>(val.As<Napi::Number>().Int32Value());
 }
 
+// ErrorCode conversions
 Napi::Value ErrorCodeToNapi(vdb::ErrorCode value, Napi::Env env) {
     return Napi::Number::New(env, static_cast<int>(value));
 }
