@@ -64,8 +64,14 @@ else()
             add_compile_options(-mavx512f -mavx512dq)
         endif()
     endif()
-    # Release optimizations (LTO disabled for compatibility with GTest)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native")
+    # Release optimizations
+    # Note: -march=native doesn't work for cross-compilation (e.g., cibuildwheel on macOS)
+    # Use -O3 only and let specific SIMD flags be added above when appropriate
+    if(DEFINED ENV{CIBUILDWHEEL} OR CMAKE_CROSSCOMPILING)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native")
+    endif()
 endif()
 
 # ============================================================================
