@@ -1,0 +1,67 @@
+# Benchmark artifacts and generated files
+
+# Test databases
+test_db*/
+*.db
+*.hnsw
+*.index
+
+# Generated data
+data/vectors/
+data/fixtures/generated/
+
+# Reports
+reports/*/
+*.json
+*.csv
+*.html
+*.parquet
+
+# Logs
+*.log
+execution.log
+
+# Profiling data
+*.prof
+*.perf
+*.trace
+
+# Memory dumps
+*.mem
+*.heap
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.pytest_cache/
+
+# C++
+*.o
+*.a
+*.so
+*.out
+*.exe
+build/
+cmake-build-*/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Temporary files
+temp/
+tmp/
+*.tmp
