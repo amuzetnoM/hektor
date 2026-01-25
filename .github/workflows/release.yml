@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-13, macos-14]  # macos-14 is arm64, macos-13 is x86_64 (free runner)
+        os: [ubuntu-24.04, windows-latest, macos-15-large, macos-14]  # macos-14 is arm64, macos-15-large is x86_64
         
     steps:
     - name: Checkout
