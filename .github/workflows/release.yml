@@ -10,6 +10,11 @@ on:
         description: 'Version tag (e.g., v3.0.0)'
         required: true
         type: string
+      publish_only:
+        description: 'Skip builds and publish existing artifacts from run ID'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -84,6 +89,7 @@ jobs:
   build-wheels:
     name: Build Wheels (${{ matrix.os }})
     needs: create-release
+    if: github.event.inputs.publish_only == ''
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     
@@ -158,6 +164,7 @@ jobs:
   build-sdist:
     name: Build Source Distribution
     needs: create-release
+    if: github.event.inputs.publish_only == ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     
@@ -201,6 +208,7 @@ jobs:
   build-docker:
     name: Build & Push Docker Images
     needs: create-release
+    if: github.event.inputs.publish_only == ''
     runs-on: ubuntu-latest
     timeout-minutes: 90
     
@@ -248,18 +256,21 @@ jobs:
           BUILD_DATE=${{ github.event.head_commit.timestamp }}
           VCS_REF=${{ github.sha }}
 
-  # Publish to PyPI
+  # Publish to PyPI (can use existing artifacts via publish_only input)
   publish-pypi:
     name: Publish to PyPI
     needs: [create-release, build-wheels, build-sdist]
     runs-on: ubuntu-latest
     # Run if create-release and build-sdist succeeded, and at least one wheel build succeeded
     # Use always() to run even if some matrix jobs failed/cancelled
+    # Also run if publish_only is set (skip build requirements)
     if: |
       always() &&
-      needs.create-release.result == 'success' &&
-      needs.build-sdist.result == 'success' &&
-      (needs.build-wheels.result == 'success' || needs.build-wheels.result == 'cancelled') &&
+      (
+        (needs.create-release.result == 'success' && needs.build-sdist.result == 'success' && 
+         (needs.build-wheels.result == 'success' || needs.build-wheels.result == 'cancelled' || needs.build-wheels.result == 'skipped'))
+        || github.event.inputs.publish_only != ''
+      ) &&
       (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') &&
       !contains(needs.create-release.outputs.version, 'alpha') &&
       !contains(needs.create-release.outputs.version, 'beta')
@@ -270,11 +281,26 @@ jobs:
       url: https://pypi.org/project/hektor-vdb/
       
     steps:
-    - name: Download all artifacts
+    - name: Download artifacts from current run
+      if: github.event.inputs.publish_only == ''
       uses: actions/download-artifact@v4
       with:
         path: dist
         merge-multiple: true
+        
+    - name: Download artifacts from specified run
+      if: github.event.inputs.publish_only != ''
+      uses: actions/download-artifact@v4
+      with:
+        run-id: ${{ github.event.inputs.publish_only }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path: dist
+        merge-multiple: true
+    
+    - name: List distribution files
+      run: |
+        echo "Files to publish:"
+        find dist -type f \( -name "*.whl" -o -name "*.tar.gz" \) | sort
         
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
