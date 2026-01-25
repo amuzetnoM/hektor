@@ -105,7 +105,7 @@ jobs:
         python-version: '3.12'
         
     - name: Install cibuildwheel
-      run: pip install cibuildwheel==2.21.0
+      run: pip install cibuildwheel==2.22.0
       
     - name: Build wheels
       run: python -m cibuildwheel --output-dir wheelhouse
@@ -253,7 +253,16 @@ jobs:
     name: Publish to PyPI
     needs: [create-release, build-wheels, build-sdist]
     runs-on: ubuntu-latest
-    if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') && !contains(needs.create-release.outputs.version, 'alpha') && !contains(needs.create-release.outputs.version, 'beta')
+    # Run if create-release and build-sdist succeeded, and at least one wheel build succeeded
+    # Use always() to run even if some matrix jobs failed/cancelled
+    if: |
+      always() &&
+      needs.create-release.result == 'success' &&
+      needs.build-sdist.result == 'success' &&
+      (needs.build-wheels.result == 'success' || needs.build-wheels.result == 'cancelled') &&
+      (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') &&
+      !contains(needs.create-release.outputs.version, 'alpha') &&
+      !contains(needs.create-release.outputs.version, 'beta')
     timeout-minutes: 10
     
     environment:
