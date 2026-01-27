@@ -1,0 +1,43 @@
+name: Build Linux Wheels
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build Linux Wheels
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+        
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        
+    - name: Install cibuildwheel
+      run: pip install cibuildwheel==2.22.0
+      
+    - name: Build wheels
+      run: python -m cibuildwheel --output-dir wheelhouse
+      env:
+        CIBW_BUILD: cp310-* cp311-* cp312-* cp313-*
+        CIBW_SKIP: "*-musllinux* *-manylinux_i686 *-manylinux2014_*"
+        CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+        CIBW_ARCHS_LINUX: x86_64
+        CIBW_BEFORE_ALL_LINUX: yum install -y cmake ninja-build libcurl-devel
+        CIBW_BUILD_VERBOSITY: 1
+        CIBW_ENVIRONMENT: CMAKE_BUILD_PARALLEL_LEVEL=4 CIBUILDWHEEL=1
+        
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels-linux
+        path: wheelhouse/*.whl
+        retention-days: 7
