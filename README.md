@@ -38,6 +38,16 @@ A High-Performance C++23 vector database with SIMD-optimized similarity search, 
 
 ---
 
+**Pre-built wheels available for:**
+
+| Platform | Supported Python (pre-built wheels) |
+|----------|-------------------------------------|
+| <img src="https://img.shields.io/badge/Linux-x86__64-000000?style=for-the-badge&logo=linux&logoColor=white" alt="" /> | [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
+| <img src="https://img.shields.io/badge/macOS-x86__64-000000?style=for-the-badge&logo=apple&logoColor=white" alt="" />| [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
+| <img src="https://img.shields.io/badge/macOS-arm64-000000?style=for-the-badge&logo=apple&logoColor=white" alt="" /> | [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
+| <img src="https://img.shields.io/badge/Windows-AMD64-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="" /> | [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
+
+
 ## FEATURE GRID
 
 ### Core Database
@@ -221,15 +231,6 @@ pip install hektor-vdb
 # Or install with ML dependencies
 pip install hektor-vdb[ml]
 ```
-
-**Pre-built wheels available for:**
-
-| Platform | Python Versions |
-|----------|-----------------|
-| Linux x86_64 | 3.10, 3.11, 3.12, 3.13 |
-| macOS x86_64 | 3.10, 3.11, 3.12, 3.13 |
-| macOS arm64 | 3.10, 3.11, 3.12, 3.13 |
-| Windows AMD64 | 3.10, 3.11, 3.12, 3.13 |
 
 ### Automated Setup from Source
 
