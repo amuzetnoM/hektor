@@ -1,8 +1,5 @@
-<p align="center">
-    <img src="assets/358ef0f2-a886-40d8-a190-2f09036bedaf.png" alt="Vector Database Illustration" width="600">
-</p>
 
-
+<img src="assets/358ef0f2-a886-40d8-a190-2f09036bedaf.png" alt="Vector Database Illustration" width="600">
 
 > **Vector Database Engine** <br>
 > *High-Fidelity Semantic Search & AI Platform* <br>
