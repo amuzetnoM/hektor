@@ -709,8 +709,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<p align="center">
-<sub>Part of the <a href="../gold_standard/README.md">Gold Standard</a> precious metals intelligence system.</sub>
-</p>
 
 
