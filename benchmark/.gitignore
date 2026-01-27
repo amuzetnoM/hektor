@@ -10,16 +10,15 @@ test_db*/
 data/vectors/
 data/fixtures/generated/
 
-# Reports
-reports/*/
-*.json
+# Reports - Keep generated results for tracking
+# reports/*/ are kept
+# *.json are kept for benchmark results
+# *.html are kept for reports
 *.csv
-*.html
 *.parquet
 
-# Logs
-*.log
-execution.log
+# Logs - Keep benchmark logs for tracking
+# *.log files in reports/ are kept
 
 # Profiling data
 *.prof
