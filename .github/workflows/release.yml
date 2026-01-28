@@ -24,6 +24,11 @@ permissions:
 env:
   BUILD_TYPE: Release
 
+# Ensure only one release build runs at a time
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.version || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # Create GitHub release first
   create-release:
