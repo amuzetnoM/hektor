@@ -253,6 +253,7 @@ jobs:
     needs: [lint-and-format, build-test, docs-validation, security-scan]
     runs-on: ubuntu-latest
     if: always()
+    permissions: {}
     
     steps:
     - name: Check CI status
