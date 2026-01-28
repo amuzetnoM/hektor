@@ -1,10 +1,47 @@
-# Security Policy — Hektor
-
-Thank you for helping keep Hektor secure. Please report vulnerabilities privately so we can fix them before public disclosure.
+# Security Policy
+> Thank you for helping keep Hektor secure.<br> Please report vulnerabilities privately so we can fix them before public disclosure.
 
 ## Reporting a Vulnerability
 Preferred: Open a private GitHub Security Advisory for this repository (recommended).
-If you cannot use that, email: security@hektor.example.com (PGP: 0123ABCD... replace with real key).
+If you cannot use that, email: support@artifactvirtual.com.
+
+PGP contact (replace with actual fingerprint and public key):
+
+- **PGP fingerprint:** <A8A5 E9C1 220D BB9D 7239  934B 82AC 16D6 186E B013>
+
+- **Public key (ASCII-armored):**
+
+```Key
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mQINBGl5yPUBEADCDJutWLH9cbXq8TpOPN4DX7M5giw3ToK4iEKu0Na/YFV2Aze7
+H4AZbziLNI8Gyhf0bO2H3ssnahC9PrnS8M4M3XIcOBzYWVl5ZDpgmEwv9SAyr2F8
+/N4aljy59O1tPcWOc44LAah8L5Er1B5RVvnLqzUJcqv8BAUz0Zmg7DtUOW3b6D3k
+UzTATVp60rD/vZreeRdI9Tw03DhCBBZUUXqkC8XevzTbDVQkWaGqzkyWKqEbvVng
+qTt/7IrH0bTIw+UZ/FdIxPgUt55KS6U69vKktxK8ZfrJvB+t6UNeNgXfXjBHk+zE
+mKdFUF4ccaC8GwOSfu4UVdvdMad3hI4vXrLPtMDRdDOid75ZU9XOTHsb+0zQkMsZ
+XzwrGDypfFE3el+iNiA843QBh1Ikd+jugwh7OcoAiQgR80QP4Q9H2GFtT7wF2674
+iBIajVGGB8ONg7nqy4jYAZdVPZohVDwOVhC1DvdJ9dO9Dy87jMtK/48mquOZKftL
+CqkyZKfmLRL+uA3zwa2YMe37VXI4djmtsPpAzP1l5PYqWwKYkvpFuWDyXKCNqmtl
+bPkuo+q/g9Ci3DxLcvGmodfBpxqV/sZtcKDpTYuW8wKvXkZuGp02my8Xo8f1JTyn
+H2t1lxJiuuMx9W7LNqLS8lQng/UDTi4t6wX4Kg+N0zGz9BcENjRaqp8hPQARAQAB
+tCtBbGkgQS4gU2hha2lsIDxzdXBwb3J0QGFydGlmYWN0dmlydHVhbC5jb20+iQJt
+BBMBCABXFiEEqKXpwSINu51yOZNLgqwW1hhusBMFAml5yPUbFIAAAAAABAAObWFu
+dTIsMi41KzEuMTEsMiwxAhsPBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJ
+EIKsFtYYbrATYdQQAI6A9dYs/0+dKcQzXFwzZcGqBheQx3HVpd4Spm7zeNNBQgYm
+2/aCmwJV5AD5gDx1tmx9lK8o/mBgazgsacIrE+IqDI5iMefE9WcUqUlu9rwN5D64
+Ua0yH/nj5ge+DZRBN+666smiVGxgXB12GdQr9481S3TDtXSNzaBacfDqngg1urr4
+6ZpSZgo2mzftYcOvX32iYWh1pAePAXJiMZP0n1iu4YXpREdiNrosnInnON5fDGQp
+Bymvvj2COuJ8UDj+8XB5kf4/tlThJOiFExQ8EXOXeYQ8gmhum8z2gZSequMigIms
+VAhQeEPo6fOLjUXytu/33t4HtpqR1SXN2+7IKq/BZ9h8XnIYSCpbQ9cHYfJUKL2g
+rbbmeBlGep8ffyNYIbVlmmgZbtMQ4oyXVgih62YuVjA6JlOBnUIaPr8XKU2iozVn
+kmWeb9WxZD4rxi9ZPh6TLk+LgJ+ALCAK40Bd7oZfBqVgDizbAyDePFtx7i9NXQsX
+79OVdxLKAt5t0e1z/c2PkQ8eOTnhlhjyUBzuaKcpcT7PtP0/nDlKslLFizOk3HLE
+Qj9hMia4+qNGlYgB+oaaAcjgCgN561nP1nV/xK+Sd3s5sA+FnQJXV16C8rpbyuJt
+L2Z1naIWabD32peknSXErlxyoY7KR8rxZ4mv33O8p0g5XB6BPwzNIs7myGxo
+=f8Xw
+-----END PGP PUBLIC KEY BLOCK-----
+```
 
 When reporting, please include:
 - A clear description and impact (e.g., RCE, auth bypass).
