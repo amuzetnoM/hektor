@@ -1,4 +1,4 @@
-# Vector Studio Research Directory
+# RESEARCH COLLECTIVE
 
 This directory contains academically rigorous research articles exploring the theoretical foundations, algorithmic details, and practical implementations of key concepts in Vector Studio and vector databases generally.
 
