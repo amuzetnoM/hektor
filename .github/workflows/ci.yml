@@ -11,6 +11,11 @@ env:
   BUILD_TYPE: Release
   CACHE_VERSION: v1
 
+# Automatically clean up old workflow runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Quick checks that run first
   lint-and-format:

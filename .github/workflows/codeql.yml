@@ -19,6 +19,11 @@ on:
   schedule:
     - cron: '43 2 * * 3'
 
+# Cancel outdated scans
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})

@@ -3,6 +3,11 @@ name: Build Linux Wheels
 on:
   workflow_dispatch:
 
+# Prevent concurrent builds
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build-linux:
     name: Build Linux Wheels
