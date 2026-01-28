@@ -1,15 +1,15 @@
 ---
 title: "Hektor v4.0.0 Documentation Master Index"
-version: "4.0.0"
+version: "4.1.7"
 date: "2026-01-22"
 status: "Complete"
 ---
 
-# Hektor v4.0.0 Documentation Master Index
+# Hektor v4.1.7 Documentation Master Index
 
 ## 📚 Documentation Overview
 
-Comprehensive professional documentation for Hektor Vector Database v4.0.0, totaling **32 documents** across 5 major categories.
+Comprehensive professional documentation for Hektor Vector Database v4.1.7, totaling **32 documents** across 5 major categories.
 
 **Total Content:** 5,942+ lines of professional documentation  
 **Data Sources:** COMPETITOR_ANALYSIS.json (47KB), HEKTOR_ANALYSIS.json (44KB)  

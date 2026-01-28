@@ -1,13 +1,12 @@
 ---
-title: "Hektor Scope Documentation"
-version: "4.0.0"
+title: "Scope, Business and Vision"
+description: "Comprehensive business, technical, and strategic documentation for the Hektor Vector Database project."
+version: "4.1.7"
 date: "2026-01-22"
 status: "Production"
 classification: "Business Documentation"
 tags: ["scope", "business", "research", "audit", "stakeholder"]
 ---
-
-# Hektor Scope Documentation
 
 > **Version 4.1.1** | **Status: Production Ready** | **Last Updated: 2026-01-24**
 
