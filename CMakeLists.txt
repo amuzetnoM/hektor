@@ -737,6 +737,7 @@ if(VDB_BUILD_TESTS)
         tests/test_hybrid_search.cpp
         tests/test_rag.cpp
         tests/test_perceptual_quantization.cpp
+        tests/test_concurrent_stress.cpp
     )
     
     target_link_libraries(vdb_tests PRIVATE

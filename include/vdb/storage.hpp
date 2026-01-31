@@ -7,6 +7,7 @@
 #include <fstream>
 #include <filesystem>
 #include <unordered_map>
+#include <shared_mutex>
 
 namespace vdb {
 
@@ -140,6 +141,9 @@ private:
     std::vector<size_t> free_slots_;
     size_t capacity_ = 0;
     size_t vector_size_bytes_ = 0;
+    
+    // CRITICAL: Mutex for thread-safe concurrent access during resize
+    mutable std::shared_mutex mutex_;
 };
 
 // ============================================================================

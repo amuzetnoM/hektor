@@ -198,10 +198,14 @@ std::vector<VectorId> HnswIndex::search_layer(
             if (visited.contains(neighbor_id)) continue;
             visited.insert(neighbor_id);
             
-            // Skip deleted nodes
+            // Skip deleted nodes - CRITICAL: Check bounds to prevent TOCTOU race
             auto neighbor_it = id_to_index_.find(neighbor_id);
             if (neighbor_it == id_to_index_.end()) continue;
-            if (nodes_[neighbor_it->second].deleted) continue;
+            
+            // Re-validate that the index is still valid (prevents TOCTOU segfault)
+            size_t neighbor_idx = neighbor_it->second;
+            if (neighbor_idx >= nodes_.size()) continue;
+            if (nodes_[neighbor_idx].deleted) continue;
             
             Distance neighbor_dist = distance_to_node(query, neighbor_id);
             
@@ -223,10 +227,13 @@ std::vector<VectorId> HnswIndex::search_layer(
         VectorId id = results.top().second;
         results.pop();
         
-        // Double-check node is not deleted
+        // Double-check node is not deleted - CRITICAL: Bounds check prevents TOCTOU segfault
         auto it = id_to_index_.find(id);
-        if (it != id_to_index_.end() && !nodes_[it->second].deleted) {
-            result_ids.push_back(id);
+        if (it != id_to_index_.end()) {
+            size_t idx = it->second;
+            if (idx < nodes_.size() && !nodes_[idx].deleted) {
+                result_ids.push_back(id);
+            }
         }
     }
     std::reverse(result_ids.begin(), result_ids.end());
@@ -261,14 +268,24 @@ Distance HnswIndex::distance_to_node(VectorView query, VectorId node_id) const {
         return std::numeric_limits<Distance>::max();
     }
     
-    return compute_distance(query, nodes_[it->second].vector.view(), config_.metric);
+    // CRITICAL: Validate index to prevent segfault from TOCTOU race or corruption
+    size_t idx = it->second;
+    if (idx >= nodes_.size()) {
+        return std::numeric_limits<Distance>::max();
+    }
+    
+    return compute_distance(query, nodes_[idx].vector.view(), config_.metric);
 }
 
 void HnswIndex::connect_nodes(VectorId from, VectorId to, int layer) {
     auto it = id_to_index_.find(from);
     if (it == id_to_index_.end()) return;
     
-    Node& node = nodes_[it->second];
+    // CRITICAL: Validate index to prevent segfault
+    size_t idx = it->second;
+    if (idx >= nodes_.size()) return;
+    
+    Node& node = nodes_[idx];
     if (layer >= static_cast<int>(node.connections.size())) return;
     
     auto& connections = node.connections[layer];

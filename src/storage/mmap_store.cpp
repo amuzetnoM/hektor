@@ -8,6 +8,8 @@
 #include <nlohmann/json.hpp>
 #include <cstring>
 #include <stdexcept>
+#include <mutex>
+#include <shared_mutex>
 
 #ifdef VDB_PLATFORM_WINDOWS
     #ifndef WIN32_LEAN_AND_MEAN
@@ -212,7 +214,7 @@ Result<void> MemoryMappedFile::open_write(const fs::path& path, size_t initial_s
     path_ = path;
     writable_ = true;
     capacity_ = initial_size;
-    size_ = 0;
+    size_ = initial_size;  // FIX: Set size to match capacity for newly created files
     
     // Create parent directories if needed
     if (path.has_parent_path()) {
@@ -382,6 +384,10 @@ Result<void> MemoryMappedFile::resize(size_t new_size) {
 #endif
     
     capacity_ = new_size;
+    // FIX: Update size to match new capacity after resize
+    // Without this, all subsequent bounds checks in get_slot_ptr() would fail
+    // because they compare against size(), causing "Failed to get slot pointer" errors
+    size_ = new_size;
     return {};
 }
 
@@ -476,6 +482,11 @@ Result<void> VectorStore::init() {
             return std::unexpected(Error{ErrorCode::IoError, "Vectors file too small"});
         }
         
+        // CRITICAL: Null check before dereferencing header pointer
+        if (vectors_file_.data() == nullptr) {
+            return std::unexpected(Error{ErrorCode::IoError, "Failed to map vectors file"});
+        }
+        
         auto* header = reinterpret_cast<const VectorFileHeader*>(vectors_file_.data());
         if (header->magic != VectorFileHeader::MAGIC) {
             return std::unexpected(Error{ErrorCode::IoError, "Invalid vectors file magic"});
@@ -504,7 +515,11 @@ Result<void> VectorStore::init() {
         auto result = vectors_file_.open_write(vectors_path, initial_file_size);
         if (!result) return std::unexpected(result.error());
         
-        // Write header
+        // Write header - CRITICAL: Null check before dereferencing
+        if (vectors_file_.data() == nullptr) {
+            return std::unexpected(Error{ErrorCode::IoError, "Failed to map vectors file for writing"});
+        }
+        
         auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
         header->magic = VectorFileHeader::MAGIC;
         header->version = VectorFileHeader::CURRENT_VERSION;
@@ -539,7 +554,11 @@ size_t VectorStore::allocate_slot() {
             return SIZE_MAX;
         }
         
-        // Update header
+        // Update header - CRITICAL: Check pointer validity after resize
+        if (vectors_file_.data() == nullptr) {
+            // Resize succeeded but mapping failed - critical error
+            return SIZE_MAX;
+        }
         auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
         header->capacity = new_capacity;
         capacity_ = new_capacity;
@@ -554,6 +573,15 @@ Scalar* VectorStore::get_slot_ptr(size_t slot) {
     }
     
     size_t offset = VectorFileHeader::SIZE + slot * vector_size_bytes_;
+    
+    // Critical: Validate that offset + vector_size_bytes_ doesn't overflow
+    // and stays within the mapped region to prevent segfaults
+    // Use safe arithmetic to prevent overflow in the addition
+    if (offset > vectors_file_.size() || 
+        vector_size_bytes_ > vectors_file_.size() - offset) {
+        return nullptr;
+    }
+    
     return reinterpret_cast<Scalar*>(vectors_file_.data() + offset);
 }
 
@@ -563,6 +591,15 @@ const Scalar* VectorStore::get_slot_ptr(size_t slot) const {
     }
     
     size_t offset = VectorFileHeader::SIZE + slot * vector_size_bytes_;
+    
+    // Critical: Validate that offset + vector_size_bytes_ doesn't overflow
+    // and stays within the mapped region to prevent segfaults
+    // Use safe arithmetic to prevent overflow in the addition
+    if (offset > vectors_file_.size() || 
+        vector_size_bytes_ > vectors_file_.size() - offset) {
+        return nullptr;
+    }
+    
     return reinterpret_cast<const Scalar*>(vectors_file_.data() + offset);
 }
 
@@ -572,6 +609,9 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
                     "Expected dimension " + std::to_string(config_.dimension) +
                     " but got " + std::to_string(vector.dim())});
     }
+    
+    // CRITICAL: Use unique_lock for writes to prevent concurrent modifications
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     
     if (id_to_offset_.contains(id)) {
         return std::unexpected(Error{ErrorCode::InvalidVectorId, "Vector ID already exists"});
@@ -594,7 +634,10 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
     // Update index
     id_to_offset_[id] = slot;
     
-    // Update header
+    // Update header - CRITICAL: Check pointer validity
+    if (vectors_file_.data() == nullptr) {
+        return std::unexpected(Error{ErrorCode::IoError, "File mapping invalid"});
+    }
     auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
     header->vector_count = id_to_offset_.size();
     
@@ -602,6 +645,9 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
 }
 
 std::optional<VectorView> VectorStore::get(VectorId id) const {
+    // Use shared_lock for reads to allow concurrent reads
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    
     auto it = id_to_offset_.find(id);
     if (it == id_to_offset_.end()) {
         return std::nullopt;
@@ -612,14 +658,22 @@ std::optional<VectorView> VectorStore::get(VectorId id) const {
         return std::nullopt;
     }
     
+    // WARNING: The returned VectorView holds a raw pointer that becomes invalid
+    // when this function returns and the lock is released. Callers must either:
+    // 1) Immediately copy the data (like HNSW does), OR
+    // 2) Ensure no concurrent resize operations can occur
+    // This is a known limitation of the current API for performance reasons.
     return VectorView(data, config_.dimension);
 }
 
 bool VectorStore::contains(VectorId id) const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     return id_to_offset_.contains(id);
 }
 
 Result<void> VectorStore::remove(VectorId id) {
+    std::unique_lock<std::shared_mutex> lock(mutex_);
+    
     auto it = id_to_offset_.find(id);
     if (it == id_to_offset_.end()) {
         return std::unexpected(Error{ErrorCode::VectorNotFound, "Vector ID not found"});
@@ -631,7 +685,10 @@ Result<void> VectorStore::remove(VectorId id) {
     // Remove from index
     id_to_offset_.erase(it);
     
-    // Update header
+    // Update header - CRITICAL: Check pointer validity
+    if (vectors_file_.data() == nullptr) {
+        return std::unexpected(Error{ErrorCode::IoError, "File mapping invalid"});
+    }
     auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
     header->vector_count = id_to_offset_.size();
     
@@ -639,6 +696,7 @@ Result<void> VectorStore::remove(VectorId id) {
 }
 
 std::vector<VectorId> VectorStore::all_ids() const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     std::vector<VectorId> ids;
     ids.reserve(id_to_offset_.size());
     for (const auto& [id, _] : id_to_offset_) {
