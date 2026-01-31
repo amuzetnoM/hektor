@@ -8,6 +8,8 @@
 #include <nlohmann/json.hpp>
 #include <cstring>
 #include <stdexcept>
+#include <mutex>
+#include <shared_mutex>
 
 #ifdef VDB_PLATFORM_WINDOWS
     #ifndef WIN32_LEAN_AND_MEAN
@@ -382,6 +384,7 @@ Result<void> MemoryMappedFile::resize(size_t new_size) {
 #endif
     
     capacity_ = new_size;
+    size_ = new_size;  // CRITICAL: Update size to match capacity after resize
     return {};
 }
 
@@ -602,6 +605,9 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
                     " but got " + std::to_string(vector.dim())});
     }
     
+    // CRITICAL: Use unique_lock for writes to prevent concurrent modifications
+    std::unique_lock<std::shared_mutex> lock(mutex_);
+    
     if (id_to_offset_.contains(id)) {
         return std::unexpected(Error{ErrorCode::InvalidVectorId, "Vector ID already exists"});
     }
@@ -634,6 +640,9 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
 }
 
 std::optional<VectorView> VectorStore::get(VectorId id) const {
+    // CRITICAL: Use shared_lock for reads to allow concurrent reads
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    
     auto it = id_to_offset_.find(id);
     if (it == id_to_offset_.end()) {
         return std::nullopt;
@@ -644,14 +653,19 @@ std::optional<VectorView> VectorStore::get(VectorId id) const {
         return std::nullopt;
     }
     
+    // Note: Returning VectorView is safe because we hold shared_lock
+    // Caller must not hold reference across potential resize operations
     return VectorView(data, config_.dimension);
 }
 
 bool VectorStore::contains(VectorId id) const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     return id_to_offset_.contains(id);
 }
 
 Result<void> VectorStore::remove(VectorId id) {
+    std::unique_lock<std::shared_mutex> lock(mutex_);
+    
     auto it = id_to_offset_.find(id);
     if (it == id_to_offset_.end()) {
         return std::unexpected(Error{ErrorCode::VectorNotFound, "Vector ID not found"});
@@ -674,6 +688,7 @@ Result<void> VectorStore::remove(VectorId id) {
 }
 
 std::vector<VectorId> VectorStore::all_ids() const {
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     std::vector<VectorId> ids;
     ids.reserve(id_to_offset_.size());
     for (const auto& [id, _] : id_to_offset_) {
