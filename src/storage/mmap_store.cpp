@@ -214,7 +214,7 @@ Result<void> MemoryMappedFile::open_write(const fs::path& path, size_t initial_s
     path_ = path;
     writable_ = true;
     capacity_ = initial_size;
-    size_ = initial_size;  // FIXED: size should match capacity for newly created files
+    size_ = initial_size;  // FIX: Set size to match capacity for newly created files
     
     // Create parent directories if needed
     if (path.has_parent_path()) {
@@ -384,7 +384,10 @@ Result<void> MemoryMappedFile::resize(size_t new_size) {
 #endif
     
     capacity_ = new_size;
-    size_ = new_size;  // CRITICAL: Update size to match capacity after resize
+    // FIX: Update size to match new capacity after resize
+    // Without this, all subsequent bounds checks in get_slot_ptr() would fail
+    // because they compare against size(), causing "Failed to get slot pointer" errors
+    size_ = new_size;
     return {};
 }
 
@@ -573,8 +576,9 @@ Scalar* VectorStore::get_slot_ptr(size_t slot) {
     
     // Critical: Validate that offset + vector_size_bytes_ doesn't overflow
     // and stays within the mapped region to prevent segfaults
+    // Use safe arithmetic to prevent overflow in the addition
     if (offset > vectors_file_.size() || 
-        offset + vector_size_bytes_ > vectors_file_.size()) {
+        vector_size_bytes_ > vectors_file_.size() - offset) {
         return nullptr;
     }
     
@@ -590,8 +594,9 @@ const Scalar* VectorStore::get_slot_ptr(size_t slot) const {
     
     // Critical: Validate that offset + vector_size_bytes_ doesn't overflow
     // and stays within the mapped region to prevent segfaults
+    // Use safe arithmetic to prevent overflow in the addition
     if (offset > vectors_file_.size() || 
-        offset + vector_size_bytes_ > vectors_file_.size()) {
+        vector_size_bytes_ > vectors_file_.size() - offset) {
         return nullptr;
     }
     
@@ -640,7 +645,7 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
 }
 
 std::optional<VectorView> VectorStore::get(VectorId id) const {
-    // CRITICAL: Use shared_lock for reads to allow concurrent reads
+    // Use shared_lock for reads to allow concurrent reads
     std::shared_lock<std::shared_mutex> lock(mutex_);
     
     auto it = id_to_offset_.find(id);
@@ -653,8 +658,11 @@ std::optional<VectorView> VectorStore::get(VectorId id) const {
         return std::nullopt;
     }
     
-    // Note: Returning VectorView is safe because we hold shared_lock
-    // Caller must not hold reference across potential resize operations
+    // WARNING: The returned VectorView holds a raw pointer that becomes invalid
+    // when this function returns and the lock is released. Callers must either:
+    // 1) Immediately copy the data (like HNSW does), OR
+    // 2) Ensure no concurrent resize operations can occur
+    // This is a known limitation of the current API for performance reasons.
     return VectorView(data, config_.dimension);
 }
 
