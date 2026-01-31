@@ -476,6 +476,11 @@ Result<void> VectorStore::init() {
             return std::unexpected(Error{ErrorCode::IoError, "Vectors file too small"});
         }
         
+        // CRITICAL: Null check before dereferencing header pointer
+        if (vectors_file_.data() == nullptr) {
+            return std::unexpected(Error{ErrorCode::IoError, "Failed to map vectors file"});
+        }
+        
         auto* header = reinterpret_cast<const VectorFileHeader*>(vectors_file_.data());
         if (header->magic != VectorFileHeader::MAGIC) {
             return std::unexpected(Error{ErrorCode::IoError, "Invalid vectors file magic"});
@@ -504,7 +509,11 @@ Result<void> VectorStore::init() {
         auto result = vectors_file_.open_write(vectors_path, initial_file_size);
         if (!result) return std::unexpected(result.error());
         
-        // Write header
+        // Write header - CRITICAL: Null check before dereferencing
+        if (vectors_file_.data() == nullptr) {
+            return std::unexpected(Error{ErrorCode::IoError, "Failed to map vectors file for writing"});
+        }
+        
         auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
         header->magic = VectorFileHeader::MAGIC;
         header->version = VectorFileHeader::CURRENT_VERSION;
@@ -539,7 +548,11 @@ size_t VectorStore::allocate_slot() {
             return SIZE_MAX;
         }
         
-        // Update header
+        // Update header - CRITICAL: Check pointer validity after resize
+        if (vectors_file_.data() == nullptr) {
+            // Resize succeeded but mapping failed - critical error
+            return SIZE_MAX;
+        }
         auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
         header->capacity = new_capacity;
         capacity_ = new_capacity;
@@ -554,6 +567,14 @@ Scalar* VectorStore::get_slot_ptr(size_t slot) {
     }
     
     size_t offset = VectorFileHeader::SIZE + slot * vector_size_bytes_;
+    
+    // Critical: Validate that offset + vector_size_bytes_ doesn't overflow
+    // and stays within the mapped region to prevent segfaults
+    if (offset > vectors_file_.size() || 
+        offset + vector_size_bytes_ > vectors_file_.size()) {
+        return nullptr;
+    }
+    
     return reinterpret_cast<Scalar*>(vectors_file_.data() + offset);
 }
 
@@ -563,6 +584,14 @@ const Scalar* VectorStore::get_slot_ptr(size_t slot) const {
     }
     
     size_t offset = VectorFileHeader::SIZE + slot * vector_size_bytes_;
+    
+    // Critical: Validate that offset + vector_size_bytes_ doesn't overflow
+    // and stays within the mapped region to prevent segfaults
+    if (offset > vectors_file_.size() || 
+        offset + vector_size_bytes_ > vectors_file_.size()) {
+        return nullptr;
+    }
+    
     return reinterpret_cast<const Scalar*>(vectors_file_.data() + offset);
 }
 
@@ -594,7 +623,10 @@ Result<void> VectorStore::add(VectorId id, VectorView vector) {
     // Update index
     id_to_offset_[id] = slot;
     
-    // Update header
+    // Update header - CRITICAL: Check pointer validity
+    if (vectors_file_.data() == nullptr) {
+        return std::unexpected(Error{ErrorCode::IoError, "File mapping invalid"});
+    }
     auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
     header->vector_count = id_to_offset_.size();
     
@@ -631,7 +663,10 @@ Result<void> VectorStore::remove(VectorId id) {
     // Remove from index
     id_to_offset_.erase(it);
     
-    // Update header
+    // Update header - CRITICAL: Check pointer validity
+    if (vectors_file_.data() == nullptr) {
+        return std::unexpected(Error{ErrorCode::IoError, "File mapping invalid"});
+    }
     auto* header = reinterpret_cast<VectorFileHeader*>(vectors_file_.data());
     header->vector_count = id_to_offset_.size();
     
