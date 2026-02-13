@@ -121,7 +121,7 @@ mypy>=1.13.0
 # ============================================================================
 pandas>=2.1.0           # CSV/Excel data manipulation
 openpyxl>=3.1.0         # Excel file reading
-pypdf2>=3.0.0           # PDF text extraction (fallback)
+pypdf>=5.0.0            # PDF text extraction (fallback, replaces deprecated PyPDF2)
 python-magic>=0.4.27    # File type detection
 
 # ============================================================================
