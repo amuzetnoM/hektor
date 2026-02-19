@@ -1,25 +1,23 @@
+# ⬜️ HECKTOR
 
+> **Vector Studio** <br>
+> **English** | [中文](README_zh.md) <br>
+> *High-Fidelity Vector Database Engine* <br>
+> Semantic Search and AI Training Platform
 
-<img src="assets/358ef0f2-a886-40d8-a190-2f09036bedaf.png">
-
-
-> **Vector Database Engine** <br>
-> *High-Fidelity Semantic Search & AI Platform* <br>
-
-A High-Performance C++23 vector database with SIMD-optimized similarity search, Dolby-compatible perceptual quantization, and comprehensive hybrid search capabilities. Designed for sub-3ms queries at billion-scale.
+A performance C++ vector database with SIMD-optimized similarity search and local ONNX-based embeddings. Designed for sub-millisecond queries on millions of vectors.
 
 ---
 
 <p align="center">
 
 <!-- Version -->
-[![Version](https://img.shields.io/badge/version-4.1.7-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
-[![PyPI](https://img.shields.io/badge/PyPI-hektor--vdb-3775A9?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/hektor-vdb/)
+[![Version](https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge&logo=semver&logoColor=white)](#)
 
-<!-- Security -->
-[![Tests](https://img.shields.io/badge/tests-passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/amuzetnoM/hektor)
-[![Coverage](https://img.shields.io/badge/coverage-85%25-green?style=for-the-badge&logo=codecov&logoColor=white)](https://github.com/amuzetnoM/hektor)
-[![CI/CD](https://img.shields.io/badge/CI/CD-Passing-blue?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/amuzetnoM/hektor)
+<!-- Build Status -->
+[![Build](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=cmake&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
+[![Tests](https://img.shields.io/badge/tests-passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
+[![Coverage](https://img.shields.io/badge/coverage-85%25-green?style=for-the-badge&logo=codecov&logoColor=white)](https://github.com/amuzetnoM/gold_standard)
 
 <!-- Tech Stack -->
 [![C++](https://img.shields.io/badge/C%2B%2B-23-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
@@ -29,125 +27,71 @@ A High-Performance C++23 vector database with SIMD-optimized similarity search, 
 
 <!-- Performance -->
 [![SIMD](https://img.shields.io/badge/SIMD-AVX2%2FAVX--512-FF6600?style=for-the-badge&logo=intel&logoColor=white)](#performance)
-[![GPU](https://img.shields.io/badge/GPU-NVIDIA%20CUDA%20-%2076B900?style=for-the-badge&logo=nvidia&logoColor=white)](#performance)
-[![HNSW](https://img.shields.io/badge/HNSW-Graph-008080?style=for-the-badge)](#performance)
 [![Latency](https://img.shields.io/badge/latency-%3C3ms-blueviolet?style=for-the-badge)](#performance)
 
 <!-- Meta -->
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey?style=for-the-badge)](#)
 
-<!-- Build Status -->
-[![Build](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=cmake&logoColor=white)](https://github.com/amuzetnoM/hektor)
-
-**Pre-built wheels available for:**
-
-| Platform | Supported Python (pre-built wheels) |
-|----------|-------------------------------------|
-| <img src="https://img.shields.io/badge/Linux-x86__64-000000?style=for-the-badge&logo=linux&logoColor=white" alt="" /> | [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
-| <img src="https://img.shields.io/badge/macOS-x86__64-000000?style=for-the-badge&logo=apple&logoColor=white" alt="" />| [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
-| <img src="https://img.shields.io/badge/macOS-arm64-000000?style=for-the-badge&logo=apple&logoColor=white" alt="" /> | [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
-| <img src="https://img.shields.io/badge/Windows-AMD64-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="" /> | [Python 3.10](https://pypi.org/project/hektor-vdb/#files) · [Python 3.11](https://pypi.org/project/hektor-vdb/#files) · [Python 3.12](https://pypi.org/project/hektor-vdb/#files) · [Python 3.13](https://pypi.org/project/hektor-vdb/#files) |
-
 </p>
-
-## FEATURE GRID
-
-### Core Database
-
-| Feature | Description |
-|---------|-------------|
-| **HNSW Index** | Production-grade HNSW for O(log n) approximate nearest neighbor with tunable M/ef parameters |
-| **Memory-Mapped Storage** | Zero-copy vector access via mmap for efficient I/O and fast cold starts |
-| **Cosine Similarity** | AVX-512 SIMD-optimized cosine similarity for high-throughput scoring |
-| **Euclidean Distance** | AVX-512 L2 distance metric for direct spatial comparisons |
-| **Inner Product** | AVX-512 dot-product similarity for maximum inner product search (MIPS) |
-| **Filtered Search** | Rich metadata predicate support: boolean, range, and tag filters |
-| **Batch Operations** | Multi-query and bulk ingest processing with parallel execution |
-
-### Hybrid Search
-
-| Feature | Description |
-|---------|-------------|
-| **BM25 Full-Text** | Production-ready BM25 with Porter stemming, stopword handling, and token normalization |
-| **RRF Fusion** | Reciprocal Rank Fusion for robust ensemble ranking |
-| **Weighted Sum** | Configurable weighted fusion (α parameter) for lexical/vector combination |
-| **CombSUM** | Additive score fusion for combined relevance scoring |
-| **CombMNZ** | CombMNZ fusion emphasizing precision by multiplicative weighting |
-| **Borda Count** | Rank voting fusion for combining ordinal signals |
-
-### Perceptual Quantization
-
-| Feature | Standards |
-|---------|-----------|
-| **SMPTE ST 2084 (PQ)** | HDR10, Dolby Vision compatible perceptual quantization curve |
-| **HLG (Rec.2100)** | Hybrid Log-Gamma support for broadcast HDR (BBC/NHK) |
-| **Gamma 2.2** | sRGB gamma curve support for standard displays |
-| **Gamma 2.4** | BT.1886 studio gamma profile for broadcast-grade encoding |
-| **HDR1000 Profile** | HDR profile tuned for 1000 nit displays and high-dynamic-range content |
-
-### RAG Pipeline
-
-| Feature | Description |
-|---------|-------------|
-| **Fixed-Size Chunking** | Uniform chunk sizes for predictable retrieval and batching |
-| **Sentence Chunking** | Natural sentence boundaries to preserve semantic units |
-| **Paragraph Chunking** | Document-structure-aware chunking for contextual coherence |
-| **Semantic Chunking** | Embedding-based segmentation for meaning-preserving splits |
-| **Recursive Chunking** | Hierarchical splitting for multi-scale context windows |
-| **LangChain Adapter** | Native adapter for LangChain integration and pipelines |
-| **LlamaIndex Adapter** | Native adapter for LlamaIndex (GPT Index) integrations |
-
-### Distributed System
-
-| Feature | Description |
-|---------|-------------|
-| **Async Replication** | Low-latency async replication (sub-100ms typical) for availability |
-| **Sync Replication** | Strong-consistency synchronous replication option |
-| **Hash Sharding** | Consistent-hashing sharding for even data distribution |
-| **Range Sharding** | Range-based partitioning for ordered key spaces |
-| **gRPC Networking** | HTTP/2 gRPC with TLS/mTLS for secure RPC communication |
-| **Service Discovery** | DNS/Consul based discovery and health-check integration |
-
-### Observability
-
-| Feature | Description |
-|---------|-------------|
-| **Prometheus Metrics** | 50+ production metrics exposed for monitoring and alerting |
-| **OpenTelemetry** | Distributed tracing and context propagation support |
-| **eBPF Profiling** | Low-overhead kernel-level profiling for performance hotspots |
-| **Structured Logging** | JSON structured logs with log levels and correlation IDs |
-
-### Studio Native Addon
-
-| Component | Description |
-|-----------|-------------|
-| **BM25Engine** | Full-text search engine with ranking, tokenization, and scoring |
-| **KeywordExtractor** | TF‑IDF based keyword extraction with configurable stoplists |
-| **HybridSearchEngine** | Tight integration of vector + lexical retrieval and fusion |
-| **QueryRewriter** | Query expansion and normalization for improved recall |
-| **Quantization** | PQ, SQ and HDR-aware perceptual quantization implementations |
-
-### Platform Support
-
-| Platform | Compiler / Notes |
-|----------|------------------|
-| **Windows 10/11** | MSVC 19.33+ (MSVC toolchain, Windows SDK) |
-| **Ubuntu 22.04+** | GCC 13+ / Clang 16+ (glibc, libstdc++ compatibility) |
-| **macOS 13+** | Apple Clang 15+ (universal macOS builds) |
-| **Docker** | Multi-arch images (amd64, arm64), runtime-ready containers |
 
 ---
 
-## Performance
+## v4.0.0
 
-| Scale | Latency (p50) | Latency (p99) | Recall@10 | Throughput |
-|-------|---------------|---------------|-----------|------------|
-| 100K | 1.2 ms | 2.8 ms | 98.5% | 10,000 QPS |
-| 1M | 2.1 ms | 4.8 ms | 98.1% | 10,000 QPS |
-| 10M | 4.3 ms | 9.2 ms | 97.5% | 8,000 QPS |
-| 100M | 6.8 ms | 15 ms | 96.8% | 5,000 QPS |
-| **1B** | **8.5 ms** | **22 ms** | **96.8%** | **85,000 QPS** (distributed) |
+**Major Release: Perceptual Quantization at 1B scale, Observability & System Snapshot**
+
+### Highlights
+
+#### Distributed System
+- **Replication**: Async, sync, and semi-sync modes with automatic failover
+- **Sharding**: Hash, range, and consistent hashing strategies with auto-resharding
+- **gRPC Networking**: High-performance RPC with HTTP/2, TLS/mTLS support
+- **Service Discovery**: Automatic node discovery and health monitoring
+- **Load Balancing**: Client-side and server-side balancing
+
+#### ML Framework Integration
+- **TensorFlow C++ API**: SavedModel loading, GPU acceleration, training export
+- **PyTorch C++ (LibTorch)**: TorchScript loading, CUDA/ROCm support, mixed precision
+- **GPU Acceleration**: Multi-GPU distribution, dynamic batching, memory management
+- **Training Export**: TFRecord, PyTorch Dataset, contrastive learning pipelines
+
+#### Hybrid Search
+- **BM25 Full-Text Search**: Porter stemming, stop-word filtering, inverted index
+- **5 Fusion Methods**: RRF, Weighted Sum, CombSUM, CombMNZ, Borda Count
+- **RAG Engine**: 5 chunking strategies (fixed, sentence, paragraph, semantic, recursive)
+- **Framework Adapters**: LangChain and LlamaIndex integration
+- **Performance**: +15-20% accuracy, +10-15% recall over vector-only search
+
+#### Enhanced Observability
+- **Prometheus Metrics**: Comprehensive metrics export with 50+ metrics
+- **OpenTelemetry Tracing**: Distributed tracing with W3C Trace Context support
+- **eBPF Integration**: Zero-overhead continuous profiling and kernel-level observability
+- **Comprehensive Logging**: 15 anomaly types, structured JSON logs
+- **Unified Observability**: Traces + Metrics + Logs + Profiles correlation
+
+#### Documentation & Quality
+- **23 Core Documents**: Professionally organized with frontmatter and navigation
+- **50+ Test Suites**: Comprehensive testing across all features
+- **Production Ready**: Security hardening, performance optimization
+- **Docker Images**: Multi-platform support (amd64, arm64)
+
+### Performance Improvements
+
+| Metric | v2.3.0 | v3.0.0 | Improvement |
+|--------|--------|--------|-------------|
+| Query Latency (p99) | 5ms | 2.9ms | 42% faster |
+| Recall@10 (1M vectors) | 95.2% | 98.1% | +2.9% (perceptual) |
+| Hybrid Search Accuracy | N/A | +15-20% | New feature |
+| Distributed Throughput | N/A | 10,000+ QPS | New feature |
+| Billion-Scale Support | N/A | 96.8% recall @ 8.5ms | New feature |
+| GPU Inference | N/A | <10ms | New feature |
+| Replication Lag (async) | N/A | <100ms | New feature |
+| Perceptual Quantization | N/A | +1-3% quality | New feature |
+
+See [v3.0.0 release notes](docs/changelog/v3.0.0.md) and [System Snapshot](docs/research/HEKTOR_ANALYSIS.md) for details.
+
+**See**: [CHANGELOG.md](../CHANGELOG.md) | [Documentation Index](00_INDEX.md) | [Real-World Applications](19_REAL_WORLD_APPLICATIONS.md)
 
 ---
 
@@ -229,11 +173,17 @@ python verify-installation.py
 ### Installation via pip (Easiest)
 
 ```bash
+# Install from source (requires CMake and C++ compiler)
 pip install hektor-vdb
 
 # Or install with ML dependencies
 pip install hektor-vdb[ml]
 ```
+
+**Requirements:**
+- Python 3.10+
+- CMake 3.20+
+- C++23 compatible compiler (GCC 13+, Clang 16+, MSVC 2022 17.3+)
 
 ### Automated Setup from Source
 
@@ -709,5 +659,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+<p align="center">
+<sub>Part of the <a href="../gold_standard/README.md">Gold Standard</a> precious metals intelligence system.</sub>
+</p>
 
 
